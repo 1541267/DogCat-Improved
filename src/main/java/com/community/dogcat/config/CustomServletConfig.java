@@ -20,8 +20,8 @@ public class CustomServletConfig implements WebMvcConfigurer {
 		registry.addResourceHandler("/img/**").addResourceLocations("classpath:/static/img/");
 		registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
 		registry.addResourceHandler("/multipart/**").addResourceLocations("file:///C:/testupload/multipart/");
-		registry.addResourceHandler("/s3/**").addResourceLocations("file:///C:/testupload/s3/");
-		registry.addResourceHandler("/temp/**").addResourceLocations("file:///C:/testupload/temp/");
+		registry.addResourceHandler("/s3/**").addResourceLocations("file:/home/ec2-user/testupload/s3/");
+		registry.addResourceHandler("/temp/**").addResourceLocations("file:/home/ec2-user/testupload/temp/");
 	}
 	// CORS
 	@Override
