@@ -17,47 +17,47 @@
 }
 
 .certification-button {
-    background-color: #67cafe;
+    background-color: #fff;
     border: 1px solid #67cafe;
     color: #67cafe;
     border-radius: 0.375rem;
-    width: 120px;
+    width: 125px;
     height: 38px;
 }
 
 .certification-button:focus {
-    background-color: #67cafe;
-    color: white;
-    border: 1px solid #67cafe;
-}
-
-.certification-button:visited {
-    background-color: #67cafe;
+    background-color: #fff;
     color: #67cafe;
     border: 1px solid #67cafe;
 }
 
-.show:active {
-    background-color: #67cafe;
-    color: #67cafe;
-    border: 1px solid #67cafe;
-}
+/*.certification-button:active {*/
+/*    background-color: #67cafe;*/
+/*    color: white;*/
+/*    border: 1px solid #67cafe;*/
+/*}*/
+
+/*.show:active {*/
+/*    background-color: #67cafe;*/
+/*    color: #67cafe;*/
+/*    border: 1px solid #67cafe;*/
+/*}*/
 
 .join-button:hover {
-    background-color: white;
-    color: #67cafe;
+    background-color: #67cafe;
     border: 1px solid #67cafe;
+    color: #000;
 }
 
 .cancel-button:hover {
-    background-color: #67cafe;
+    background-color: red;
     color: white;
-    border: 1px solid #67cafe;
+    border: 1px solid red;
 }
 
 .certification-button:hover {
-    background-color: white;
-    color: #67cafe;
+    background-color: #67cafe;
+    color: white;
     border: 1px solid #67cafe;
 }
 

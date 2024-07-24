@@ -90,13 +90,11 @@
     width: 120px;
 }
 
-.sideLetterbox,
 .sideActivity {
     width: 120px;
 }
 
 .sideActivity > a,
-.sideLetterbox > a,
 .sideMyInfo > a {
     text-decoration: none;
     color: black;

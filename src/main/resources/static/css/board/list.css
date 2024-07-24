@@ -80,6 +80,11 @@ td > a {
     width: 30px;
 }
 
+.form-check-input {
+    margin-left: 0.75rem;
+    margin-right: 0.2rem;
+}
+
 .boardImg {
     display: block;
     width: 120px;
@@ -163,12 +168,10 @@ td > a {
 }
 
 .deleteBtn {
-    color: #000;
     background-color: #E8FFFF;
-    border: 1px solid #E8FFFF;
-    --bs-btn-hover-color: black;
-    --bs-btn-hover-border-color: red;
-    --bs-btn-hover-bg: red;
+    border-color: white;
+    color: #000;
+    --bs-btn-hover-color: #fff;
 }
 
 .page-item .page-link {

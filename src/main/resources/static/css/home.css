@@ -169,3 +169,7 @@ a {
 .tooltip-arrow {
     display: none !important; /* 화살표를 숨깁니다 */
 }
+
+.nickname {
+    color: #67cafe;
+}

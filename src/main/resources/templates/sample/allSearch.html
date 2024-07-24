@@ -28,9 +28,15 @@
     <!--본문 영역-->
     <div class="content">
 
+        <h2 class="allSearchTitle">통합검색</h2>
+        <br>
+        <h4 class="allSearchTitle">
+            전체 게시판 내 <span class="allSearchContent">'고양이'</span>
+            검색 결과 : 총 <span class="allSearchContent">'10'</span> 건
+        </h4>
+
         <!--본문-->
         <div id="list" class="card mb-4">
-
             <!--게시글이 있을 때-->
             <!--글목록-->
             <div th:if="${searchResponseDTO?.dtoList != null}">
