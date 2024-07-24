@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.dogcat'
-version = '0.0.1-SNAPSHOT'
+version = ''
 
 java {
     toolchain {
@@ -105,23 +105,3 @@ dependencies {
 
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-// 테스트 빌드 최적화
-
-tasks.withType(Test) {
-    maxParallelForks = 4
-}
-
-tasks.withType(JavaCompile) {
-    options.fork = true
-}
-
-tasks.withType(JavaCompile) {
-    options.incremental = true
-}
-
-tasks.withType(Test) {
-    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
-}
