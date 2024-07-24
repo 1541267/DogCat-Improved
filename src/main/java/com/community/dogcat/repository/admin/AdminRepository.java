@@ -27,9 +27,9 @@ public interface AdminRepository extends JpaRepository<User, String> {
 
 
     // 전체 유저목록
-    Page<User> findAllByBlockFalseAndNicknameContainingOrBlockFalseAndUserNameContaining(String keyword1, String keyword2, Pageable pageable);
+    Page<User> findByBlockFalseAndNicknameContainingOrBlockFalseAndUserNameContaining(String keyword1, String keyword2, Pageable pageable);
 
-    Page<User> findByBlockIsTrue(Pageable pageable);
+    Page<User> findByBlockFalse(Pageable pageable);
 
     long countByBlockFalseAndNicknameContainingOrUserNameContaining(String keyword1, String keyword2);
 
@@ -37,9 +37,9 @@ public interface AdminRepository extends JpaRepository<User, String> {
 
 
     //차단된 유저목록
-    Page<User> findAllByBlockTrueAndNicknameContainingOrBlockTrueAndUserNameContaining(String keyword1, String keyword2, Pageable pageable);
+    Page<User> findByBlockTrueAndNicknameContainingOrBlockTrueAndUserNameContaining(String keyword1, String keyword2, Pageable pageable);
 
-    Page<User> findByBlockIsFalse(Pageable pageable);
+    Page<User> findByBlockIsTrue(Pageable pageable);
 
     long countByBlockTrueAndNicknameContainingOrUserNameContaining(String keyword1, String keyword2);
 

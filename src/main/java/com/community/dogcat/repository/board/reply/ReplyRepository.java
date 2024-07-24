@@ -44,4 +44,7 @@ public interface ReplyRepository extends JpaRepository<Reply, Long>, ReplySearch
     Long countRepliesByPost(@Param("postNo") Long postNo);
 
     Reply findByReplyNo(Long replyNo);
+
+
+
 }

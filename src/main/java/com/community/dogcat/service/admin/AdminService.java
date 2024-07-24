@@ -8,10 +8,10 @@ import com.community.dogcat.dto.board.BoardPageRequestDTO;
 import com.community.dogcat.dto.report.ReportDetailDTO;
 import com.community.dogcat.repository.admin.AdminRepository;
 import com.community.dogcat.repository.board.BoardRepository;
+import com.community.dogcat.repository.board.reply.ReplyRepository;
 import com.community.dogcat.repository.report.ReportLogRepository;
 import com.community.dogcat.repository.user.UserRepository;
 import com.community.dogcat.repository.user.UsersAuthRepository;
-import com.community.dogcat.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -33,7 +33,7 @@ public class AdminService {
     private final AdminRepository adminRepository;
     private final UsersAuthRepository usersAuthRepository;
     private final BoardRepository boardRepository;
-    private final UserService userService;
+    private final ReplyRepository replyRepository;
 
     public List<AdminUserDetailDTO> findAllUsers(BoardPageRequestDTO pageRequestDTO) {
         Pageable pageable = pageRequestDTO.getPageable("userId");
@@ -41,9 +41,9 @@ public class AdminService {
 
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
-            userPage = adminRepository.findAllByBlockFalseAndNicknameContainingOrBlockFalseAndUserNameContaining(keyword, keyword, pageable);
+            userPage = adminRepository.findByBlockFalseAndNicknameContainingOrBlockFalseAndUserNameContaining(keyword, keyword, pageable);
         } else {
-            userPage = adminRepository.findByBlockIsFalse(pageable);
+            userPage = adminRepository.findByBlockFalse(pageable);
         }
 
         return userPage.getContent().stream()
@@ -78,7 +78,12 @@ public class AdminService {
         }
 
         return reportLogPage.getContent().stream()
-                .filter(reportLog -> !reportLog.getUserId().isBlock())
+                .filter(reportLog -> {
+                    // Null 체크 및 차단된 유저 필터링
+                    boolean postNotBlocked = reportLog.getPostNo() != null && !reportLog.getPostNo().getUserId().isBlock();
+                    boolean replyNotBlocked = reportLog.getReplyNo() != null && !reportLog.getReplyNo().getUserId().isBlock();
+                    return postNotBlocked || replyNotBlocked;
+                })
                 .map(reportLog -> ReportListDTO.builder()
                         .userId(reportLog.getUserId())
                         .nickname(reportLog.getUserId().getNickname())
@@ -86,8 +91,8 @@ public class AdminService {
                         .reportTitle(reportLog.getReportTitle())
                         .reportContent(reportLog.getReportContent())
                         .regDate(reportLog.getRegDate())
-                        .postNo(reportLog.getPostNo())
-                        .replyNo(reportLog.getReplyNo())
+                        .post(reportLog.getPostNo())
+                        .reply(reportLog.getReplyNo())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -142,7 +147,7 @@ public class AdminService {
 
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
-            blockUserPage = adminRepository.findAllByBlockTrueAndNicknameContainingOrBlockTrueAndUserNameContaining(keyword, keyword, pageable);
+            blockUserPage = adminRepository.findByBlockTrueAndNicknameContainingOrBlockTrueAndUserNameContaining(keyword, keyword, pageable);
         } else {
             blockUserPage = adminRepository.findByBlockIsTrue(pageable);
         }
@@ -166,6 +171,13 @@ public class AdminService {
         } else {
             return (int) adminRepository.countByBlockTrue();
         }
+
+
+//        int count = (int) userRepository.countByBlock(true);
+//        log.info(count);
+//
+//        return (int) userRepository.countByBlock(true);
+
 
     }
 

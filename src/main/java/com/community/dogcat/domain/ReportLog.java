@@ -38,11 +38,11 @@ public class ReportLog {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User userId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "post_no")
 	private Post postNo;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "reply_no")
 	private Reply replyNo;
 

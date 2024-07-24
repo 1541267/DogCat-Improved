@@ -208,7 +208,7 @@
                             </div>
                             <div class="justify-content-end">
                                 <!--댓글신고버튼-->
-                                <button class="btn reportReplyBtn"
+                                <button class="btn btn-warning reportReplyButton"
                                         th:attr="data-reply-no=${reply.replyNo}">
                                     신고
                                 </button>
@@ -584,10 +584,8 @@
         });
         //게시글신고 버튼 클릭 이벤트
         $('.bi-file-x').on('mousedown', function () {
-
             // 아이콘 클래스 변경
             $(this).removeClass('bi-file-x').addClass('bi-file-x-fill');
-
         });
 
         $('.bi-file-x').on('mouseup', function (e) {
@@ -601,7 +599,7 @@
             function openPostReportPopup(postNo) {
                 const url = `/report/post-report/` + postNo;
                 const windowName = "postReport";
-                const windowFeatures = "width=500, height=542, scrollbars=yes";
+                const windowFeatures = "width=497, height=542, scrollbars=yes";
                 window.open(url, windowName, windowFeatures);
             }
 
@@ -770,9 +768,30 @@
             divContent.appendChild(cardText);
             divContent.appendChild(cardFooter);
 
+            // 댓글신고 버튼 클릭 이벤트
             const reportReplyButton = document.createElement('button');
-            reportReplyButton.classList.add('btn', 'btn-warning', 'ms-2', 'reportReplyBtn');
+            reportReplyButton.classList.add('btn', 'btn-warning', 'ms-2', 'reportReplyButton');
             reportReplyButton.textContent = '신고';
+
+            reportReplyButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                const replyNo = reply.replyNo;
+
+
+                // 신고 처리를 서버에 요청
+                fetch(`/report/reply-report/${replyNo}`, {
+                    method: 'GET'
+                }).then(response => {
+                    if (response.ok) {
+                        // 새 창 또는 탭에서 'report/reply-report' 열기
+                        window.open(`/report/reply-report/${replyNo}`, '_blank', 'width=497,height=540');
+                        console.log('Successfully reported reply');
+                    } else {
+                        console.error('Failed to report reply');
+                    }
+                });
+
+            });
 
             const deleteButton = document.createElement('button');
             deleteButton.classList.add('btn', 'btn-danger', 'ms-2', 'deleteReplyBtn');
