@@ -1,0 +1,171 @@
+body {
+    min-width: 1200px; /* 고정 최소 너비 설정 */
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto; /* 중앙 정렬 */
+    display: flex;
+}
+
+.content {
+    width: 100%;
+}
+
+.viewMore {
+    color: gray;
+}
+
+.showOffBoard {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    box-shadow: 1px 1px 3px #dee2e6;
+    padding: 10px;
+    width: 600px;
+    height: 350px;
+    overflow-y: hidden;
+}
+
+.showOff {
+    width: 100%;
+}
+
+.showListOne {
+    width: 130px;
+}
+
+td {
+    width: 200px;
+    vertical-align: middle;
+    border-bottom: none;
+}
+
+.boardImg {
+    display: block;
+    width: 150px;
+    height: 150px;
+}
+
+.login {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    box-shadow: 1px 1px 3px #dee2e6;
+    padding: 10px;
+    width: 400px;
+    height: 350px;
+}
+
+.login-button {
+    width: 100px;
+    height: 100px;
+    color: #000;
+    background-color: #E8FFFF;
+    border-radius: 10px;
+    border: 1px solid #E8FFFF;
+    --bs-btn-hover-color: #000;
+    --bs-btn-hover-border-color: #67cafe;
+    --bs-btn-hover-bg: #67cafe;
+}
+
+.loginImg {
+    width: 45px;
+    height: 45px;
+}
+
+.generalBoard,
+.tipBoard {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    box-shadow: 1px 1px 3px #dee2e6;
+    padding: 10px;
+    width: 600px;
+    height: 730px;
+    overflow-y: hidden;
+}
+
+.currentHotBoard,
+.qnaBoard {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    box-shadow: 1px 1px 3px #dee2e6;
+    width: 400px;
+    height: 730px;
+    overflow-y: hidden;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.boardHr {
+    margin: 10px 0;
+}
+
+.boardTitle {
+    font-size: 25px;
+    margin-bottom: 0;
+}
+
+.boardCode {
+    width: 70px;
+}
+
+.boardTag {
+    display: inline-block;
+    width: 100%;
+    border-radius: 10px;
+    background-color: #dcffe0;
+}
+
+.userId {
+    font-size: 20px;
+}
+
+.nickname {
+    font-size: 20px;
+}
+
+.listOne {
+    width: auto;
+}
+
+.tag {
+    height: 35px;
+}
+
+.title.sub {
+    font-size: 12px;
+    color: gray;
+}
+
+.level {
+    height: 15px;
+}
+
+.replyAuth {
+    width: 30px;
+    margin-right: 5px;
+}
+
+.replyAuthImg {
+    width: 30px;
+}
+
+.custom-progress-bar {
+    background-color: #67cafe;
+}
+
+.tooltip .tooltip-inner {
+    background-color: #67cafe;
+    color: #fff;
+    font-size: 0.875rem;
+}
+
+.tooltip-arrow::before {
+    content: none !important; /* 화살표를 숨깁니다 */
+}
+
+.tooltip-arrow {
+    display: none !important; /* 화살표를 숨깁니다 */
+}

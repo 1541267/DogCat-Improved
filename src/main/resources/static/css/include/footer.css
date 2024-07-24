@@ -1,0 +1,18 @@
+.footer-nav {
+    margin: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.footer-nav img {
+    margin-right: 15px;
+}
+
+.footer-nav {
+    margin-left: 15px;
+
+}
+.nav-item {
+    list-style-type: none;
+}
+

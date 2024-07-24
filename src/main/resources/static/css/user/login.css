@@ -1,0 +1,62 @@
+a {
+    color: black;
+    text-decoration: none;
+}
+
+.login-button {
+    background-color: #67cafe;
+    border: 1px solid #67cafe;
+    color: white;
+    border-radius: 0.375rem;
+    width: 400px;
+    height: 65px;
+}
+
+.login-button:hover {
+    background-color: white;
+    color: #67cafe;
+    border: 1px solid #67cafe;
+}
+
+.kakao {
+    width: 400px;
+    height: 65px;
+    color: white;
+    border-radius: 0.375rem;
+    background: #FEE500;
+    border: none;
+}
+
+.kakao a {
+    color: white;
+}
+
+.naver {
+    width: 400px;
+    height: 65px;
+    color: white;
+    border-radius: 0.375rem;
+    background: #03C75A;
+    border: none;
+}
+
+.naver a {
+    color: white;
+}
+
+.google {
+    width: 400px;
+    height: 65px;
+    border-radius: 0.375rem;
+    background: #131314;
+    color: white;
+}
+
+.text-span {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.form-control {
+    width: 400px;
+}

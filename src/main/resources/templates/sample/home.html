@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+    <title>Document</title>
+</head>
+<style>
+
+</style>
+<body>
+<div th:include="include/header :: header"></div>
+
+<div class="container">
+    <div class="content">
+        <div class="d-flex">
+            <!--왼쪽-->
+            <div>
+                <div class="p-4 mb-4 showOffBoard">
+                    <div class="d-flex justify-content-between px-2" style="background-color: #e5ffee;">
+                        <p class="boardTitle">자랑 게시판</p>
+                        <a class="ms-3 align-content-end viewMore" href="/board/showoff">더 보기</a>
+                    </div>
+                    <hr>
+                    <table class="table showOff">
+                        <tbody>
+                        <tr>
+                            <td class="mb-2 showListOne" th:each="dto:${showOffList}">
+                                <a th:href="@{'/board/read/'+${dto.postNo}}">
+                                    <span th:if="${!dto.imgBoards.isEmpty()}" th:each="imgDto:${dto.imgBoards}">
+                                    <img th:src="${imgDto.thumbnailPath}" class="boardImg"
+                                         alt="Image">
+                                    </span>
+                                    <span th:if="${dto.imgBoards.isEmpty()}">
+                                    <img src="/img/board/no_search.png" class="boardImg"
+                                         alt="Image">
+                                    </span>
+                                    <div class="mt-3">
+                                        <p class="mb-0" th:text="${dto.postTitle}">제목</p>
+                                        <p class="mb-0" th:text="${dto.nickname}">글쓴이</p>
+                                    </div>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-4 mb-4 generalBoard">
+                    <div class="d-flex justify-content-between px-2" style="background-color: #E8FFFF;">
+                        <p class="boardTitle">자유 게시판</p>
+                        <a class="ms-3 align-content-end viewMore" href="/board/general">더 보기</a>
+                    </div>
+                    <hr class="boardHr">
+                    <div class="board">
+                        <table class="table read">
+                            <tbody>
+                            <tr th:each="dto:${generalList}">
+                                <td class="align-middle listOne">
+                                    <a th:href="@{'/board/read/'+${dto.postNo}}">
+                                        <div class="d-flex align-items-center">
+                                            <div>
+                                                <div>
+                                                <span>
+                                                    <img class="tag" src="/img/tag/tag_dog.png"
+                                                         th:if="${dto.postTag eq '강아지'}"
+                                                         alt="강아지태그">
+                                                    <img class="tag" src="/img/tag/tag_cat.png"
+                                                         th:if="${dto.postTag eq '고양이'}"
+                                                         alt="고양이태그">
+                                                </span>
+                                                    <span th:text="${dto.postTitle}">
+                                                    게시물 제목
+                                                </span>
+                                                    <!--비밀글여부-->
+                                                    <span class="icon secret" th:if="${dto.secret == true}">
+                                                 <i class="bi bi-file-lock"></i>
+                                                </span>
+                                                    <!--비밀글일경우 첨부파일이 존재해도 표시안하고 비밀글처리 ~> 첨부파잂 표시하려면 비밀글값이 0이어야함(디폴트값)-->
+                                                    <span class="icon file"
+                                                          th:if="${dto.imgBoards != null && dto.imgBoards.size() > 0 && dto.secret == false}">
+                                                     <i class="bi bi-file-earmark-image"></i>
+                                                </span>
+                                                </div>
+                                                <div class="title sub">
+                                                    <span th:text="${dto.nickname}">작성자</span>
+                                                    <span>
+                                                    <img class="level" src="/img/level/red.png" alt="레벨이미지 red"
+                                                         th:if="${dto.exp < 200}">
+                                                    <img class="level" src="/img/level/orange.png" alt="레벨이미지 orange"
+                                                         th:if="${dto.exp >= 200 and dto.exp < 400}">
+                                                    <img class="level" src="/img/level/yellow.png" alt="레벨이미지 yellow"
+                                                         th:if="${dto.exp >= 400 and dto.exp < 600}">
+                                                    <img class="level" src="/img/level/mint.png" alt="레벨이미지 mint"
+                                                         th:if="${dto.exp >= 600 and dto.exp < 800}">
+                                                    <img class="level" src="/img/level/purple.png" alt="레벨이미지 purple"
+                                                         th:if="${dto.exp >= 800}">
+                                                </span>
+                                                    <span class="mx-1">조회수 <span
+                                                            th:text="${dto?.viewCount}">5</span></span>
+                                                    <span class="mx-1" th:if="${dto?.modDate == null}"
+                                                          th:text="${#temporals.format(dto.regDate, 'yyyy-MM-dd')}">작성일</span>
+                                                    <span class="mx-1" th:if="${dto?.modDate != null}"
+                                                          th:text="${#temporals.format(dto?.modDate, 'yyyy-MM-dd')}">작성일</span>
+                                                </div> <!--title sub-->
+                                            </div>
+                                        </div>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> <!--general-->
+
+                <div class="p-4 tipBoard">
+                    <div class="d-flex justify-content-between px-2" style="background-color: #fffde8;">
+                        <p class="boardTitle">정보 게시판</p>
+                        <a class="ms-3 align-content-end viewMore" href="/board/tip">더 보기</a>
+                    </div>
+                    <hr class="boardHr">
+                    <div class="board">
+                        <table class="table read">
+                            <tbody>
+                            <tr th:each="dto:${tipList}">
+                                <td class="align-middle listOne">
+                                    <a th:href="@{'/board/read/'+${dto.postNo}}">
+                                        <div class="d-flex align-items-center">
+                                            <div>
+                                                <div>
+                                                <span>
+                                                    <img class="tag" src="/img/tag/tag_dog.png"
+                                                         th:if="${dto.postTag eq '강아지'}"
+                                                         alt="강아지태그">
+                                                    <img class="tag" src="/img/tag/tag_cat.png"
+                                                         th:if="${dto.postTag eq '고양이'}"
+                                                         alt="고양이태그">
+                                                </span>
+                                                    <span th:text="${dto.postTitle}">
+                                                    게시물 제목
+                                                </span>
+                                                    <!--비밀글여부-->
+                                                    <span class="icon secret" th:if="${dto.secret == true}">
+                                                 <i class="bi bi-file-lock"></i>
+                                                </span>
+                                                    <!--비밀글일경우 첨부파일이 존재해도 표시안하고 비밀글처리 ~> 첨부파잂 표시하려면 비밀글값이 0이어야함(디폴트값)-->
+                                                    <span class="icon file"
+                                                          th:if="${dto.imgBoards != null && dto.imgBoards.size() > 0 && dto.secret == false}">
+                                                     <i class="bi bi-file-earmark-image"></i>
+                                                </span>
+                                                </div>
+                                                <div class="title sub">
+                                                    <span th:text="${dto.nickname}">작성자</span>
+                                                    <span>
+                                                    <img class="level" src="/img/level/red.png" alt="레벨이미지 red"
+                                                         th:if="${dto.exp < 200}">
+                                                    <img class="level" src="/img/level/orange.png" alt="레벨이미지 orange"
+                                                         th:if="${dto.exp >= 200 and dto.exp < 400}">
+                                                    <img class="level" src="/img/level/yellow.png" alt="레벨이미지 yellow"
+                                                         th:if="${dto.exp >= 400 and dto.exp < 600}">
+                                                    <img class="level" src="/img/level/mint.png" alt="레벨이미지 mint"
+                                                         th:if="${dto.exp >= 600 and dto.exp < 800}">
+                                                    <img class="level" src="/img/level/purple.png" alt="레벨이미지 purple"
+                                                         th:if="${dto.exp >= 800}">
+                                                </span>
+                                                    <span class="mx-1">조회수 <span
+                                                            th:text="${dto?.viewCount}">5</span></span>
+                                                    <span class="mx-1" th:if="${dto?.modDate == null}"
+                                                          th:text="${#temporals.format(dto.regDate, 'yyyy-MM-dd')}">작성일</span>
+                                                    <span class="mx-1" th:if="${dto?.modDate != null}"
+                                                          th:text="${#temporals.format(dto?.modDate, 'yyyy-MM-dd')}">작성일</span>
+                                                </div> <!--title sub-->
+                                            </div>
+                                        </div>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> <!--tipBoard-->
+
+            </div>
+
+            <!--오른쪽-->
+            <div>
+
+                <div class="d-flex mb-4 ms-4 login" th:if="${username == null}">
+                    <div>
+                        <form>
+                            <div class="mt-3 mx-3 d-flex align-items-center">
+                                <div>
+                                    <div style="width: 220px">
+                                        <label for="username">아이디</label>
+                                        <input type="text" name="username" id="username" class="form-control">
+                                    </div>
+                                    <div style="width: 220px">
+                                        <label for="password">비밀번호</label>
+                                        <input type="password" name="password" id="password"
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                <button class="align-self-end ms-3 login-button">
+                                    <span>로그인</span>
+                                </button>
+                            </div>
+                            <div class="d-flex justify-content-evenly align-items-center"
+                                 style="height: 65px;">
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="autoLogin" id="autoLogin"
+                                               class="d-inline" checked>
+                                        자동로그인</label>
+                                </div>
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="rememberMe" id="rememberMe"
+                                               class="d-inline" checked>
+                                        아이디저장</label>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="d-flex justify-content-around align-items-center"
+                             style="height: 30px;">
+                            <a href="/user/join">회원가입</a>
+                            <div class="d-flex justify-content-between">
+                                <a href="/user/findId">아이디찾기</a>
+                                <span class="mx-1">|</span>
+                                <a href="/user/findPw">비밀번호찾기</a>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-evenly align-items-center mt-3">
+                            <a href="/oauth2/authorization/kakao">
+                                <img class="loginImg" th:src="@{/img/login/kakao/img.png}" alt="카카오"></a>
+                            <a href="/oauth2/authorization/naver">
+                                <img class="loginImg" th:src="@{/img/login/naver/btnG_아이콘사각.png}"
+                                     alt="네이버"></a>
+                            <a href="/oauth2/authorization/google">
+                                <img class="loginImg" th:src="@{/img/login/google/png@1x/dark/web_dark_sq_na@1x.png}"
+                                     alt="구글"></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 mb-4 ms-4 login" th:if="${username != null}">
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex flex-column align-self-center">
+                            <p class="userId" th:text="${username}"></p>
+                            <p class="nickname" th:text="${nickname + '님, 반갑습니다!'}"></p>
+                        </div>
+                        <!-- 레벨 이미지 표시 -->
+                        <div>
+                            <img th:if="${userLevelInfo.level == 1}" th:src="@{/img/level/red.png}"
+                                 alt="User Level Image" style="width: 100px; height: 100px;"/>
+                            <img th:if="${userLevelInfo.level == 2}" th:src="@{/img/level/orange.png}"
+                                 alt="User Level Image" style="width: 100px; height: 100px;"/>
+                            <img th:if="${userLevelInfo.level == 3}" th:src="@{/img/level/yellow.png}"
+                                 alt="User Level Image" style="width: 100px; height: 100px;"/>
+                            <img th:if="${userLevelInfo.level == 4}" th:src="@{/img/level/mint.png}"
+                                 alt="User Level Image" style="width: 100px; height: 100px;"/>
+                            <img th:if="${userLevelInfo.level == 5}" th:src="@{/img/level/purple.png}"
+                                 alt="User Level Image" style="width: 100px; height: 100px;"/>
+                        </div>
+                    </div>
+
+                    <div class="progress-container" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                         title="자주 방문하거나 글, 댓글을 작성하면 경험치가 쌓입니다!">
+                        <div class="progress">
+                            <!-- 진행 바 -->
+                            <div class="custom-progress-bar" role="progressbar"
+                                 th:style="'width: ' + ${userLevelInfo.percentage} + '%;'"
+                                 th:attr="aria-valuenow=${userLevelInfo.percentage},
+                                          aria-valuemin=0,
+                                          aria-valuemax=100"
+                                 aria-valuenow="${userLevelInfo.percentage}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-evenly">
+                        <a th:href="@{'/my/userActivity/' + ${username} + '/posts'}">활동</a>
+                        <a th:href="@{'/my/user-modify?userId=' + ${username}}">정보수정</a>
+                    </div>
+                    <div>
+
+                    </div>
+                </div>
+
+                <div class="ms-4 mb-4 currentHotBoard">
+                    <div class="p-4">
+                        <p class="boardTitle px-2" style="background-color: #ffe8eb;">실시간 인기 게시글</p>
+                        <hr class="boardHr">
+                        <div class="board">
+                            <table class="table read">
+                                <tbody>
+                                <tr th:each="dto:${todayList}">
+                                    <td class="align-middle text-center boardCode">
+                                <span class="boardTag">
+                                    <span th:if="${dto.boardCode eq 'showoff'}" th:text="자랑"></span>
+                                    <span th:if="${dto.boardCode eq 'general'}" th:text="자유"></span>
+                                    <span th:if="${dto.boardCode eq 'tip'}" th:text="정보"></span>
+                                    <span th:if="${dto.boardCode eq 'qna'}" th:text="QnA"></span>
+                                </span>
+                                    </td>
+                                    <td class="align-middle listOne">
+                                        <a th:href="@{'/board/read/'+${dto.postNo}}">
+                                            <div class="d-flex align-items-center">
+                                                <div>
+                                                    <div>
+                                                <span>
+                                                    <img class="tag" src="/img/tag/tag_dog.png"
+                                                         th:if="${dto.postTag eq '강아지'}"
+                                                         alt="강아지태그">
+                                                    <img class="tag" src="/img/tag/tag_cat.png"
+                                                         th:if="${dto.postTag eq '고양이'}"
+                                                         alt="고양이태그">
+                                                </span>
+                                                        <span th:text="${dto.postTitle}">
+                                                    게시물 제목
+                                                </span>
+                                                        <!--비밀글여부-->
+                                                        <span class="icon secret" th:if="${dto.secret == true}">
+                                                 <i class="bi bi-file-lock"></i>
+                                                </span>
+                                                        <!--비밀글일경우 첨부파일이 존재해도 표시안하고 비밀글처리 ~> 첨부파잂 표시하려면 비밀글값이 0이어야함(디폴트값)-->
+                                                        <span class="icon file"
+                                                              th:if="${dto.imgBoards != null && dto.imgBoards.size() > 0 && dto.secret == false}">
+                                                     <i class="bi bi-file-earmark-image"></i>
+                                                </span>
+                                                    </div>
+                                                    <div class="title sub">
+                                                        <span th:text="${dto.nickname}">작성자</span>
+                                                        <span>
+                                                    <img class="level" src="/img/level/red.png" alt="레벨이미지 red"
+                                                         th:if="${dto.exp < 200}">
+                                                    <img class="level" src="/img/level/orange.png" alt="레벨이미지 orange"
+                                                         th:if="${dto.exp >= 200 and dto.exp < 400}">
+                                                    <img class="level" src="/img/level/yellow.png" alt="레벨이미지 yellow"
+                                                         th:if="${dto.exp >= 400 and dto.exp < 600}">
+                                                    <img class="level" src="/img/level/mint.png" alt="레벨이미지 mint"
+                                                         th:if="${dto.exp >= 600 and dto.exp < 800}">
+                                                    <img class="level" src="/img/level/purple.png" alt="레벨이미지 purple"
+                                                         th:if="${dto.exp >= 800}">
+                                                </span>
+                                                        <span class="mx-1">조회수 <span
+                                                                th:text="${dto?.viewCount}">5</span></span>
+                                                        <span class="mx-1" th:if="${dto?.modDate == null}"
+                                                              th:text="${#temporals.format(dto.regDate, 'yyyy-MM-dd')}">작성일</span>
+                                                        <span class="mx-1" th:if="${dto?.modDate != null}"
+                                                              th:text="${#temporals.format(dto?.modDate, 'yyyy-MM-dd')}">작성일</span>
+                                                    </div> <!--title sub-->
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                </div> <!--currentHotBoard-->
+
+                <div class="ms-4 mb-4 qnaBoard">
+                    <div class="p-4">
+                        <div class="d-flex justify-content-between px-2" style="background-color: #f9e8ff;">
+                            <p class="boardTitle">QnA 게시판</p>
+                            <a class="ms-3 align-content-end viewMore" href="/board/qna">더 보기</a>
+                        </div>
+                        <hr class="boardHr">
+                        <div class="board">
+                            <table class="table read">
+                                <tbody>
+                                <tr th:each="dto:${qnaList}">
+                                    <td class="align-middle listOne">
+                                        <a th:href="@{'/board/read/'+${dto.postNo}}">
+                                            <div class="d-flex align-items-center">
+                                                <div class="replyAuth" th:if="${dto.replyAuth==true}">
+                                                    <img class="replyAuthImg" src="/img/tag/vetScope.png"
+                                                         alt="수의사만 답변 가능">
+                                                </div>
+                                                <div>
+                                                    <div>
+                                                <span>
+                                                    <img class="tag" src="/img/tag/tag_dog.png"
+                                                         th:if="${dto.postTag eq '강아지'}"
+                                                         alt="강아지태그">
+                                                    <img class="tag" src="/img/tag/tag_cat.png"
+                                                         th:if="${dto.postTag eq '고양이'}"
+                                                         alt="고양이태그">
+                                                </span>
+                                                        <span th:text="${dto.postTitle}">
+                                                    게시물 제목
+                                                </span>
+                                                        <!--비밀글여부-->
+                                                        <span class="icon secret" th:if="${dto.secret == true}">
+                                                 <i class="bi bi-file-lock"></i>
+                                                </span>
+                                                        <!--비밀글일경우 첨부파일이 존재해도 표시안하고 비밀글처리 ~> 첨부파잂 표시하려면 비밀글값이 0이어야함(디폴트값)-->
+                                                        <span class="icon file"
+                                                              th:if="${dto.imgBoards != null && dto.imgBoards.size() > 0 && dto.secret == false}">
+                                                     <i class="bi bi-file-earmark-image"></i>
+                                                </span>
+                                                    </div>
+                                                    <div class="title sub">
+                                                        <span th:text="${dto.nickname}">작성자</span>
+                                                        <span>
+                                                    <img class="level" src="/img/level/red.png" alt="레벨이미지 red"
+                                                         th:if="${dto.exp < 200}">
+                                                    <img class="level" src="/img/level/orange.png" alt="레벨이미지 orange"
+                                                         th:if="${dto.exp >= 200 and dto.exp < 400}">
+                                                    <img class="level" src="/img/level/yellow.png" alt="레벨이미지 yellow"
+                                                         th:if="${dto.exp >= 400 and dto.exp < 600}">
+                                                    <img class="level" src="/img/level/mint.png" alt="레벨이미지 mint"
+                                                         th:if="${dto.exp >= 600 and dto.exp < 800}">
+                                                    <img class="level" src="/img/level/purple.png" alt="레벨이미지 purple"
+                                                         th:if="${dto.exp >= 800}">
+                                                </span>
+                                                        <span class="mx-1">조회수 <span
+                                                                th:text="${dto?.viewCount}">5</span></span>
+                                                        <span class="mx-1" th:if="${dto?.modDate == null}"
+                                                              th:text="${#temporals.format(dto.regDate, 'yyyy-MM-dd')}">작성일</span>
+                                                        <span class="mx-1" th:if="${dto?.modDate != null}"
+                                                              th:text="${#temporals.format(dto?.modDate, 'yyyy-MM-dd')}">작성일</span>
+                                                    </div> <!--title sub-->
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div> <!--qnaBoard-->
+            </div>
+        </div> <!--d-felx-->
+    </div> <!--content-->
+</div> <!--container-->
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+
+    document.querySelector(".login-button").addEventListener("click", (event) => {
+        event.preventDefault();
+
+        // 사용자가 입력한 아이디와 비밀번호 가져오기
+        const username = document.querySelector('input[name="username"]').value;
+        const password = document.querySelector('input[name="password"]').value;
+        const autoLogin = document.querySelector('input[name="autoLogin"]').checked ? 'true' : 'false';
+        const rememberMe = document.querySelector('input[name="rememberMe"]').checked ? 'true' : 'false';
+
+
+        const data = {username: username, password: password, autoLogin: autoLogin, rememberMe: rememberMe};
+
+        axios.post("/user/loginProc", null, {params: data})
+            .then(res => {
+                // 로그인 성공 시
+                window.location.href = "/sample/home";
+            })
+            .catch(error => {
+                if (error.response) {
+                    if (error.response.status === 403) {
+                        if (error.response.data === "LOGIN_LOCKED") {
+                            alert("로그인 5회 실패로 계정이 비활성화 되었습니다.\n비밀번호찾기에서 임시비밀번호를 발급하세요.");
+                        } else if (error.response.data === "LOGIN_BLOCK") {
+                            alert("관리자에 의해 계정이 차단되었습니다.");
+                        }
+                        window.location.href = "/user/login"; // 로그인 페이지로 이동
+                    } else if (error.response.status === 401) {
+                        alert("아이디 또는 비밀번호를 확인하세요.");
+                        window.location.href = "/user/login"; // 로그인 페이지로 이동
+                    } else {
+                        alert("알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.");
+                    }
+                } else {
+                    alert("서버와의 연결에 문제가 발생했습니다.");
+                }
+            });
+    }, false);
+</script>
+</body>
+<div th:include="include/footer :: footer"></div>
+</html>

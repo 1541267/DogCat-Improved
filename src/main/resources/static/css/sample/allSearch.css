@@ -1,0 +1,107 @@
+body {
+    min-width: 1200px; /* 고정 최소 너비 설정 */
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto; /* 중앙 정렬 */
+    display: flex;
+}
+
+.content {
+    width: 100%;
+    padding-top: 50px;
+}
+
+#list {
+    width: 1000px;
+    height: 700px; /* 카드 크기 고정 */
+}
+
+.read {
+    margin-bottom: 0;
+}
+
+td {
+    height: 70px;
+}
+
+td > a {
+    text-decoration: none;
+    color: black;
+}
+
+.boardTag {
+    display: inline-block;
+    width: 100%;
+    border-radius: 10px;
+    background-color: #dcffe0;
+}
+
+.boardCode {
+    width: 70px;
+}
+
+.listOne {
+    width: auto;
+}
+
+.tag {
+    height: 35px;
+}
+
+.title.sub {
+    font-size: 12px;
+    color: gray;
+}
+
+.level {
+    height: 15px;
+}
+
+.reply {
+    width: 150px;
+}
+
+.replyCountBtn {
+    color: #000;
+    background-color: #E8FFFF;
+    border: 1px solid #E8FFFF;
+    --bs-btn-hover-color: #000;
+    --bs-btn-hover-border-color: #67cafe;
+    --bs-btn-hover-bg: #67cafe;
+}
+
+.noSearch {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.noSearchContent {
+    text-align: center;
+}
+
+.noSearch img {
+    height: 500px;
+}
+
+.noSearch > div {
+    color: gray;
+}
+
+.page-item .page-link {
+    color: #000; /* 기본 색상 */
+    background-color: #fff;
+    border: 1px solid #67cafe;
+}
+
+.page-item .page-link:hover {
+    background-color: #E8FFFF;
+}
+
+.page-item.active .page-link {
+    background-color: #67cafe; /* 활성화된 버튼 배경색 */
+    color: #fff; /* 활성화된 버튼 텍스트 색상 */
+}

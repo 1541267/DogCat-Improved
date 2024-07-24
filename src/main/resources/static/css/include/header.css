@@ -1,0 +1,70 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+header {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+}
+
+.header-top {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 20px;
+    background-color: #f8f9fa;
+    margin-bottom: 40px;
+}
+
+.header-top-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+
+.search-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 10px 0 40px;
+}
+
+.log {
+    font-weight: bold;
+}
+
+.auth {
+    font-size: 0.9em;
+}
+
+.auth a {
+    margin-left: 10px;
+    text-decoration: none;
+    color: #333;
+}
+
+.search-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.search-container input[type="text"] {
+    width: 50%;
+    padding: 5px;
+    font-size: 1em;
+}
+
+nav {
+    text-align: center;
+    margin-top: 10px;
+}
+
+nav a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #333;
+    font-size: 1.1em;
+}
+

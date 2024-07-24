@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>Document</title>
+
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        a:hover {
+            font-weight: bold;
+        }
+
+        header {
+            width: 100%;
+            height: 80px; /* 팝업창 높이에 맞게 조정 */
+        }
+
+        .popup {
+            width: 900px;
+            height: 400px;
+            margin: 0 auto;
+            padding: 10px;
+            box-sizing: border-box; /* padding과 border를 포함하여 전체 크기를 설정 */
+            overflow-y: auto; /* 내용이 넘칠 경우 스크롤 가능하도록 설정 */
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px; /* 헤더와 컨텐츠 사이의 간격 조정 */
+        }
+
+        .header-top .log img {
+            width: 60px;
+            height: 48px;
+        }
+
+        .header-top .title {
+            margin-right: 10px;
+        }
+
+        .border {
+            border: 1px solid #dee2e6;
+        }
+
+        .col-custom {
+            flex: 0 0 48%;
+            max-width: 48%;
+        }
+
+        .content {
+            height: calc(100% - 80px - 10px); /* 팝업창 높이에서 헤더 높이와 패딩을 뺀 높이 */
+            overflow-y: auto; /* 내용이 넘칠 경우 스크롤 가능하도록 설정 */
+        }
+
+        .d-flex {
+            margin: 0; /* 좌우 간격 제거 */
+        }
+    </style>
+</head>
+<body>
+<div class="popup">
+    <header>
+        <div class="header-top">
+            <div class="log">
+                <img class="bi me-2" th:src="@{/img/logo/logo.png}" alt="임시로고">
+            </div>
+            <div>
+                <span class="title" th:text="${reportNickname}"></span>
+                <span>회원 신고 내역</span>
+            </div>
+            <button class="btn btn-danger square-button" onclick="closeWindow()">X</button>
+        </div>
+    </header>
+
+    <div class="content">
+        <div class="d-flex flex-row justify-content-between mb-3">
+            <div class="col-custom border p-2">
+                <h5>게시물</h5>
+                <div th:each="post : ${reportedPosts}" th:if="${post.postNo != null}"
+                     class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <span th:switch="${post.boardCode}"
+                              style="background-color: #0056b3; color: white; padding: 5px; border-radius: 3px;">
+                            <span th:case="'general'">자유</span>
+                            <span th:case="'showoff'">자랑</span>
+                            <span th:case="'tip'">정보</span>
+                            <span th:case="'qna'">QnA</span>
+                        </span>
+                        <a class="d-inline-block" style="max-width: 180px; cursor: pointer;" th:text="${post.postTitle}"
+                           th:onclick="|openReportDetailPopup('${post.reportNo}')|"></a>
+                    </div>
+                    <div class="text-right">
+                        <span th:text="${#dates.format(post.regDate, 'yyyy-MM-dd')}"></span>
+                        <button class="btn btn-danger ml-2 btn-sm" th:onclick="|deleteReportLog(${post.reportNo})|">삭제
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-custom border p-2">
+                <h5>댓글</h5>
+                <div th:each="reply : ${reportedReplys}" th:if="${reply.replyNo != null}"
+                     class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <span style="width: 35px;" class="bg-dark text-white"> 댓글</span>
+                        <a class="d-inline-block" style="max-width: 180px; cursor: pointer;"
+                           th:text="${reply.replyContent}"
+                           th:onclick="|openReportDetailPopup('${reply.reportNo}')|"></a>
+                    </div>
+                    <div class="text-right">
+                        <span th:text="${#dates.format(reply.regDate, 'yyyy-MM-dd')}"></span>
+                        <button class="btn btn-danger m-0 btn-sm" th:onclick="|deleteReportLog(${reply.reportNo})|">삭제
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function closeWindow() {
+        window.close();
+    }
+
+    function openReportDetailPopup(reportNo) {
+        const url = `/admin/report-detail?reportNo=${reportNo}`;
+        const windowName = "ReportDetail";
+        const windowFeatures = "width=500,height=542,scrollbars=yes";
+        window.open(url, windowName, windowFeatures);
+    }
+
+    async function deleteReportLog(reportNo) {
+        const isConfirmed = confirm(`정말로 신고 번호 ${reportNo}를 삭제하시겠습니까?`);
+        if (!isConfirmed) return;
+
+        try {
+            const response = await fetch(`/admin/deleteReportLog/${reportNo}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'}
+            });
+            if (response.ok) {
+                alert(`신고 번호: ${reportNo} 삭제 되었습니다.`);
+                location.reload();
+            } else {
+                alert('Failed to delete reportLog.');
+            }
+        } catch (error) {
+            alert('Error deleteReportLog: ' + error);
+        }
+    }
+</script>
+</body>
+</html>

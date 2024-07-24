@@ -1,0 +1,266 @@
+body {
+    min-width: 1200px; /* 고정 최소 너비 설정 */
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto; /* 중앙 정렬 */
+    display: flex;
+}
+
+.content {
+    width: 100%;
+}
+
+.boardTitle {
+    color: #67cafe;
+    font-size: 25px;
+    margin-bottom: 0;
+}
+
+.replyAuthImg {
+    width: 30px;
+}
+
+.tag {
+    height: 45px;
+}
+
+.readTitle {
+    font-size: 25px;
+}
+
+.readTitle.sub {
+    font-size: 17px;
+    color: gray;
+}
+
+.level {
+    height: 20px;
+}
+
+.postContent {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.bi-hand-thumbs-up {
+    font-size: 2.8em;
+    line-height: 0.5em;
+    color: dodgerblue;
+}
+
+.bi-hand-thumbs-up-fill {
+    font-size: 2.8em;
+    line-height: 0.5em;
+    color: dodgerblue;
+}
+
+.likeCount {
+    color: dodgerblue;
+}
+
+.likeBox {
+    border: 3px solid dodgerblue;
+    border-radius: 0.5rem;
+}
+
+.bi-hand-thumbs-down {
+    font-size: 2.8em;
+    line-height: 0.5em;
+    color: #FF6C6C;
+}
+
+.bi-hand-thumbs-down-fill {
+    font-size: 2.8em;
+    line-height: 0.5em;
+    color: #FF6C6C;
+}
+
+.dislikeCount {
+    color: #FF6C6C;
+}
+
+.dislikeBox {
+    border: 3px solid #FF6C6C;
+    border-radius: 0.5rem;
+}
+
+.scrapNotice {
+    font-size: x-small;
+}
+
+.bi-basket {
+    color: #934F00;
+}
+
+.bi-basket-fill {
+    color: #934F00;
+}
+
+.bi-file-x {
+    color: red;
+}
+
+.bi-file-x-fill {
+    color: red;
+}
+
+.reportNotice {
+    font-size: x-small;
+}
+
+.blank,
+.btnSection {
+    width: 157px;
+}
+
+.listBtn {
+    color: #fff;
+    background-color: #67cafe;
+    border: 1px solid #67cafe;
+    --bs-btn-hover-color: #000;
+    --bs-btn-hover-border-color: #67cafe;
+    --bs-btn-hover-bg: #67cafe;
+}
+
+.modify_qBtn, .modifyBtn {
+    color: #fff;
+    background-color: #67cafe;
+    border: 1px solid #67cafe;
+    --bs-btn-hover-color: #000;
+    --bs-btn-hover-border-color: #ffc107;
+    --bs-btn-hover-bg: #ffc107;
+}
+
+.deletePostBtn {
+    color: #fff;
+    background-color: #67cafe;
+    border: 1px solid #67cafe;
+    --bs-btn-hover-color: black;
+    --bs-btn-hover-border-color: red;
+    --bs-btn-hover-bg: red;
+}
+
+.deleteReplyBtn {
+    color: #fff;
+    --bs-btn-hover-color: #000;
+}
+
+.reportReplyBtn {
+    color: #fff;
+    --bs-btn-hover-color: #000;
+}
+
+table.replyRegister {
+    border: 1px solid lightgray;
+    background-color: #F9F9F9;
+}
+
+td.replyNotice {
+    font-size: large;
+}
+
+tr.replyTop {
+    height: 30px;
+}
+
+tr.replyBody {
+    height: 60px;
+}
+
+tr.replyBody > td.p-2 {
+    width: 85%;
+}
+
+td.p-2 > div {
+    height: 50px;
+}
+
+tr.replyBody > td.align-middle {
+    width: 15%;
+}
+
+.replySubmitBtn {
+    width: 120px;
+    color: #fff;
+    background-color: #67cafe;
+    border: 1px solid #67cafe;
+    --bs-btn-hover-color: #000;
+    --bs-btn-hover-border-color: #67cafe;
+    --bs-btn-hover-bg: #67cafe;
+}
+
+#readList {
+    width: 975.27px;
+    height: 700px; /* 카드 크기 고정 */
+}
+
+.read {
+    margin-bottom: 0;
+}
+
+td {
+    height: 70px;
+}
+
+td > a {
+    text-decoration: none;
+    color: black;
+}
+
+.listOne {
+    width: auto;
+}
+
+.listTag {
+    height: 35px;
+}
+
+.title.sub {
+    font-size: 12px;
+    color: gray;
+    align-items: center
+}
+
+.listLevel {
+    height: 15px;
+}
+
+.reply {
+    width: 150px;
+}
+
+.replyCountBtn {
+    color: #000;
+    background-color: #E8FFFF;
+    border: 1px solid #E8FFFF;
+    --bs-btn-hover-color: #000;
+    --bs-btn-hover-border-color: #67cafe;
+    --bs-btn-hover-bg: #67cafe;
+}
+
+.page-item .page-link {
+    color: #000; /* 기본 색상 */
+    background-color: #fff;
+    border: 1px solid #67cafe;
+}
+
+.page-item .page-link:hover {
+    background-color: #E8FFFF;
+}
+
+.page-item.active .page-link {
+    background-color: #67cafe; /* 활성화된 버튼 배경색 */
+    color: #fff; /* 활성화된 버튼 텍스트 색상 */
+}
+
+.writeBtn {
+    color: #000;
+    background-color: #E8FFFF;
+    border: 1px solid #E8FFFF;
+    --bs-btn-hover-color: #000;
+    --bs-btn-hover-border-color: #67cafe;
+    --bs-btn-hover-bg: #67cafe;
+}
+

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>Board Read</title>
+    <!-- 부트스트랩 CSS 로드 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <!-- 부트스트랩 아이콘 사용 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+    <!-- Font Awesome 아이콘 사용 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- 사용자 정의 CSS 로드 -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/board/read.css}">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- 부트스트랩 JS 로드 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+<div th:include="include/header :: header"></div>
+
+<div class="container">
+
+    <!--본문 영역-->
+    <div class="content">
+        <!--글 상세 내용 영역-->
+        <div>
+            <!--게시판분류-->
+            <p class="mt-2 boardTitle" th:switch="${postDTO.boardCode}">
+                <span class="mb-0" th:case="showoff">자랑게시판</span>
+                <span class="mb-0" th:case="general">자유게시판</span>
+                <span class="mb-0" th:case="tip">정보게시판</span>
+                <span class="mb-0" th:case="qna">Q&A게시판</span>
+            </p>
+            <div>
+                <hr>
+            </div>
+            <!--글제목-->
+            <div>
+                <table class="table">
+                    <tbody>
+                    <tr class="justify-content-center">
+                        <td class="read-one">
+                                <span class="align-middle" th:if="${postDTO.replyAuth==true}">
+                                    <img class="replyAuthImg" src="/img/tag/vetScope.png" alt="수의사만 답변 가능">
+                                </span>
+                            <span>
+                                    <img class="tag" src="/img/tag/tag_dog.png" th:if="${postDTO.postTag eq '강아지'}"
+                                         alt="강아지태그">
+                                    <img class="tag" src="/img/tag/tag_cat.png" th:if="${postDTO.postTag eq '고양이'}"
+                                         alt="고양이태그">
+                                </span>
+                            <span class="readTitle" th:text="${postDTO.postTitle}">
+                                </span>
+                            <span class="icon secret" th:if="${postDTO.secret != false}">
+                                    <i class="bi bi-file-lock"></i>
+                                </span>
+                            <br>
+                            <div class="readTitle sub">
+                                <span th:text="${postDTO.nickname}">작성자</span>
+                                <span>
+                                    <img class="level" src="/img/level/red.png" alt="레벨이미지 red"
+                                         th:if="${postDTO.exp < 200}">
+                                    <img class="level" src="/img/level/orange.png" alt="레벨이미지 orange"
+                                         th:if="${postDTO.exp >= 200 and postDTO.exp < 400}">
+                                    <img class="level" src="/img/level/yellow.png" alt="레벨이미지 yellow"
+                                         th:if="${postDTO.exp >= 400 and postDTO.exp < 600}">
+                                    <img class="level" src="/img/level/mint.png" alt="레벨이미지 mint"
+                                         th:if="${postDTO.exp >= 600 and postDTO.exp < 800}">
+                                    <img class="level" src="/img/level/purple.png" alt="레벨이미지 purple"
+                                         th:if="${postDTO.exp >= 800}">
+                                </span>
+                                <span th:if="${postDTO.modDate == null}"
+                                      th:text="${#temporals.format(postDTO.regDate, 'yyyy-MM-dd')}">작성일</span>
+                                <span th:if="${postDTO.modDate != null}"
+                                      th:text="${#temporals.format(postDTO.modDate, 'yyyy-MM-dd')}">작성일</span>
+                            </div>
+                        </td>
+                        <td class="align-middle text-end count">
+                            <span>조회수</span>
+                            <span th:text="${postDTO?.viewCount}"></span>
+                            <span>추천수</span>
+                            <span th:text="${postDTO?.likeCount}"></span>
+                            <span>댓글수</span>
+                            <span th:text="${postDTO?.replyCount}"></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div> <!--글제목-->
+
+            <!--글내용-->
+            <div th:utext="${postDTO.postContent}" class="mx-3 my-5 postContent"></div>
+            <!--좋아요/싫어요/보관/신고 버튼-->
+            <div class="mt-3 justify-content-center text-center">
+                <div class="d-flex justify-content-center">
+                    <!-- 좋아요 -->
+                    <div class="d-flex flex-row p-2 mx-2 likeBox">
+                            <span th:if="${postDTO?.likeState==false}" data-likeState="${postDTO?.likeState}"
+                                  class="d-flex flex-column mx-2">
+                                <i class="bi bi-hand-thumbs-up">
+                                    <form id="fromLike" th:action="@{/postLike/}" method="post"
+                                          data-likeNo="${postDTO?.likeNo}">
+                                    </form>
+                                </i>
+                                <small class="mt-2">좋아요</small>
+                            </span>
+                        <span th:if="${postDTO?.likeState==true}" data-likeState="${postDTO?.likeState}"
+                              class="d-flex flex-column mx-2">
+                                <i class="bi bi-hand-thumbs-up-fill">
+                                    <form id="fromLikeDelete" th:action="@{/postLike/${likeNo}}" method="post"
+                                          data-likeNo="${postDTO?.likeNo}">
+                                    </form>
+                                </i>
+                                <small class="mt-2">좋아요</small>
+                            </span>
+                        <span th:text="${postDTO?.likeCount}" class="likeCount fs-3 mx-2 mt-2"></span>
+                    </div>
+                    <!-- 싫어요 -->
+                    <div class="d-flex flex-row p-2 mx-2 dislikeBox">
+                        <span th:text="${postDTO?.dislikeCount}" class="dislikeCount fs-3 mx-2 mt-2"></span>
+                        <span th:if="${postDTO?.dislikeState==false}" data-dislikeState="${postDTO?.dislikeState}"
+                              class="d-flex flex-column mx-2">
+                                <i class="bi bi-hand-thumbs-down">
+                                    <form id="fromdislike" th:action="@{/postLike/}" method="post"
+                                          data-likeNo="${postDTO?.likeNo}">
+                                    </form>
+                                </i>
+                                <small class="mt-2">싫어요</small>
+                            </span>
+                        <span th:if="${postDTO?.dislikeState==true}" data-dislikeState="${postDTO?.dislikeState}"
+                              class="d-flex flex-column mx-2">
+                                <i class="bi bi-hand-thumbs-down-fill">
+                                    <form id="fromdislikeDelete" th:action="@{/postLike/${likeNo}}" method="post"
+                                          data-likeNo="${postDTO?.likeNo}">
+                                    </form>
+                                </i>
+                                <small class="mt-2">싫어요</small>
+                            </span>
+                    </div>
+                </div>
+                <div class="d-flex flex-row justify-content-center mt-3">
+                    <!--보관-->
+                    <div class="d-flex flex-column mx-2">
+                        <div th:if="${postDTO?.scrapNo==null}">
+                            <i class="bi bi-basket fa-2x">
+                                <form id="fromScrap" th:action="@{/scrap/}" method="post"
+                                      data-scrapNo="${postDTO?.scrapNo}">
+                                </form>
+                            </i>
+                        </div>
+                        <div th:if="${postDTO?.scrapNo!=null}">
+                            <i class="bi bi-basket-fill fa-2x">
+                                <form id="fromScrapDelete" th:action="@{/scrap/${scrapNo}}" method="post"
+                                      data-scrapNo="${postDTO?.scrapNo}">
+                                </form>
+                            </i>
+                        </div>
+                        <div class="scrapNotice">보관</div>
+                    </div>
+                    <!--게시글신고-->
+                    <div class="d-flex flex-column mx-2">
+                        <i class="bi bi-file-x fa-2x"></i>
+                        <div class="reportNotice">신고</div>
+                    </div>
+
+                </div>
+            </div>
+            <!--목록/수정/삭제 버튼-->
+            <div class="row justify-content-between mt-3">
+                <div class="btnSection">
+                    <button class="btn listBtn">목록</button>
+                </div>
+                <div class="d-flex text-end btnSection">
+                    <!--수정 버튼 권한에 따라 버튼 나타내기 / 글작성자,관리자-->
+                    <!--          <button class="btn btn-warning modifyBtn" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or #authentication.principal.username == post.email'')}">수정</button>-->
+                    <button class="btn modifyBtn" th:if="${postDTO.boardCode ne 'qna'}">수정</button>
+                    <button class="btn modify_qBtn" th:if="${postDTO.boardCode eq 'qna'}">수정</button>
+                    <!--삭제 버튼 권한에 따라 버튼 나타내기 / 글작성자,관리자-->
+                    <!--          <button class="btn btn-warning ms-2 deletePostBtn" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or #authentication.principal.username == post.email'')}">삭제</button>-->
+                    <button class="btn ms-2 deletePostBtn">삭제</button>
+                </div>
+            </div>
+        </div> <!--글 상세 내용 영역-->
+
+        <div>
+            <hr>
+        </div>
+
+        <!--댓글 영역-->
+        <div id="reply" class="mb-5">
+            <!-- 댓글이 있는 경우 -->
+            <div id="replyList">
+                <div th:if="${not #lists.isEmpty(replies)}" th:each="reply, iterStat : ${replies}"
+                     class="list-group">
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="card-title" th:text="${reply.nickname}">작성자 이름</span>
+                                <small class="text-muted"
+                                       th:text="${#temporals.format(reply.regDate, 'yyyy-MM-dd HH:mm:ss')}">작성일</small>
+                                <div class="card-footer" th:text="${reply.replyContent}">댓글 내용</div>
+                            </div>
+                            <div class="justify-content-end">
+                                <!--댓글신고버튼-->
+                                <button class="btn reportReplyBtn"
+                                        th:attr="data-reply-no=${reply.replyNo}">
+                                    신고
+                                </button>
+                                <button class="btn deleteReplyBtn"
+                                        th:attr="data-reply-no=${reply.replyNo}">
+                                    삭제
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 댓글이 없는 경우 -->
+                <!--                    <div class="no-reply" th:if="${#lists.isEmpty(replies)}">-->
+                <!--                        <div class="no-reply">-->
+                <!--                            <img class="mx-auto d-block" src="/img/board/no_reply.png" alt="해당 게시판에 댓글이 존재하지 않습니다">-->
+                <!--                            <div class="text-center mt-3 mb-3">-->
+                <!--                                아직 댓글이 없습니다.-->
+                <!--                            </div>-->
+                <!--                        </div>-->
+                <!--                    </div>-->
+            </div>
+            <form id="formReply" th:action="@{/replies/}" method="post">
+                <table class="m-1 mt-4 w-100 replyRegister">
+                    <tbody>
+                    <tr class="replyTop">
+                        <td class="pt-3 px-3 replyNotice">댓글 작성</td>
+                    </tr>
+                    <tr class="replyBody">
+                        <td class="p-2">
+                            <div class="input-group">
+                                <input type="text" name="replyContent" class="form-control"
+                                       placeholder="공지사항을 위반하는 댓글은 삭제될 수 있습니다."
+                                       aria-label="댓글">
+                            </div>
+                        </td>
+                        <td class="align-middle text-center">
+                            <button type="submit" class="btn btn-lg replySubmitBtn">
+                                등록
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form> <!--댓글 등록-->
+
+        </div> <!--댓글 영역-->
+
+        <div>
+            <hr>
+        </div>
+
+        <!--글목록 영역-->
+        <div class="mt-5">
+            <!--본문-->
+            <div id="readList" class="card mb-4">
+                <!--게시글이 있을 때-->
+                <!--글목록-->
+                <div th:if="${responseDTO?.dtoList != null}">
+                    <div>
+                        <table class="table read mb-0">
+                            <!--게시물 정보 받아오기-->
+                            <tbody>
+                            <tr class="postList" th:each="dto:${responseDTO.dtoList}">
+                                <td class="align-middle listOne">
+                                    <a th:href="@{'/board/read/'+${dto.postNo}}">
+                                        <!--                                        <a class="readDetail" th:attr="data-postNo=${dto.postNo}">-->
+                                        <span class="align-middle" th:if="${dto.replyAuth==true}">
+                                            <img class="replyAuthImg" src="/img/tag/vetScope.png" alt="수의사만 답변 가능">
+                                        </span>
+                                        <span>
+                                            <img class="listTag" src="/img/tag/tag_dog.png"
+                                                 th:if="${dto.postTag eq '강아지'}"
+                                                 alt="강아지태그">
+                                            <img class="listTag" src="/img/tag/tag_cat.png"
+                                                 th:if="${dto.postTag eq '고양이'}"
+                                                 alt="고양이태그">
+                                        </span>
+                                        <span th:text="${dto.postTitle}">
+                                            게시물 제목
+                                        </span>
+                                        <!--비밀글여부-->
+                                        <span class="icon secret" th:if="${dto.secret == true}">
+                                         <i class="bi bi-file-lock"></i>
+                                        </span>
+                                        <!--비밀글일경우 첨부파일이 존재해도 표시안하고 비밀글처리 ~> 첨부파일 표시하려면 비밀글값이 0이어야함(디폴트값)-->
+                                        <span class="icon file"
+                                              th:if="${dto.imgBoards != null && dto.imgBoards.size() > 0 && dto.secret == false}">
+                                        <i class="bi bi-file-earmark-image"></i>
+                                        </span>
+                                    </a>
+                                    <br>
+                                    <div class="title sub">
+                                        <span th:text="${dto.nickname}">작성자</span>
+                                        <span>
+                                    <img class="listLevel" src="/img/level/red.png" alt="레벨이미지 red"
+                                         th:if="${dto.exp < 200}">
+                                    <img class="listLevel" src="/img/level/orange.png" alt="레벨이미지 orange"
+                                         th:if="${dto.exp >= 200 and dto.exp < 400}">
+                                    <img class="listLevel" src="/img/level/yellow.png" alt="레벨이미지 yellow"
+                                         th:if="${dto.exp >= 400 and dto.exp < 600}">
+                                    <img class="listLevel" src="/img/level/mint.png" alt="레벨이미지 mint"
+                                         th:if="${dto.exp >= 600 and dto.exp < 800}">
+                                    <img class="listLevel" src="/img/level/purple.png" alt="레벨이미지 purple"
+                                         th:if="${dto.exp >= 800}">
+                                </span>
+                                        <span class="mx-1">조회수 <span th:text="${dto?.viewCount}">5</span></span>
+                                        <span class="mx-1" th:if="${dto?.modDate == null}"
+                                              th:text="${#temporals.format(dto.regDate, 'yyyy-MM-dd')}">작성일</span>
+                                        <span class="mx-1" th:if="${dto?.modDate != null}"
+                                              th:text="${#temporals.format(dto?.modDate, 'yyyy-MM-dd')}">작성일</span>
+                                    </div>
+                                </td>
+                                <td class="text-end align-middle reply">
+                                    <button class="btn replyCountBtn"
+                                            th:attr="data-postNo=${dto.postNo}">댓글수
+                                        <span th:text="${dto?.replyCount}">5</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div> <!--글목록-->
+                </div> <!--글목록-->
+            </div> <!--card--> <!--본문-->
+
+            <!--하단-->
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="blank"></span>
+                <!--pagination-->
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:if="${responseDTO.prev}">
+                        <a class="page-link" th:data-num="${responseDTO.first}"><i
+                                class="bi bi-skip-backward-fill"></i></a>
+                    </li>
+                    <li class="page-item" th:if="${responseDTO.prev}">
+                        <a class="page-link" th:data-num="${responseDTO.start}-1"><i
+                                class="bi bi-caret-left-fill"></i></a></li>
+                    <th:block th:each="i: ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
+                        <li th:class="${responseDTO.page == i}?'page-item active':'page-item'">
+                            <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                        </li>
+                    </th:block>
+                    <li class="page-item" th:if="${responseDTO.next}">
+                        <a class="page-link" th:data-num="${responseDTO.end}+1">
+                            <i class="bi bi-caret-right-fill"></i></a></li>
+                    <li class="page-item" th:if="${responseDTO.next}">
+
+                        <a class="page-link" th:data-num="${responseDTO.last}">
+
+                            <i class="bi bi-skip-forward-fill"></i></a>
+                    </li>
+                </ul> <!--pagination-->
+                <!--버튼-->
+                <span class="text-end align-self-start btnSection">
+                        <a class="btn writeBtn" th:if="${postDTO.boardCode != 'qna'}" th:href="@{/board/register}"><i
+                                class="bi bi-pencil-fill"></i>글쓰기</a>
+                        <a class="btn writeBtn" th:if="${postDTO.boardCode == 'qna'}" th:href="@{/board/register_q}"><i
+                                class="bi bi-pencil-fill"></i>글쓰기</a>
+                    </span> <!--버튼-->
+            </div> <!--하단-->
+        </div> <!--글목록 영역-->
+    </div> <!--content--> <!--본문 영역-->
+
+</div> <!--container-->
+</body>
+<div th:include="include/footer :: footer"></div>
+<script>
+    //listBtn 버튼 클릭 이벤트
+    document.querySelector(".listBtn").addEventListener("click", function (e) {
+        e.preventDefault();
+        let boardCode = '[[${postDTO.boardCode}]]'
+        location.href = '/board/' + boardCode;
+    }, false)
+
+    //deletePostBtn 버튼 클릭 이벤트
+    document.querySelector(".deletePostBtn").addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (confirm('정말 이 게시물을 삭제하시겠습니까?')) {
+            let postNo = [[${postDTO.postNo}]]
+            location.href = '/board/delete/' + postNo;
+        }
+    }, false)
+
+    //replyCountBtn 버튼 클릭 이벤트
+    document.querySelectorAll(".replyCountBtn").forEach(function (button) {
+        button.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            let postNo = this.getAttribute("data-postNo");
+            location.href = '/board/read/' + postNo + '#reply';
+        });
+    });
+
+    //modifyBtn, modify_qBtn 버튼 클릭 이벤트
+    const modifyBtn = document.querySelector(".modifyBtn");
+    if (modifyBtn) {
+        document.querySelector(".modifyBtn").addEventListener("click", function (e) {
+            e.preventDefault();
+            let postNo = [[${postDTO.postNo}]]
+            location.href = '/board/modify/' + postNo;
+        }, false)
+    } else {
+        document.querySelector(".modify_qBtn").addEventListener("click", function (e) {
+            e.preventDefault();
+            let postNo = [[${postDTO.postNo}]]
+            location.href = '/board/modify_q/' + postNo;
+        }, false)
+    }
+
+    $(document).ready(function () {
+        //좋아요, 싫어요 상태에 따른 변화
+        let likeState = $('#formLike').data('likeState');
+        let dislikeState = $('#formdislike').data('dislikeState');
+        if (likeState) {
+            $('#formLike').hide();
+            $('#formLikeDelete').show();
+        } else {
+            $('#formLike').show();
+            $('#formLikeDelete').hide();
+        }
+        if (dislikeState) {
+            $('#formdislike').hide();
+            $('#formdislikeDelete').show();
+        } else {
+            $('#formdislike').show();
+            $('#formdislikeDelete').hide();
+        }
+        // 좋아요 버튼 클릭 이벤트
+        $('.bi-hand-thumbs-up').on('click', function (e) {
+            e.preventDefault();
+            let formData = {
+                userId: '[[${username}]]',   // 로그인한 회원 정보
+                postNo: [[${postDTO.postNo}]],  // 게시물 정보
+                likeState: true,  // 좋아요 상태 정보
+                dislikeState: [[${postDTO.dislikeState ? postDTO.dislikeState : false}]]  // 싫어요 상태 정보
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/postLike/',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function (data) {
+                    console.log('Success:', data);
+                    $('#formLike').hide();
+                    $('#formLikeDelete').show();
+                    location.reload();
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+        $('.bi-hand-thumbs-up-fill').on('click', function (e) {
+            e.preventDefault();
+            if (confirm("이 게시글의 '좋아요'를 취소하시겠습니까?")) {
+                let likeNo = [[${postDTO.likeNo}]]
+                $.ajax({
+                    type: 'DELETE',
+                    url: '/postLike/' + likeNo,
+                    contentType: 'application/json',
+                    success: function (data) {
+                        console.log('Success:', data);
+                        $('#formLikeDelete').hide();
+                        $('#formLike').show();
+                        location.reload();
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+        });
+        // 싫어요 버튼 클릭 이벤트
+        $('.bi-hand-thumbs-down').on('click', function (e) {
+            e.preventDefault();
+            let formData = {
+                userId: '[[${username}]]',   // 로그인한 회원 정보
+                postNo: [[${postDTO.postNo}]],  // 게시물 정보
+                likeState: [[${postDTO.likeState ? postDTO.likeState : false}]],  // 좋아요 상태 정보
+                dislikeState: true
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/postLike/',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function (data) {
+                    console.log('Success:', data);
+                    $('#formdislike').hide();
+                    $('#formdislikeDelete').show();
+                    location.reload();
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+        $('.bi-hand-thumbs-down-fill').on('click', function (e) {
+            e.preventDefault();
+            if (confirm("이 게시글의 '싫어요'를 취소하시겠습니까?")) {
+                let likeNo = [[${postDTO.likeNo}]]
+                $.ajax({
+                    type: 'DELETE',
+                    url: '/postLike/' + likeNo,
+                    contentType: 'application/json',
+                    success: function (data) {
+                        console.log('Success:', data);
+                        $('#formdislikeDelete').hide();
+                        $('#formdislike').show();
+                        location.reload();
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+        });
+
+        // 보관 상태에 따른 변화
+        let scrapNo = $('#formScrap').data('scrapNo');
+        if (scrapNo) {
+            $('#formScrap').hide();
+            $('#formScrapDelete').show();
+        } else {
+            $('#formScrap').show();
+            $('#formScrapDelete').hide();
+        }
+        // 보관함 버튼 클릭 이벤트
+        $('.bi-basket').on('click', function (e) {
+            e.preventDefault();
+            if (confirm('이 게시물을 보관하시겠습니까?')) {
+                let formData = {
+                    userId: '[[${username}]]',   // 로그인한 회원 정보
+                    postNo: [[${postDTO.postNo}]]  // 게시물 정보
+                };
+                $.ajax({
+                    type: 'POST',
+                    url: '/scrap/',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function (data) {
+                        console.log('Success:', data);
+                        $('#formScrap').hide();
+                        $('#formScrapDelete').show();
+                        location.reload();
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+        });
+        $('.bi-basket-fill').on('click', function (e) {
+            e.preventDefault();
+            if (confirm('이 게시물을 보관하지 않으시겠습니까?')) {
+                let scrapNo = [[${postDTO.scrapNo}]]
+                $.ajax({
+                    type: 'DELETE',
+                    url: '/scrap/' + scrapNo,
+                    contentType: 'application/json',
+                    success: function (data) {
+                        console.log('Success:', data);
+                        $('#formScrapDelete').hide();
+                        $('#formScrap').show();
+                        location.reload();
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+        });
+        //게시글신고 버튼 클릭 이벤트
+        $('.bi-file-x').on('mousedown', function () {
+
+            // 아이콘 클래스 변경
+            $(this).removeClass('bi-file-x').addClass('bi-file-x-fill');
+
+        });
+
+        $('.bi-file-x').on('mouseup', function (e) {
+
+            e.preventDefault();
+            console.log("--postNo 값: " + [[${postDTO.postNo}]]);
+            openPostReportPopup([[${postDTO.postNo}]]);
+
+            $(this).removeClass('bi-file-x-fill').addClass('bi-file-x');
+
+            function openPostReportPopup(postNo) {
+                const url = `/report/post-report/` + postNo;
+                const windowName = "postReport";
+                const windowFeatures = "width=500, height=542, scrollbars=yes";
+                window.open(url, windowName, windowFeatures);
+            }
+
+        });
+    });
+
+    // 댓글 등록
+    document.getElementById('formReply').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        let replyContent = document.querySelector('input[name="replyContent"]').value.trim();
+
+        if (!replyContent) {
+            alert('댓글을 입력하세요.');
+            return;
+        }
+
+        if (!confirm('댓글을 등록하시겠습니까?')) {
+            return;
+        }
+
+        let formData = {
+            userId: '[[${username}]]',
+            postNo: [[${postDTO.postNo}]],
+            replyContent: document.querySelector('input[name="replyContent"]').value.trim()
+        };
+        fetch('/replies/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                location.reload();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    });
+
+
+    // 댓글 목록
+    document.addEventListener('DOMContentLoaded', function () {
+        let pathParts = window.location.pathname.split('/');
+        let postNo = pathParts[pathParts.length - 1]; // Assuming postNo is at the end of the path
+
+        const replyListElement = document.getElementById('replyList');
+
+        fetch(`/replies/${postNo}`)
+            .then(response => response.json())
+            .then(replies => {
+                let totalReplies = replies.length;
+                let groups = Math.ceil(totalReplies / 10);
+
+                if (totalReplies > 0) {
+                    for (let i = 0; i < groups; i++) {
+                        let startIndex = i * 10;
+                        let endIndex = Math.min(startIndex + 10, totalReplies);
+                        let replyGroup = replies.slice(startIndex, endIndex);
+
+                        const groupCard = document.createElement('div');
+                        groupCard.classList.add('card', 'mt-2');
+
+                        const groupCardBody = document.createElement('div');
+                        groupCardBody.classList.add('card-body', 'd-flex', 'justify-content-between', 'align-items-center');
+
+                        const groupText = document.createElement('span');
+                        groupText.textContent = `${startIndex + 1}~${endIndex}번 댓글`;
+
+                        const toggleButton = document.createElement('button');
+                        toggleButton.classList.add('btn', 'btn-secondary', 'toggle-button');
+                        toggleButton.textContent = '+';
+                        toggleButton.addEventListener('click', function () {
+                            let replyGroupElement = document.getElementById(`replyGroup-${i}`);
+                            if (replyGroupElement.style.display === 'none' || !replyGroupElement.style.display) {
+                                replyGroupElement.style.display = 'block';
+                                toggleButton.textContent = '-';
+                            } else {
+                                replyGroupElement.style.display = 'none';
+                                toggleButton.textContent = '+';
+                            }
+                        });
+
+                        groupCardBody.appendChild(groupText);
+                        groupCardBody.appendChild(toggleButton);
+                        groupCard.appendChild(groupCardBody);
+                        replyListElement.appendChild(groupCard);
+
+                        let replyGroupElement = createReplyGroup(replyGroup, i);
+                        if (i === groups - 1) {
+                            replyGroupElement.style.display = 'block'; // 마지막 그룹은 기본적으로 보여지도록 설정
+                            toggleButton.textContent = '-';
+                        } else {
+                            replyGroupElement.style.display = 'none'; // 나머지 그룹은 기본적으로 숨기도록 설정
+                        }
+                        replyListElement.appendChild(replyGroupElement);
+                    }
+                } else {
+                    // 댓글이 없는 경우 처리
+                    const noReplyDiv = document.createElement('div');
+                    noReplyDiv.classList.add('no-reply', 'my-5');
+
+                    const noReplyImage = document.createElement('img');
+                    noReplyImage.classList.add('mx-auto', 'd-block');
+                    noReplyImage.style.width = '80%';
+                    noReplyImage.src = '/img/board/no_reply.png';
+                    noReplyImage.alt = '해당 게시판에 댓글이 존재하지 않습니다';
+
+                    noReplyDiv.appendChild(noReplyImage);
+                    replyListElement.appendChild(noReplyDiv);
+                }
+            })
+            .catch(error => console.error('Error fetching replies:', error));
+
+        function createReplyGroup(replyGroup, groupIndex) {
+            const replyGroupElement = document.createElement('div');
+            replyGroupElement.id = `replyGroup-${groupIndex}`;
+            replyGroupElement.classList.add('list-group', 'hidden-comments');
+
+            replyGroup.forEach(reply => {
+                const replyCard = createReplyCard(reply);
+                replyGroupElement.appendChild(replyCard);
+            });
+
+            return replyGroupElement;
+        }
+
+        function createReplyCard(reply) {
+            const replyCard = document.createElement('div');
+            replyCard.classList.add('list-group-item');
+
+            const div = document.createElement('div');
+            div.classList.add('d-flex', 'justify-content-between', 'align-items-center');
+
+            const divContent = document.createElement('div');
+            divContent.classList.add('col')
+
+            const cardTitle = document.createElement('span');
+            cardTitle.classList.add('card-title', 'fs-5');
+            cardTitle.textContent = reply.nickname;
+
+            const cardText = document.createElement('small');
+            cardText.classList.add('text-muted', 'card-text', 'mx-3');
+            let date = new Date(reply.regDate);
+
+            let seoulTime = date.toLocaleString('ko-KR', {
+                timeZone: 'Asia/Seoul',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false // 24시간 형식
+            });
+            cardText.textContent = seoulTime;
+
+            const cardFooter = document.createElement('div');
+            cardFooter.classList.add('card-footer', 'mt-2');
+            cardFooter.textContent = reply.replyContent;
+
+            divContent.appendChild(cardTitle);
+            divContent.appendChild(cardText);
+            divContent.appendChild(cardFooter);
+
+            const reportReplyButton = document.createElement('button');
+            reportReplyButton.classList.add('btn', 'btn-warning', 'ms-2', 'reportReplyBtn');
+            reportReplyButton.textContent = '신고';
+
+            const deleteButton = document.createElement('button');
+            deleteButton.classList.add('btn', 'btn-danger', 'ms-2', 'deleteReplyBtn');
+            deleteButton.textContent = '삭제';
+
+            deleteButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                let replyNo = reply.replyNo;
+
+                if (confirm('정말 댓글을 삭제하시겠습니까?')) {
+                    fetch(`/replies/${replyNo}`, {
+                        method: 'DELETE'
+                    }).then(response => {
+                        if (response.ok) {
+                            replyCard.remove();
+                            location.reload();
+                        } else {
+                            console.error('Failed to delete reply');
+                        }
+                    });
+                }
+            });
+
+            div.appendChild(divContent);
+            div.appendChild(reportReplyButton)
+            div.appendChild(deleteButton);
+            replyCard.appendChild(div);
+
+            return replyCard;
+        }
+    });
+
+    //pagination 클릭 이벤트
+    document.querySelector(".pagination").addEventListener("click", function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+
+        //실제 클릭된 요소를 가져와서 target 변수에 할당
+        let target = e.target.closest('a');
+
+        if (!target) {
+            return;
+        }
+
+        let num = target.getAttribute("data-num")
+        if (!num) {
+            num = 1; // 기본값 설정
+        }
+
+        // 현재 URL 가져오기
+        let currentUrl = new URL(window.location.href);
+
+        // 페이지 번호 업데이트
+        currentUrl.searchParams.set('page', num);// replyCount로 이동한 경우 추가된 해시 제거 + 글목록영역으로 이동하는 해시로 변경
+        currentUrl.hash = '#readList';
+        // 페이지 번호 업데이트
+        currentUrl.searchParams.set('page', num);
+
+        // 수정된 URL로 이동
+        window.location.href = currentUrl.href;
+        // replyCount로 이동한 경우 추가된 해시 제거 + 글목록영역으로 이동하는 해시로 변경
+        currentUrl.hash = '#readList';
+
+        // 수정된 URL로 이동
+        window.location.href = currentUrl.href;
+
+    }, false)
+
+    // tr이 10번째인 것 만 아랫 밑줄 제거
+    document.addEventListener("DOMContentLoaded", function () {
+        let rows = document.querySelectorAll(".table.read tbody tr");
+        if (rows.length >= 10) {
+            let targetRow = rows[9]; // 10번째 tr, 인덱스 9
+            targetRow.style.borderBottom = "none"; // 10번째 tr의 밑줄 제거
+
+            let cells = targetRow.querySelectorAll("td"); // 10번째 tr의 모든 td
+            cells.forEach(cell => {
+                cell.style.borderBottom = "none"; // 모든 td의 밑줄 제거
+            });
+        }
+    });
+
+    // document.querySelector(".readDetail").addEventListener("click", function (e) {
+    //     e.preventDefault()
+    //     e.stopPropagation()
+    //
+    //     //실제 클릭된 요소를 가져와서 target 변수에 할당
+    //     let target = e.target
+    //     //요소가 <a>인지 체크
+    //     if (target.tagName !== 'A') {
+    //         return
+    //     }
+    //
+    //     let postNo = target.getAttribute("data-postNo")
+    //
+    //     // 현재 URL 가져오기
+    //     let currentUrl = new URL(window.location.href);
+    //
+    //     // pathname에서 postNo 추출
+    //     let pathParts = currentUrl.pathname.split('/');
+    //     let boardIndex = pathParts.indexOf('board');
+    //
+    //     // postNo가 위치한 인덱스를 확인하고, 새로운 postNo로 변경
+    //     if (boardIndex !== -1 && boardIndex + 1 < pathParts.length) {
+    //         pathParts[boardIndex + 1] = postNo; // 새로운 postNo로 변경
+    //         currentUrl.pathname = pathParts.join('/'); // 수정된 pathname으로 설정
+    //     }
+    //
+    //     // 글목록 영역으로 이동하는 해시 제거
+    //     currentUrl.hash = '';
+    //
+    //     // 수정된 URL로 이동
+    //     window.location.href = currentUrl.href;
+    //
+    // }, false)
+
+
+</script>
+</html>
+
