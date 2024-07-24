@@ -52,16 +52,16 @@ public class ReportController extends BaseController {
         return "report/post-report";
     }
 
-    // @GetMapping("/reply-report/{replyNo}")
-    // public String replyReport(@PathVariable Long replyNo, Model model) {
-    //     log.info("Report replyNo: {}", replyNo);
-    //
-    //     Reply replyReport = replyServiceImpl.findReplyByReplyNo(replyNo);
-    //     log.info(replyReport);
-    //
-    //     model.addAttribute("replyReport", replyReport);
-    //     return "report/reply-report";
-    // }
+    @GetMapping("/reply-report/{replyNo}")
+    public String replyReport(@PathVariable Long replyNo, Model model) {
+        log.info("Report replyNo: {}", replyNo);
+
+        Reply replyReport = replyServiceImpl.findReplyByReplyNo(replyNo);
+        log.info(replyReport);
+
+        model.addAttribute("replyReport", replyReport);
+        return "report/reply-report";
+    }
 
 
 }

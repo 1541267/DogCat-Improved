@@ -29,8 +29,8 @@ public class ReportListDTO {
 
 	private Instant regDate;
 
-	private Post postNo;
+	private Post post;
 
-	private Reply replyNo;
+	private Reply reply;
 
 }

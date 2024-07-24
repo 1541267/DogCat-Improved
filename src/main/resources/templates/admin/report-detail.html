@@ -12,9 +12,22 @@
     <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
     <title>Report Detail</title>
     <style>
-        .container {
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* 가로 스크롤바 제거 */
+            overflow-y: hidden;
+            display: flex;
+            align-items: flex-start;
+            resize: none;
+        }
+
+        .report-detail {
             border: 1px solid #000;
             padding: 20px;
+            width: 500px;
+            margin-top: 0px;
+            box-sizing: border-box; /* 패딩 포함 너비 계산 */
         }
 
         .header-top {
@@ -27,8 +40,7 @@
             margin-bottom: 20px;
         }
 
-        .details span {
-            display: block;
+        .details div {
             margin-bottom: 5px;
         }
 
@@ -48,54 +60,71 @@
             justify-content: flex-end;
             margin-bottom: 20px;
         }
+
+        #reportContent{
+            resize: none;
+        }
     </style>
 
 </head>
 <body>
 
-<div class="container" th:each="reportDetail : ${reportDetail}">
+<div class="report-detail" th:each="reportDetail : ${reportDetail}">
     <div class="header-top">
         <h2>신고 상세</h2>
         <button class="btn btn-danger square-button" onclick="closeWindow()">X</button>
     </div>
 
-    <div class="details">
-        <div>신고자:
-            <th:block th:text="${reportDetail.userName}"></th:block>
-            /
-            <th:block th:text="${reportDetail.userId.userId}"></th:block>
-            <!--이름 아이디-->
-        </div>
-        <span>신고일: <th:block th:text="${#dates.format(reportDetail.regDate, 'yyyy-MM-dd')}"></th:block></span>
-        <span>
+    <div>
+        <!--신고 관련정보-->
+        <div class="details">
+            <!--신고자정보-->
+            <div>
+                <span class="badge bg-secondary text-white m-1">신고자</span>
+                <th:block th:text="${reportDetail.userName}"></th:block>
+                /
+                <th:block th:text="${reportDetail.userId.userId}"></th:block>
+            </div>
+            <!--신고내용-->
+            <div>
+                <span class="badge bg-secondary text-white m-1">신고일</span>
+                <th:block th:text="${#dates.format(reportDetail.regDate, 'yyyy-MM-dd')}"></th:block>
+            </div>
+            <div>
                 <th:block th:if="${reportDetail.postNo != null}">
-                    게시글 : <th:block th:text="${reportDetail.postNo.postTitle}"></th:block>
+                    <span class="badge bg-secondary text-white m-1">게시글</span>
+                    <th:block th:text="${reportDetail.postNo.postTitle}"></th:block>
                 </th:block>
                 <th:block th:if="${reportDetail.replyNo != null}">
-                    댓 글 : <th:block th:text="${reportDetail.replyNo.replyContent}"></th:block>
+                    <span class="badge bg-secondary text-white m-1">댓글</span>
+                    <th:block th:text="${reportDetail.replyNo.replyContent}"></th:block>
                 </th:block>
-            </span>
-    </div>
+            </div>
+        </div>
 
-    <div class="delete-button-container">
-        <button class="btn btn-danger ml-2 btn-sm"
-                th:onclick="|deleteReportLog(${reportDetail.reportNo})|">삭제
-        </button>
-    </div>
+        <!--삭제버튼-->
+        <div class="delete-button-container">
+            <button class="btn btn-danger ml-2 btn-sm"
+                    th:onclick="|deleteReportLog(${reportDetail.reportNo})|">삭제
+            </button>
+        </div>
 
-    <div class="report-title">
-        <label for="reportTitle" class="form-label">신고 제목</label>
-        <input type="text" id="reportTitle" class="form-control" readonly
-               th:value="${reportDetail.reportTitle}">
-    </div>
+        <!--신고제목-->
+        <div class="report-title">
+            <label for="reportTitle" class="form-label">신고 제목</label>
+            <input type="text" id="reportTitle" class="form-control" readonly
+                   th:value="${reportDetail.reportTitle}">
+        </div>
 
-    <div class="report-content">
-        <label for="reportContent" class="form-label">신고 내용</label>
-        <textarea id="reportContent" class="form-control" rows="4" readonly
-                  th:text="${reportDetail.reportContent}"></textarea>
-    </div>
+        <!--신고내용-->
+        <div class="report-content">
+            <label for="reportContent" class="form-label">신고 내용</label>
+            <textarea id="reportContent" class="form-control" rows="4" readonly
+                      th:text="${reportDetail.reportContent}"></textarea>
+        </div>
 
-    <div th:text="${reportDetail.reportNo}" style="display:none;"></div>
+        <div th:text="${reportDetail.reportNo}" style="display:none;"></div>
+    </div>
 </div>
 
 <script>
@@ -122,7 +151,6 @@
         }
     }
 </script>
-
 
 </body>
 </html>

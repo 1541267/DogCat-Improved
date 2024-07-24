@@ -85,4 +85,10 @@ public class ReplyServiceImpl implements ReplyService {
 		return replies.stream()
 			.map(reply -> new ReplyDTO(reply)).collect(Collectors.toList());
 	}
+//	@Override
+	public Reply findReplyByReplyNo(Long replyNo) {
+		Optional<Reply> optionalReply = replyRepository.findById(replyNo);
+		Reply reply = optionalReply.get();
+		return reply;
+	}
 }
