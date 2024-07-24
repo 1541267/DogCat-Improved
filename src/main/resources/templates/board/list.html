@@ -61,7 +61,7 @@
             <span>
                 <!--삭제 버튼 추가 / 권한에 따라 버튼 나타내기-->
                 <!--          <button class="btn ms-3 removeBtn" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">삭제</button>-->
-                <button class="btn deleteBtn">글 삭제</button>
+                <button class="btn btn-danger deleteBtn">글 삭제</button>
                 </span> <!--버튼-->
         </div> <!--상단-->
 
@@ -75,11 +75,12 @@
                     <table class="table read">
                         <!--게시물 정보 받아오기-->
                         <tbody>
-                        <tr th:each="dto:${responseDTO.dtoList}" class="list">
+                        <tr th:each="dto:${responseDTO.dtoList}" class="list ps-3">
                             <td class="align-middle checkBox">
                                 <!--td에 추가 삭제 체크 박스 권한에 따라 버튼 나타내기-->
                                 <!--                  <input class="form-check-input" type="checkbox" id="" value="" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">-->
-                                <input class="form-check-input" type="checkbox" th:value="${dto.postNo}"
+                                <input class="align-items-center form-check-input" type="checkbox"
+                                       th:value="${dto.postNo}"
                                        th:attr="data-postNo=${dto.postNo}">
                             </td>
                             <td class="align-middle listOne">
@@ -190,7 +191,7 @@
                     <i class="bi bi-pencil-fill"></i>글쓰기</button>
                 <!--삭제 버튼 권한에 따라 버튼 나타내기-->
                 <!--<button class="btn ms-2 deleteBtn" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">삭제</button>-->
-                <button class="btn ms-2 deleteBtn">글 삭제</button>
+                <button class="btn btn-danger ms-2 deleteBtn">글 삭제</button>
             </span> <!--버튼-->
         </div> <!--하단-->
         <!-- 검색 -->
@@ -298,6 +299,7 @@
         button.addEventListener("click", function (e) {
             e.preventDefault();
             e.stopPropagation();
+            // TODO 게시글 하나 남아 있을 때 선택 후 삭제하면 에러메세지, 기능 작동안함
             // 선택된 체크박스들을 모두 찾음
             let checkboxes = document.querySelectorAll('.form-check-input:checked');
             let postNos = Array.from(checkboxes).map(checkbox => checkbox.getAttribute('data-postNo'));

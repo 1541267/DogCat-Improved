@@ -105,3 +105,12 @@ td > a {
     background-color: #67cafe; /* 활성화된 버튼 배경색 */
     color: #fff; /* 활성화된 버튼 텍스트 색상 */
 }
+
+.allSearchTitle {
+    color: #67cafe;
+    margin-bottom: 2rem;
+}
+
+.allSearchContent {
+    color: #797987;
+}

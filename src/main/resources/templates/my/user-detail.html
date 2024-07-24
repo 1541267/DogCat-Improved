@@ -20,7 +20,7 @@
         <div>
             <div class="d-flex justify-content-center align-items-center"
                  style="height: 100px; width: 800px;">
-                <h1 style="color: #67cafe"><b>MY INFORMATION</b></h1>
+                <h1 style="color: #67cafe"><b>내 정보</b></h1>
             </div>
             <div class="d-flex justify-content-center align-items-center"
                  style="height: 650px; width: 800px;">
@@ -104,9 +104,6 @@
                 </div>
                 <div class="text-center p-2 sideActivity">
                     <a th:href="@{/my/userActivity/{userId}/posts(userId=${user.getUserId})}">내 활동</a>
-                </div>
-                <div class="text-center p-2 sideLetterbox">
-                    쪽지함
                 </div>
                 <div class="text-center p-2 mb-2 sideMyInfo">
                     <a th:href="@{'/my/user-modify?userId=' + ${username}}">내 정보 수정</a>
