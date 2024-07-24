@@ -28,7 +28,7 @@ import lombok.extern.log4j.Log4j2;
 public class FileCheckTask {
 
 	//TODO 배포시 리눅스 경로로 변경
-	@Value("tempUploadPath")
+	@Value("${tempUploadPath}")
 	private String tempUploadPath;
 
 	@Value("${cloud.aws.s3.bucket}")

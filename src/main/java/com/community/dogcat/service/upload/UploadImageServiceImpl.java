@@ -34,6 +34,9 @@ public class UploadImageServiceImpl implements UploadImageService {
 	@Value("${tempUploadPath}")
 	private String tempUploadPath;
 
+	@Value("${baseUrl}")
+	private String baseUrl;
+
 	private final S3Uploader s3Uploader;
 
 	// s3업로드 or 게시글 등록 취소 or 백스페이스 summernote 임시 업로드 이미지 파일 삭제
@@ -82,12 +85,14 @@ public class UploadImageServiceImpl implements UploadImageService {
 				FileUtils.copyInputStreamToFile(fileStream, targetFile);
 
 				// 요청의 절대 경로 -> localhost:10000
-				String baseUrl =
-					request.getRequestURL().substring(0, request.getRequestURL().indexOf(request.getRequestURI()))
-						+ request.getContextPath();
+				// String baseUrl =
+				// 	request.getRequestURL().substring(0, request.getRequestURL().indexOf(request.getRequestURI()))
+				// 		+ request.getContextPath();
+
+
 
 				// 이미지의 URL 생성
-				String imageUrl = baseUrl + "/temp/" + saveFileName;
+				String imageUrl = baseUrl + "temp/" + saveFileName;
 				JsonObject fileJsonObject = new JsonObject();
 
 				// 생성된 파일의 uuid 와 이미지링크 summernote 에 전달
