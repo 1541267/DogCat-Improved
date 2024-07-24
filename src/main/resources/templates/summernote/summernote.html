@@ -479,7 +479,7 @@
             }
         });
 
-        // 브라우저가 종료될 시 임시파일 삭제 (취소버튼, F5, alt+F4, 브라우저 종료 등등
+        // 브라우저가 종료될 시 임시파일 삭제 (취소버튼, F5, alt+F4, 브라우저 종료 등등)
         window.addEventListener('beforeunload', function (e) {
             removeTempFileWithCancelButton(imageUUIDs, extensions);
         })

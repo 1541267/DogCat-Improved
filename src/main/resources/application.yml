@@ -1,7 +1,7 @@
 server:
   port: 10000   # 웹 테스트 포트 10000
 
-#TODO
+
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -9,9 +9,11 @@ spring:
     secret: doccatdoccatdoccatdoccatdoccatdoccatdoccatdoccatdoccatdoccat
   profiles:
     include: google
-  
+
   application:
     name: DogCat
+  # TODO 배포시 linux 로 변경
+  environment: dev
 
   #TODO url: jdbc:mariadb://dogcat-project.c30wsegeo29w.ap-northeast-2.rds.amazonaws.com:3306/dogcat
 
