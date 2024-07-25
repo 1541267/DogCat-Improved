@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.Date;
 
 @Data
 @Builder
@@ -26,6 +27,8 @@ public class UserReportDetailDTO {
     private Long reportNo;
 
     private Instant regDate;
+
+    private Date ReplyregDate;
 
     private String boardCode;
 

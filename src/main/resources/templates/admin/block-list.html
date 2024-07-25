@@ -13,6 +13,57 @@
         a:hover {
             font-weight: bold;
         }
+        .pagination {
+            width: 1000px;
+            display: flex;
+        }
+
+        .page-item .page-link {
+            color: #000; /* 기본 색상 */
+            background-color: #fff;
+            border: 1px solid #67cafe;
+        }
+
+        .page-item .page-link:hover {
+            background-color: #E8FFFF;
+        }
+
+        .page-item.active .page-link {
+            background-color: #67cafe; /* 활성화된 버튼 배경색 */
+            color: #fff; /* 활성화된 버튼 텍스트 색상 */
+        }
+
+        .countPost1 {
+            background-color: #E8FFFF;
+            border: 1px solid #d5d5d5;
+            border-radius: 0.5rem 0 0 0.5rem ;
+            height: 43px;
+            padding: 10px;
+            align-items: center;
+
+        }
+
+        .countPost2 {
+            background-color: #E8FFFF;
+            border: 1px solid #d5d5d5;
+            border-left: white;
+            border-radius: 0;
+            height: 43px;
+            padding: 10px;
+            align-items: center;
+
+        }
+
+        .countPost3 {
+            background-color: #E8FFFF;
+            border: 1px solid #d5d5d5;
+            border-left: white;
+            border-radius: 0 0.5rem 0.5rem 0;
+            height: 43px;
+            padding: 10px;
+            align-items: center;
+
+        }
 
     </style>
 </head>
@@ -37,31 +88,36 @@
                     <div class="row g-0 overflow-hidden flex-md-row mb-4 position-relative">
                         <div class="col p-4 d-flex flex-column position-relative">
                             <div class="d-flex justify-content-between">
-                                <div class="d-flex flex-row justify-content-around" style="width: 65%">
 
-                                    <a href="user-list" class="btn btn-outline-secondary align-items-center"
+                                <!--전체회원, 신고목록, 차단회원 이동메뉴-->
+                                <div class="d-flex flex-row justify-content-around" style="width: 65%">
+                                    <a href="user-list"
+                                       class="btn btn-outline-secondary align-items-center countPost1"
                                        type="button" style="width: 40%">
                                         전체 회원
                                     </a>
 
-                                    <a href="report-list" class="btn btn-outline-secondary align-items-center"
+                                    <a href="report-list"
+                                       class="btn btn-outline-secondary align-items-center countPost2"
                                        type="button" style="width: 40%">
                                         신고 목록
                                     </a>
 
-                                    <a href="block-list" class="btn btn-primary align-items-center" type="button"
-                                       style="width: 40%">
+                                    <a href="block-list"
+                                       class="btn btn-outline-secondary align-items-center countPost3"
+                                       type="button" style="width: 40%; background-color: #67cafe; color: white">
                                         차단 회원
                                     </a>
-
                                 </div>
 
                                 <!-- 검색 폼 추가 -->
                                 <form class="d-flex input-group justify-content-end" style="width: 30%;" method="get"
                                       action="/admin/block-list">
-                                    <input type="text" class="form-control" name="keyword" placeholder="검색"
+                                    <input type="text" class="form-control" name="keyword" placeholder="검색어 입력"
                                            th:value="${searchKeyword}">
-                                    <button class="btn btn-outline-secondary searchBtn" type="submit">검색</button>
+                                    <button class="btn btn-outline-secondary searchBtn"  type="submit">
+                                        <i class="bi bi-search"></i>
+                                    </button>
                                 </form>
 
                             </div>
@@ -71,22 +127,35 @@
                                          aria-current="true">
                                         <div class="d-flex gap-2 w-100 justify-content-between">
 
-                                            <!--본문 내용-->
-                                            <div>
-                                                <h5 class="my-2" th:text="${user.userName}"><b></b></h5>
+                                            <!--회원 정보-->
+                                            <div class="justify-content-center align-content-center">
+                                                <!--내 활동으로 연결, 이름 표시-->
+                                                <a th:href="@{/my/userActivity/{userId}/posts(userId=${user.userId})}"
+                                                      onclick="openMyActivityPopup(this.href); return false;"
+                                                      class="my-2" th:text="${user.nickname}"
+                                                      style="font-size: x-large; text-decoration: none; color: #131314">
+                                                </a>
 
+                                                <!--수의사면 표시-->
+                                                <span th:if="${user.userVet}">
+                                                    <img class="replyAuthImg" src="/img/tag/vetScope.png"
+                                                         alt="수의사만 답변 가능" width="25" height="25">
+                                                </span>
+
+                                                <!--유저아이디, 등록일-->
                                                 <div class="d-flex justify-content-around h11">
-
                                                     <p class="m-1 pr-2 opacity-75" th:text="${user.userId}"></p>
+                                                    <p class="m-1 pr-2 opacity-75"
+                                                       th:text="${user.userName}"></p>
                                                     <p class="m-1 px-2 opacity-75"
                                                        th:text="${#dates.format(user.regDate, 'yyyy-MM-dd')}"></p>
-
                                                 </div>
                                             </div>
-                                            <div class="d-flex flex-column justify-content-between gap-3">
-                                                <small class="opacity-75 text-nowrap">작성 글 / 댓글</small>
+
+                                            <!--차단해제-->
+                                            <div class="d-flex flex-column justify-content-between">
                                                 <button class="btn btn-warning fw-bold"
-                                                        th:onclick="restoreUser([[${user.userId}]])">복구
+                                                        th:onclick="restoreUser([[${user.userId}]])">차단 해제
                                                 </button>
                                             </div>
 
@@ -99,38 +168,42 @@
                     </div>
 
                     <!-- 페이지네이션 -->
-                    <!-- 페이징 처리를 감싸는 컨테이너를 추가하여 가운데 정렬 -->
                     <div class="d-flex justify-content-center">
                         <nav aria-label="Page navigation">
-                            <ul class="pagination">
-                                <!-- 이전 버튼 -->
-                                <li class="page-item" th:class="${!pageResponse.prev} ? 'disabled' : ''">
+                            <ul class="pagination justify-content-center">
+
+                                <!-- 이전 -->
+                                <li class="page-item" th:if="${!pageResponse.prev}">
                                     <a class="page-link"
-                                       th:href="@{/admin/block-list(page=${pageResponse.page - 1}, size=${pageResponse.size})}"
+                                       th:href="@{/admin/block-list(page=${pageResponse.page - 1}, size=${pageResponse.size}, keyword=${searchKeyword})}"
                                        aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
+                                        <i class="bi bi-caret-left-fill" aria-hidden="true"></i>
                                     </a>
                                 </li>
 
-                                <!-- 페이지 번호 반복 -->
-                                <li class="page-item"
-                                    th:each="pageNumber : ${#numbers.sequence(pageResponse.start, pageResponse.end)}">
-                                    <a class="page-link"
-                                       th:href="@{/admin/block-list(page=${pageNumber}, size=${pageResponse.size})}"
-                                       th:text="${pageNumber}"></a>
-                                </li>
+                                <!-- 페이지 번호 -->
+                                <th:block class="page-item"
+                                          th:each="pageNumber : ${#numbers.sequence(pageResponse.start, pageResponse.end)}">
+                                    <li th:class="${pageResponse.page == pageNumber} ? 'page-item active' : 'page-item'">
+                                        <a class="page-link"
+                                           th:data-num="${pageNumber}"
+                                           th:href="@{/admin/block-list(page=${pageNumber}, size=${pageResponse.size}, keyword=${searchKeyword})}">
+                                            [[${pageNumber}]]
+                                        </a>
+                                    </li>
+                                </th:block>
 
-                                <!-- 다음 버튼 -->
-                                <li class="page-item" th:class="${!pageResponse.next} ? 'disabled' : ''">
+                                <!-- 다음 -->
+                                <li class="page-item" th:if="${!pageResponse.next}">
                                     <a class="page-link"
-                                       th:href="@{/admin/block-list(page=${pageResponse.page + 1}, size=${pageResponse.size})}"
+                                       th:href="@{/admin/block-list(page=${pageResponse.page + 1}, size=${pageResponse.size}, keyword=${searchKeyword})}"
                                        aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
+                                        <i class="bi bi-caret-right-fill" aria-hidden="true"></i>
                                     </a>
                                 </li>
                             </ul>
                         </nav>
-                    </div>
+                    </div><!--페이지네이션-->
 
 
                 </div>
@@ -150,7 +223,7 @@
 
 <script>
 
-
+    /*차단해제*/
     async function restoreUser(userId) {
         try {
             const response = await fetch(`/admin/restoreUser/${userId}`, {
@@ -168,6 +241,10 @@
         } catch (error) {
             alert('Error restoring user: ' + error);
         }
+    }
+    /*내활동으로 연결*/
+    function openMyActivityPopup(url) {
+        window.open(url, '_blank');
     }
 </script>
 

@@ -105,7 +105,7 @@ public class ReportService {
                         .replyNo(reply.getReplyNo())
                         .replyContent(reply.getReplyContent())
                         .reportNo(reportNo)
-//                        .regDate(reply.getRegDate())
+                        .ReplyregDate(reply.getRegDate())
                         .build();
                 userReportDetailDTOS.add(dto);
             }
@@ -114,6 +114,12 @@ public class ReportService {
 
 
     }
+    //신고 삭제
+    @Transactional
+    public void deleteReportLog(Long reportNo) {
+        reportLogRepository.deleteReportLog(reportNo);
+    }
+
 
 
 }

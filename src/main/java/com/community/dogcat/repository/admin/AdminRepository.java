@@ -21,27 +21,27 @@ public interface AdminRepository extends JpaRepository<User, String> {
     @Query("UPDATE User u SET u.block = false WHERE u.userId = :userId")
     int restoreUserByUserId(@Param("userId") String userId);
 
-    @Modifying
-    @Query("DELETE FROM ReportLog rl WHERE rl.reportNo = :reportNo")
-    int deleteReportLog(@Param("reportNo") Long reportNo);
-
 
     // 전체 유저목록
-    Page<User> findByBlockFalseAndNicknameContainingOrBlockFalseAndUserNameContaining(String keyword1, String keyword2, Pageable pageable);
+    @Query("SELECT u FROM User u WHERE u.block = false AND u.nickname LIKE %:keyword1% AND u.block = false AND u.userName LIKE %:keyword2%")
+    Page<User> findByBlockFalseKeyword(@Param("keyword1") String keyword1, @Param("keyword2") String keyword2, Pageable pageable);
 
     Page<User> findByBlockFalse(Pageable pageable);
 
-    long countByBlockFalseAndNicknameContainingOrUserNameContaining(String keyword1, String keyword2);
+    @Query("SELECT COUNT(u) FROM User u WHERE u.block = false AND (u.nickname LIKE %:keyword1% OR u.userName LIKE %:keyword2%)")
+    long countByBlockFalseKeyword(@Param("keyword1") String keyword1, @Param("keyword2") String keyword2);
 
     long countByBlockFalse();
 
 
     //차단된 유저목록
-    Page<User> findByBlockTrueAndNicknameContainingOrBlockTrueAndUserNameContaining(String keyword1, String keyword2, Pageable pageable);
+    @Query("SELECT u FROM User u WHERE u.block = true AND (u.nickname LIKE %:keyword1% OR u.userName LIKE %:keyword2%)")
+    Page<User> findByBlockTrueKeyword(@Param("keyword1") String keyword1, @Param("keyword2") String keyword2, Pageable pageable);
 
     Page<User> findByBlockIsTrue(Pageable pageable);
 
-    long countByBlockTrueAndNicknameContainingOrUserNameContaining(String keyword1, String keyword2);
+    @Query("SELECT COUNT(u) FROM User u WHERE u.block = true AND (u.nickname LIKE %:keyword1% OR u.userName LIKE %:keyword2%)")
+    long countByBlockTrueKeyword(@Param("keyword1") String keyword1, @Param("keyword2") String keyword2);
 
     long countByBlockTrue();
 

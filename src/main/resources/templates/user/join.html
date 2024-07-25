@@ -28,10 +28,10 @@
                     <!-- 수의사 인증 섹션 -->
                     <div class="d-flex justify-content-end">
                         <div class="dropdown">
-                            <button class="certification-button dropdown-toggle" type="button"
+                            <button class="btn certification-button dropdown-toggle" type="button"
                                     id="vetVerificationDropdown"
                                     data-bs-toggle="dropdown" aria-expanded="false">
-                                수의사 인증
+                                수의사인증
                             </button>
                             <ul class="dropdown-menu p-4" aria-labelledby="vetVerificationDropdown">
                                 <li class="mb-3">
@@ -43,7 +43,7 @@
                                     <input type="text" id="vetLicense" name="vetLicense" class="form-control">
                                 </li>
                                 <li class="d-flex justify-content-center">
-                                    <button type="button" class="certification-button"
+                                    <button type="button" class="btn certification-button"
                                             onclick="verifyVet()">
                                         인증
                                     </button>
@@ -87,7 +87,7 @@
                         <label for="nickname">닉네임</label>
                         <div>
                             <input type="text" name="nickname" id="nickname" class="form-control form-width d-inline"
-                                   onkeyup="checkNickname()" required>
+                                   maxlength="8" onkeyup="checkNickname()" required>
                             <div id="nicknameFeedback" class="feedback"></div>
                         </div>
                     </div>
@@ -232,7 +232,7 @@
             document.getElementById('userId').classList.add('is-invalid');
         } else {
             // 서버로 아이디 중복 체크 요청을 보냄
-            axios.post('/check/userid', {userId: userId}, {
+            axios.post('/check/userId', {userId: userId}, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -304,16 +304,18 @@
         const vetName = document.getElementById('vetName').value;
         const vetLicense = document.getElementById('vetLicense').value;
 
-        const data = {vetName: vetName, vetLicense: vetLicense};
+        const data = { vetName: vetName, vetLicense: vetLicense };
 
         // 서버로 인증 요청을 보냄
-        axios.post("/check/vet", null, {params: data})
+        axios.post("/check/vet", null, { params: data })
             .then(response => {
-                if (response.data.isVerified) {
+                const responseData = response.data;
+                // 서버에서 보낸 메시지를 사용하여 알림을 표시
+                if (responseData.isVerified) {
                     document.getElementById('userVet').value = 'true';
-                    alert('수의사 인증이 완료되었습니다.');
+                    alert(responseData.message); // 인증 완료 메시지
                 } else {
-                    alert('수의사 인증에 실패하였습니다.');
+                    alert(responseData.message); // 인증 실패 메시지
                 }
             })
             .catch(error => {

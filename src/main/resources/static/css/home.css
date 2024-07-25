@@ -26,12 +26,24 @@ body {
     overflow-y: hidden;
 }
 
+.showoffBgc {
+    background-color: #e5ffee;
+}
+
 .showOff {
     width: 100%;
 }
 
 .showListOne {
     width: 130px;
+}
+
+.showListOne a {
+    height: 233px;
+}
+
+.showListOne a div {
+    height: 60px;
 }
 
 td {
@@ -46,13 +58,18 @@ td {
     height: 150px;
 }
 
-.login {
+.loginA,
+.loginB {
     border: 1px solid #dee2e6;
     border-radius: 5px;
     box-shadow: 1px 1px 3px #dee2e6;
     padding: 10px;
     width: 400px;
     height: 350px;
+}
+
+.loginA {
+    background-color: #E8FFFF;
 }
 
 .login-button {
@@ -72,6 +89,52 @@ td {
     height: 45px;
 }
 
+.homeMyInfo {
+    background-color: white; height: 220px;
+    border: 1px solid #d5d5d5;
+    border-radius: 0.35rem;
+}
+
+.levelImg {
+    width: 50px;
+    height: 50px;
+}
+
+.progress {
+    width: 240px;
+}
+
+.levelExp {
+    font-size: 18px;
+}
+
+.myActInfo {
+    margin-top: 20px;
+}
+
+.myActivity,
+.modMyInfo {
+    background-color: white;
+    width: 165px;
+    height: 60px;
+    border: 1px solid #d5d5d5;
+    border-radius: 0.35rem
+}
+
+.myActivity {
+    margin-right: 20px;
+}
+
+.myActivity > div,
+.modMyInfo > div {
+    margin-top: 16px;
+}
+
+.myActivity > div > a,
+.modMyInfo > div > a {
+    color: #22b3fd;
+}
+
 .generalBoard,
 .tipBoard {
     border: 1px solid #dee2e6;
@@ -79,8 +142,24 @@ td {
     box-shadow: 1px 1px 3px #dee2e6;
     padding: 10px;
     width: 600px;
-    height: 730px;
+    height: 790px;
     overflow-y: hidden;
+}
+
+.generalBgc {
+    background-color: #E8FFFF;
+}
+
+.tipBgc {
+    background-color: #fffde8;
+}
+
+.bestPost {
+    background-color: #ffe8eb;
+}
+
+.qnaBgc {
+    background-color: #f9e8ff;
 }
 
 .currentHotBoard,
@@ -89,13 +168,25 @@ td {
     border-radius: 5px;
     box-shadow: 1px 1px 3px #dee2e6;
     width: 400px;
-    height: 730px;
+    height: 790px;
     overflow-y: hidden;
 }
 
 .boardEmpty {
     text-align: center;
     color: gray;
+
+.loginId,
+.loginPw{
+    width: 220px;
+}
+  
+.loginOpt {
+    height: 65px;
+}
+  
+.etcOpt {
+    height: 30px;
 }
 
 a {
@@ -177,4 +268,16 @@ a {
 
 .nickname {
     color: #67cafe;
+}
+
+.showoffTitle {
+    width: 167px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.showoffWriter {
+    font-size: 13px;
+    color: #919191;
 }

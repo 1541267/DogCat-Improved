@@ -20,9 +20,10 @@ import com.community.dogcat.service.user.UserService;
 @RequestMapping("/my")
 public class MyPageController extends BaseController {
 
-	public MyPageController(JWTUtil jwtUtil,
-		UserService userService) {
+	public MyPageController(JWTUtil jwtUtil, UserService userService) {
+
 		super(jwtUtil, userService);
+
 	}
 
 	@GetMapping("/user-detail")

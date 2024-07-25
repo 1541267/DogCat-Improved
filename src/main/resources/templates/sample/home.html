@@ -9,11 +9,8 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" th:href="@{/css/home.css}">
     <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
-    <title>Document</title>
+    <title>말랑발자국</title>
 </head>
-<style>
-
-</style>
 <body>
 <div th:include="include/header :: header"></div>
 
@@ -23,7 +20,7 @@
             <!--왼쪽-->
             <div>
                 <div class="p-4 mb-4 showOffBoard">
-                    <div class="d-flex justify-content-between px-2" style="background-color: #e5ffee;">
+                    <div class="d-flex justify-content-between px-2 showoffBgc">
                         <p class="boardTitle">자랑 게시판</p>
                         <a class="ms-3 align-content-end viewMore" href="/board/showoff">더 보기</a>
                     </div>
@@ -33,7 +30,7 @@
                         <tbody>
                         <tr>
                             <td class="mb-2 showListOne" th:each="dto:${showOffList}">
-                                <a th:href="@{'/board/read/'+${dto.postNo}}">
+                                <a th:href="@{'/board/read/'+${dto.postNo}}" class="d-flex flex-column justify-content-between">
                                     <span th:if="${!dto.imgBoards.isEmpty()}" th:each="imgDto:${dto.imgBoards}">
                                     <img th:src="${imgDto.thumbnailPath}" class="boardImg"
                                          alt="Image">
@@ -71,7 +68,7 @@
                     </div>
                 </div>
                 <div class="p-4 mb-4 generalBoard">
-                    <div class="d-flex justify-content-between px-2" style="background-color: #E8FFFF;">
+                    <div class="d-flex justify-content-between px-2 generalBgc">
                         <p class="boardTitle">자유 게시판</p>
                         <a class="ms-3 align-content-end viewMore" href="/board/general">더 보기</a>
                     </div>
@@ -141,7 +138,7 @@
                 </div> <!--general-->
 
                 <div class="p-4 tipBoard">
-                    <div class="d-flex justify-content-between px-2" style="background-color: #fffde8;">
+                    <div class="d-flex justify-content-between px-2 tipBgc">
                         <p class="boardTitle">정보 게시판</p>
                         <a class="ms-3 align-content-end viewMore" href="/board/tip">더 보기</a>
                     </div>
@@ -215,16 +212,16 @@
             <!--오른쪽-->
             <div>
                 <!--로그인 전-->
-                <div class="d-flex mb-4 ms-4 login" th:if="${username == null}">
+                <div class="d-flex mb-4 ms-4 loginB" th:if="${username == null}">
                     <div>
                         <form>
                             <div class="mt-3 mx-3 d-flex align-items-center">
                                 <div>
-                                    <div style="width: 220px">
+                                    <div class="loginId">
                                         <label for="username">아이디</label>
                                         <input type="text" name="username" id="username" class="form-control">
                                     </div>
-                                    <div style="width: 220px">
+                                    <div class="loginPw">
                                         <label for="password">비밀번호</label>
                                         <input type="password" name="password" id="password"
                                                class="form-control">
@@ -234,8 +231,7 @@
                                     <span>로그인</span>
                                 </button>
                             </div>
-                            <div class="d-flex justify-content-evenly align-items-center"
-                                 style="height: 65px;">
+                            <div class="d-flex justify-content-evenly align-items-center loginOpt">
                                 <div>
                                     <label>
                                         <input type="checkbox" name="autoLogin" id="autoLogin"
@@ -251,13 +247,12 @@
                             </div>
                         </form>
 
-                        <div class="d-flex justify-content-around align-items-center"
-                             style="height: 30px;">
+                        <div class="d-flex justify-content-around align-items-center etcOpt">
                             <a href="/user/join">회원가입</a>
                             <div class="d-flex justify-content-between">
-                                <a href="/user/findId">아이디찾기</a>
+                                <a href="/user/find-id">아이디찾기</a>
                                 <span class="mx-1">|</span>
-                                <a href="/user/findPw">비밀번호찾기</a>
+                                <a href="/user/find-pw">비밀번호찾기</a>
                             </div>
                         </div>
                         <div class="d-flex justify-content-evenly align-items-center mt-3">
@@ -273,8 +268,8 @@
                     </div>
                 </div>
                 <!--로그인 후-->
-                <div class="p-4 mb-4 ms-4 login" th:if="${username != null}" style="background-color: #E8FFFF">
-                    <div class="d-flex flex-column justify-content-between px-3" style="background-color: white; height: 220px; border: 1px solid #d5d5d5; border-radius: 0.35rem">
+                <div class="p-4 mb-4 ms-4 loginA" th:if="${username != null}">
+                    <div class="d-flex flex-column justify-content-between px-3 homeMyInfo">
                         <!--닉네임-->
                         <div class="align-self-center mt-5">
                             <div class="d-flex flex-row">
@@ -290,21 +285,21 @@
                                 <!-- 레벨 이미지 표시 -->
                                 <span class="ms-2 mb-1">
                                     <img th:if="${userLevelInfo.level == 1}" th:src="@{/img/level/red.png}"
-                                         alt="User Level Image" style="width: 50px; height: 50px;"/>
+                                         alt="User Level Image" class="levelImg"/>
                                     <img th:if="${userLevelInfo.level == 2}" th:src="@{/img/level/orange.png}"
-                                         alt="User Level Image" style="width: 50px; height: 50px;"/>
+                                         alt="User Level Image" class="levelImg"/>
                                     <img th:if="${userLevelInfo.level == 3}" th:src="@{/img/level/yellow.png}"
-                                         alt="User Level Image" style="width: 50px; height: 50px;"/>
+                                         alt="User Level Image" class="levelImg"/>
                                     <img th:if="${userLevelInfo.level == 4}" th:src="@{/img/level/mint.png}"
-                                         alt="User Level Image" style="width: 50px; height: 50px;"/>
+                                         alt="User Level Image" class="levelImg"/>
                                     <img th:if="${userLevelInfo.level == 5}" th:src="@{/img/level/purple.png}"
-                                         alt="User Level Image" style="width: 50px; height: 50px;"/>
+                                         alt="User Level Image" class="levelImg"/>
                                 </span>
                                 <!--exp 바-->
                                 <div class="d-flex flex-column justify-content-center ms-4 me-3 mt-3">
                                     <div class="d-flex flex-column justify-content-center progress-container" data-bs-toggle="tooltip" data-bs-placement="top"
                                          title="자주 방문하거나 글, 댓글을 작성하면 경험치가 쌓입니다!">
-                                        <div class="progress" style="width: 240px">
+                                        <div class="progress">
                                             <!-- 진행 바 -->
                                             <div class="custom-progress-bar" role="progressbar"
                                                  th:style="'width: ' + ${userLevelInfo.percentage} + '%;'"
@@ -318,34 +313,35 @@
                                 </div>
                             </div>
                             <div class="d-flex flex-row justify-content-between me-5">
-                                <span class="ms-1" style="font-size: 18px">
-                                    레벨
+                                <span class="ms-1 levelExp">
+                                    등급
                                 </span>
-                                <span class="me-5" style="font-size: 18px">
+                                <span class="me-5 levelExp">
                                     경험치
                                 </span>
                             </div>
                         </div>
                     </div>
                     <!--활동/정보 수정-->
-                    <div class="d-flex flex-row justify-content-between" style="margin-top: 20px">
+                    <div class="d-flex flex-row justify-content-between myActInfo">
                         <!--활동-->
-                        <div style="background-color: white; width: 165px; height: 60px; margin-right: 20px; border: 1px solid #d5d5d5; border-radius: 0.35rem">
-                            <div class="d-flex justify-content-center" style="margin-top: 16px;">
-                                <a th:href="@{'/my/userActivity/' + ${username} + '/posts'}" style="color: #22b3fd;">내 활동</a>
+                        <div class="myActivity">
+                            <div class="d-flex justify-content-center">
+                                <a th:href="@{'/my/userActivity/' + ${username} + '/posts'}">내 활동</a>
                             </div>
                         </div>
                         <!--정보 수정-->
-                        <div style="background-color: white; width: 165px; height: 60px; border: 1px solid #d5d5d5; border-radius: 0.35rem">
-                            <div class="d-flex justify-content-center" style="margin-top: 16px">
-                                <a th:href="@{'/my/user-modify?userId=' + ${username}}" style="color: #22b3fd;">내 정보 수정</a>
+                        <div class="modMyInfo">
+                            <div class="d-flex justify-content-center">
+                                <a th:href="@{'/my/user-modify?userId=' + ${username}}">내 정보 수정</a>
                             </div>
                         </div>
                     </div>
                 </div>
 
+
                 <div class="ms-4 mb-4 p-4 currentHotBoard">
-                        <p class="boardTitle px-2" style="background-color: #ffe8eb;">실시간 인기 게시글</p>
+                        <p class="boardTitle px-2 bestPost">실시간 인기 게시글</p>
                         <hr class="boardHr">
                         <div class="board" th:if="${!todayList.isEmpty()}">
                             <table class="table read">
@@ -420,8 +416,9 @@
 
                 </div> <!--currentHotBoard-->
 
+
                 <div class="ms-4 mb-4 p-4 qnaBoard">
-                        <div class="d-flex justify-content-between px-2" style="background-color: #f9e8ff;">
+                        <div class="d-flex justify-content-between px-2 qnaBgc">
                             <p class="boardTitle">QnA 게시판</p>
                             <a class="ms-3 align-content-end viewMore" href="/board/qna">더 보기</a>
                         </div>
@@ -502,50 +499,78 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // 툴팁 초기화
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
+
+        // 로그인 버튼 이벤트 리스너 추가
+        var loginButton = document.querySelector(".login-button");
+        if (loginButton) {
+            loginButton.addEventListener("click", (event) => {
+                event.preventDefault();
+
+                // 사용자가 입력한 아이디와 비밀번호 가져오기
+                const username = document.querySelector('input[name="username"]').value;
+                const password = document.querySelector('input[name="password"]').value;
+                const autoLogin = document.querySelector('input[name="autoLogin"]').checked ? 'true' : 'false';
+                const rememberMe = document.querySelector('input[name="rememberMe"]').checked ? 'true' : 'false';
+
+                const data = { username: username, password: password, autoLogin: autoLogin, rememberMe: rememberMe };
+
+                axios.post("/user/loginProc", null, { params: data })
+                    .then(res => {
+                        // 로그인 성공 시
+                        window.location.href = "/sample/home";
+                    })
+                    .catch(error => {
+                        if (error.response) {
+                            if (error.response.status === 403) {
+                                if (error.response.data === "LOGIN_LOCKED") {
+                                    alert("로그인 5회 실패로 계정이 비활성화 되었습니다.\n비밀번호찾기에서 임시비밀번호를 발급하세요.");
+                                } else if (error.response.data === "LOGIN_BLOCK") {
+                                    alert("관리자에 의해 계정이 차단되었습니다.");
+                                }
+                                window.location.href = "/user/login"; // 로그인 페이지로 이동
+                            } else if (error.response.status === 401) {
+                                alert("아이디 또는 비밀번호를 확인하세요.");
+                                window.location.href = "/user/login"; // 로그인 페이지로 이동
+                            } else {
+                                alert("알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.");
+                            }
+                        } else {
+                            alert("서버와의 연결에 문제가 발생했습니다.");
+                        }
+                    });
+            }, false);
+        }
+
+        // 페이지 로드 시 쿠키에서 아이디 값을 가져와 입력
+        window.onload = function () {
+            var usernameInput = document.getElementById("username");
+            if (usernameInput) {
+                usernameInput.value = getCookieValue("userId");
+            }
+        };
     });
 
-    document.querySelector(".login-button").addEventListener("click", (event) => {
-        event.preventDefault();
-
-        // 사용자가 입력한 아이디와 비밀번호 가져오기
-        const username = document.querySelector('input[name="username"]').value;
-        const password = document.querySelector('input[name="password"]').value;
-        const autoLogin = document.querySelector('input[name="autoLogin"]').checked ? 'true' : 'false';
-        const rememberMe = document.querySelector('input[name="rememberMe"]').checked ? 'true' : 'false';
-
-
-        const data = {username: username, password: password, autoLogin: autoLogin, rememberMe: rememberMe};
-
-        axios.post("/user/loginProc", null, {params: data})
-            .then(res => {
-                // 로그인 성공 시
-                window.location.href = "/sample/home";
-            })
-            .catch(error => {
-                if (error.response) {
-                    if (error.response.status === 403) {
-                        if (error.response.data === "LOGIN_LOCKED") {
-                            alert("로그인 5회 실패로 계정이 비활성화 되었습니다.\n비밀번호찾기에서 임시비밀번호를 발급하세요.");
-                        } else if (error.response.data === "LOGIN_BLOCK") {
-                            alert("관리자에 의해 계정이 차단되었습니다.");
-                        }
-                        window.location.href = "/user/login"; // 로그인 페이지로 이동
-                    } else if (error.response.status === 401) {
-                        alert("아이디 또는 비밀번호를 확인하세요.");
-                        window.location.href = "/user/login"; // 로그인 페이지로 이동
-                    } else {
-                        alert("알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.");
-                    }
-                } else {
-                    alert("서버와의 연결에 문제가 발생했습니다.");
-                }
-            });
-    }, false);
+    // 쿠키에서 특정 이름의 값을 가져오는 함수
+    function getCookieValue(cookieName) {
+        var name = cookieName + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var cookieArray = decodedCookie.split(';');
+        for (var i = 0; i < cookieArray.length; i++) {
+            var cookie = cookieArray[i].trim();
+            if (cookie.indexOf(name) === 0) {
+                return cookie.substring(name.length, cookie.length);
+            }
+        }
+        return "";
+    }
 </script>
+
+
 </body>
 <div th:include="include/footer :: footer"></div>
 </html>

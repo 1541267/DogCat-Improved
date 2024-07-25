@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.community.dogcat.domain.Post;
 import com.community.dogcat.domain.Scrap;
@@ -25,4 +26,7 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long>, ScrapSearch
 	// userId에 해당하는 댓글 갯수 카운트(마이페이지용)
 	@Query("SELECT count(s) FROM Scrap s WHERE s.userId.userId = :userId")
 	Long countScrapsByUser(@Param("userId") String userId);
+
+	@Transactional
+	void deleteAllByUserId(User user);
 }

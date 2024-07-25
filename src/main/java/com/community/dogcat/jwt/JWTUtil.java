@@ -15,7 +15,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JWTUtil {
 
-	private static final Logger log = LoggerFactory.getLogger(JWTUtil.class);
 	private final String secretKey;
 
 	public JWTUtil(@Value("${spring.jwt.secret}") String secretKey) {
@@ -23,40 +22,49 @@ public class JWTUtil {
 	}
 
 	public String getUsername(String token) {
+
 		Claims claims = Jwts.parser()
 			.setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
 			.parseClaimsJws(token)
 			.getBody();
 
 		return claims.get("username", String.class);
+
 	}
 
 	public String getRole(String token) {
+
 		Claims claims = Jwts.parser()
 			.setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
 			.parseClaimsJws(token)
 			.getBody();
 
 		return claims.get("role", String.class);
+
 	}
 
 	public String getCategory(String token) {
+
 		Claims claims = Jwts.parser()
 			.setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
 			.parseClaimsJws(token)
 			.getBody();
 
 		return claims.get("category", String.class);
+
 	}
 
 	public void isExpired(String token) {
+
 		Claims claims = Jwts.parser()
 			.setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
 			.parseClaimsJws(token)
 			.getBody();
+
 	}
 
 	public String createJwt(String category, String username, String role, Long expiredMs) {
+
 		return Jwts.builder()
 			.claim("category", category)
 			.claim("username", username)
@@ -65,6 +73,7 @@ public class JWTUtil {
 			.setExpiration(new Date(System.currentTimeMillis() + expiredMs))
 			.signWith(SignatureAlgorithm.HS256, secretKey.getBytes(StandardCharsets.UTF_8))
 			.compact();
+
 	}
 
 	// JWT 토큰 유효성 검사 메서드

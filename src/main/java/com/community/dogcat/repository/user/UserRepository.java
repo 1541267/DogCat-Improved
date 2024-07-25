@@ -31,7 +31,4 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query("SELECT u.userPw FROM User u WHERE u.userId = ?1")
     String findPasswordHashByUsername(String userId);
 
-    long countByBlock(boolean block);
-
-
 }

@@ -25,7 +25,6 @@
         }
 
         .report-detail {
-            border: 1px solid #000;
             padding: 20px;
             width: 500px;
             margin-top: 0px;
@@ -82,18 +81,18 @@
         <!--신고 관련정보-->
         <div class="details">
             <div>
-                <span class="badge bg-secondary text-white m-1">신고자</span>
+                <span class="badge bg-secondary text-white m-1">신&nbsp; 고&nbsp; 자</span>
                 <span id="nickname" th:text="${nickname}"></span>
                 /
                 <span id="userName" th:text="${username}"></span>
             </div>
 
             <div>
-                <span class="badge bg-secondary text-white m-1">신고시간</span>
+                <span class="badge bg-secondary text-white m-1">신고 시간</span>
                 <th:block th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">[신고시간]</th:block>
             </div>
             <div>
-                <span class="badge bg-secondary text-white m-1">신고 제목</span>
+                <span class="badge bg-secondary text-white m-1">댓글 내용</span>
                 <th:block th:text="${replyReport.replyContent}">[신고시간]</th:block>
             </div>
         </div>
