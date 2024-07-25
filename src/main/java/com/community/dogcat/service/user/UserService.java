@@ -139,6 +139,9 @@ public class UserService {
 		User existingUser = userRepository.findById(userDetailDTO.getUserId())
 			.orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+		String encodedPassword = userDetailDTO.getUserPw().isEmpty() ?
+			existingUser.getUserPw() : bCryptPasswordEncoder.encode(userDetailDTO.getUserPw());
+
 		User updatedUser = User.builder()
 			.userId(existingUser.getUserId())
 			.userName(existingUser.getUserName())
@@ -146,8 +149,7 @@ public class UserService {
 			.tel(userDetailDTO.getTel())
 			.social(userDetailDTO.isSocial())
 			.userVet(userDetailDTO.isUserVet())
-			.userPw(userDetailDTO.getUserPw() != null ?
-				bCryptPasswordEncoder.encode(userDetailDTO.getUserPw()) : existingUser.getUserPw())
+			.userPw(encodedPassword)
 			.exp(existingUser.getExp())
 			.build();
 
