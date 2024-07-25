@@ -32,7 +32,6 @@ public class User {
 	private String userId;
 
 	@Column(name = "user_pw", length = 100, nullable = false)
-	//패스워드 인코딩 시 길이가 짧아 들어가지 않음 30 -> 100 수정
 	private String userPw;
 
 	@Column(name = "user_name", length = 20, nullable = false)
@@ -74,7 +73,7 @@ public class User {
 
 	// exp 값을 증가시키는 메서드
 	public void incrementExp() {
-		this.exp = (this.exp == null) ? 1 : this.exp + 1;
+		this.exp = (this.exp == null) ? 0 : this.exp + 2;
 	}
 
 	// 게시글 작성시 exp 증가

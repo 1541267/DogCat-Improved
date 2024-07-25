@@ -16,6 +16,21 @@
     height: 38px;
 }
 
+.certification-button {
+    background-color: #fff;
+    border: 1px solid #67cafe;
+    color: #67cafe;
+    border-radius: 0.375rem;
+    width: 125px;
+    height: 38px;
+}
+
+.certification-button:focus {
+    background-color: #fff;
+    color: #67cafe;
+    border: 1px solid #67cafe;
+}
+
 .modi-button:hover {
     background-color: white;
     color: #67cafe;

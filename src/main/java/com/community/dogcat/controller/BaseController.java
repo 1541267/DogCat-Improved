@@ -27,6 +27,7 @@ public abstract class BaseController {
 			String username = jwtUtil.getUsername(accessToken);
 			String nickname = userService.getNickname(username);
 			String role = userService.getRole(username);
+
 			model.addAttribute("username", username);
 			model.addAttribute("nickname", nickname);
 			model.addAttribute("role", role);
@@ -56,6 +57,6 @@ public abstract class BaseController {
 
 		}
 		return null;
-
 	}
+
 }

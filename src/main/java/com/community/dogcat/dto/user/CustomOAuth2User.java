@@ -27,6 +27,7 @@ public class CustomOAuth2User implements OAuth2User {
 		collection.add(new GrantedAuthority() {
 			@Override
 			public String getAuthority() {
+				System.out.println("ROLE : " + dto.getRole());
 				return dto.getRole();
 			}
 		});
