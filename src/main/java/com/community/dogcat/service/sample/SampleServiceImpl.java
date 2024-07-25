@@ -58,6 +58,7 @@ public class SampleServiceImpl implements SampleService {
 			.pageRequestDTO(pageRequestDTO)
 			.dtoList(result.getContent())
 			.total((int)result.getTotalElements())
+			.keyword(pageRequestDTO.getKeyword())
 			.build();
 	}
 

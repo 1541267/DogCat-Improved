@@ -336,6 +336,8 @@
                 url = '/board/modify_q';
                 formData.append('secret', secret);
                 formData.append('replyAuth', replyAuth);
+            } else {
+                url = '/board/modify';
             }
 
             console.log("imageUUIDs: ", imageUUIDs);

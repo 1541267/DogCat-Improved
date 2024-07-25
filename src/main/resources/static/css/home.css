@@ -93,6 +93,11 @@ td {
     overflow-y: hidden;
 }
 
+.boardEmpty {
+    text-align: center;
+    color: gray;
+}
+
 a {
     text-decoration: none;
     color: black;

@@ -32,14 +32,18 @@ public class SampleResponseDTO<E> {
 	// DTO->List
 	private List<E> dtoList;
 
+	private String keyword;
+
 	@Builder(builderMethodName = "withAll")
-	public SampleResponseDTO(SamplePageRequestDTO pageRequestDTO, List<E> dtoList, int total) {
+	public SampleResponseDTO(SamplePageRequestDTO pageRequestDTO, List<E> dtoList, int total, String keyword) {
 
 		this.page = pageRequestDTO.getPage();
 		this.size = pageRequestDTO.getSize();
 
 		this.total = total;
 		this.dtoList = dtoList;
+
+		this.keyword = keyword;
 
 		// 화면상 마지막번호
 		this.end = (int)(Math.ceil(this.page / 5.0)) * 5;

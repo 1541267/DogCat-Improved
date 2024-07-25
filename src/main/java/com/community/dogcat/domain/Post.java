@@ -113,6 +113,10 @@ public class Post {
 		orphanRemoval = true)
 	private Set<PostLike> postLikes;
 
+	@OneToMany(mappedBy = "postNo", cascade = CascadeType.ALL,
+		orphanRemoval = true)
+	private Set<ReportLog> reports;
+
 	// 게시글 수정
 	public void modify(String boardCode, String postTitle, String postContent,
 		Instant modDate, String postTag, Boolean secret, Boolean replyAuth) {

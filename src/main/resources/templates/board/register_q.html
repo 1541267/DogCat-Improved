@@ -118,16 +118,6 @@
 </body>
 <div th:include="include/footer :: footer"></div>
 <script>
-    //cancel 버튼 클릭 이벤트
-    document.querySelector(".cancelBtn").addEventListener("click", function (e) {
-        e.preventDefault();
-    }, false);
-
-    //submit 버튼 클릭 이벤트
-    document.querySelector(".submitBtn").addEventListener("click", function (e) {
-        e.preventDefault();
-    }, false);
-
     function checkForm() {
         let postTitle = document.querySelector('input[name="postTitle"]').value.trim();
         let replyAuth = document.querySelector('select[name="replyAuth"]').value;

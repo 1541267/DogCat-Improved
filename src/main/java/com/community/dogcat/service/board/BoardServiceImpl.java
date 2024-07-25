@@ -16,6 +16,7 @@ import com.community.dogcat.domain.Post;
 import com.community.dogcat.domain.PostLike;
 import com.community.dogcat.domain.Scrap;
 import com.community.dogcat.domain.User;
+import com.community.dogcat.domain.UsersAuth;
 import com.community.dogcat.dto.board.BoardListDTO;
 import com.community.dogcat.dto.board.BoardPageRequestDTO;
 import com.community.dogcat.dto.board.BoardPageResponseDTO;
@@ -29,6 +30,7 @@ import com.community.dogcat.repository.board.reply.ReplyRepository;
 import com.community.dogcat.repository.board.scrap.ScrapRepository;
 import com.community.dogcat.repository.upload.UploadRepository;
 import com.community.dogcat.repository.user.UserRepository;
+import com.community.dogcat.repository.user.UsersAuthRepository;
 import com.community.dogcat.util.uploader.S3Uploader;
 
 import lombok.RequiredArgsConstructor;
@@ -43,6 +45,8 @@ public class BoardServiceImpl implements BoardService {
 	private final S3Uploader s3Uploader;
 
 	private final UserRepository userRepository;
+
+	private final UsersAuthRepository usersAuthRepository;
 
 	private final BoardRepository boardRepository;
 
@@ -70,14 +74,18 @@ public class BoardServiceImpl implements BoardService {
 		// 로그인한 회원정보를 받아 userId 조회
 		String userId = postDTO.getUserId();
 		User user = userRepository.findById(userId).orElseThrow();
+		log.info(user);
 
 		// 조회한 회원정보 DTO에 추가
 		postDTO.setNickname(user.getNickname());
 		postDTO.setExp(user.getExp());
 		postDTO.setUserVet(user.isUserVet());
+		log.info(postDTO.getNickname());
+		log.info(postDTO.getExp());
+		log.info(postDTO.isUserVet());
 
 		// 게시글 작성자 경험치 증가
-		user.exp(postDTO.getExp());
+		user.incrementPostExp();
 
 		// 게시글 등록시 이미지가 summernote 링크로 먼저 등록되기 때문에 x 박스가 뜸
 		// 고쳐주기 위해 업로드때 수행하던 작업을 게시판 등록할때 적용 - ys
@@ -110,11 +118,17 @@ public class BoardServiceImpl implements BoardService {
 	public void delete(Long postNo, String userId) {
 		// 로그인한 회원 정보 확인
 		User user = userRepository.findById(userId).orElseThrow();
+
 		// 게시물 번호와 회원 아이디가 일치하는 게시물인지 확인
 		Optional<Post> post = boardRepository.findByPostNoAndUserId(postNo, user);
+
+		// 로그인한 회원이 관리자인지 확인
+		String auth = usersAuthRepository.findByUserId(userId).getAuthorities();
+		log.info(auth);
+
 		// 회원 아이디로 작성한 게시글이 맞으면 삭제
-		if (post.isPresent()) {
-			List<ImgBoard> images = uploadRepository.findByPostNo(post.get());
+		if (post.isPresent() || auth.equals("ROLE_ADMIN")) {
+			List<ImgBoard> images = uploadRepository.findByPostNo(postNo);
 			for (ImgBoard image : images) {
 				String fileName = image.getFileUuid() + image.getExtension();
 				String thumbFileName = "t_" + fileName;
@@ -283,25 +297,5 @@ public class BoardServiceImpl implements BoardService {
 			.build();
 	}
 
-	// 예비용
-	// @Override
-	// public BoardPageResponseDTO<PostDTO> list(BoardPageRequestDTO pageRequestDTO) {
-	// 	String[] types = pageRequestDTO.getTypes();
-	// 	String keyword = pageRequestDTO.getKeyword();
-	// 	Pageable pageable = pageRequestDTO.getPageable("postNo");
-	// 	String boardCode = pageRequestDTO.getBoardCode();
-	//
-	// 	Page<Post> result = boardRepository.searchBoard(types, keyword, pageable, boardCode);
-	//
-	// 	List<PostDTO> dtoList = result.getContent().stream()
-	// 		.map(post -> new PostDTO(post))
-	// 		.collect(Collectors.toList());
-	//
-	// 	return BoardPageResponseDTO.<PostDTO>withAll()
-	// 		.pageRequestDTO(pageRequestDTO)
-	// 		.dtoList(dtoList)
-	// 		.total((int)result.getTotalElements())
-	// 		.build();
-	// }
 }
 

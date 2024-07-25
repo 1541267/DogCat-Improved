@@ -112,13 +112,19 @@ body {
 
 .blank,
 .btnSection {
+    display: flex;
+    justify-content: flex-end;
     width: 157px;
+}
+
+.listBtnSection {
+    width: 100px;
 }
 
 .listBtn {
     color: #fff;
     background-color: #67cafe;
-    border: 3px solid #67cafe;
+    border: 1px solid #67cafe;
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
@@ -126,8 +132,8 @@ body {
 
 .modify_qBtn, .modifyBtn {
     color: #fff;
-    background-color: #ffc107;
-    border: 3px solid #ffc107;
+    background-color: #67cafe;
+    border: 1px solid #67cafe;
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #ffc107;
     --bs-btn-hover-bg: #ffc107;
@@ -135,8 +141,8 @@ body {
 
 .deletePostBtn {
     color: #fff;
-    background-color: red;
-    border: 3px solid red;
+    background-color: #67cafe;
+    border: 1px solid #67cafe;
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: red;
     --bs-btn-hover-bg: red;
@@ -144,12 +150,20 @@ body {
 
 .deleteReplyBtn {
     color: #fff;
+    background-color: #67cafe;
+    border: 1px solid #67cafe;
     --bs-btn-hover-color: #000;
+    --bs-btn-hover-border-color: red;
+    --bs-btn-hover-bg: red;
 }
 
 .reportReplyBtn {
     color: #fff;
+    background-color: #67cafe;
+    border: 1px solid #67cafe;
     --bs-btn-hover-color: #000;
+    --bs-btn-hover-border-color: #ffc107;
+    --bs-btn-hover-bg: #ffc107;
 }
 
 table.replyRegister {
@@ -182,7 +196,13 @@ tr.replyBody > td.align-middle {
 }
 
 .replySubmitBtn {
-    color: white;
+    width: 120px;
+    color: #fff;
+    background-color: #67cafe;
+    border: 1px solid #67cafe;
+    --bs-btn-hover-color: #000;
+    --bs-btn-hover-border-color: #67cafe;
+    --bs-btn-hover-bg: #67cafe;
 }
 
 #readList {

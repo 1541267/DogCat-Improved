@@ -73,12 +73,11 @@ public class User {
 	private boolean userVet;
 
 	// exp 값을 증가시키는 메서드
-	public void incrementExp() {
+	public void incrementExp() { this.exp = (this.exp == null) ? 2 : this.exp + 2; }
+
+	// exp 값을 증가시키는 메서드 (게시글 작성)
+	public void incrementPostExp() {
 		this.exp = (this.exp == null) ? 1 : this.exp + 1;
 	}
 
-	// 게시글 작성시 exp 증가
-	public void exp(Long exp) {
-		this.exp = exp;
-	}
 }

@@ -15,6 +15,7 @@ import com.community.dogcat.dto.board.reply.ReplyDTO;
 import com.community.dogcat.repository.board.BoardRepository;
 import com.community.dogcat.repository.board.reply.ReplyRepository;
 import com.community.dogcat.repository.user.UserRepository;
+import com.community.dogcat.repository.user.UsersAuthRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -26,6 +27,7 @@ import lombok.extern.log4j.Log4j2;
 public class ReplyServiceImpl implements ReplyService {
 
 	private final UserRepository userRepository;
+	private final UsersAuthRepository usersAuthRepository;
 	private final BoardRepository boardRepository;
 	private final ReplyRepository replyRepository;
 
@@ -70,8 +72,13 @@ public class ReplyServiceImpl implements ReplyService {
 		User user = userRepository.findById(userId).orElseThrow();
 		// 댓글 번호와 회원 아이디가 일치하는 댓글인지 확인
 		Optional<Reply> reply = replyRepository.findByReplyNoAndUserId(replyNo, user);
+
+		// 로그인한 회원이 관리자인지 확인
+		String auth = usersAuthRepository.findByUserId(userId).getAuthorities();
+		log.info(auth);
+
 		// 회원 아이디로 작성한 댓글이면 삭제
-		if (reply.isPresent()) {
+		if (reply.isPresent()|| auth.equals("ROLE_ADMIN")) {
 			replyRepository.deleteById(replyNo);
 		}
 	}

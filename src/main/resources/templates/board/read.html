@@ -173,17 +173,15 @@
             </div>
             <!--목록/수정/삭제 버튼-->
             <div class="row justify-content-between mt-3">
-                <div class="btnSection">
+                <div class="listBtnSection">
                     <button class="btn listBtn">목록</button>
                 </div>
                 <div class="d-flex text-end btnSection">
                     <!--수정 버튼 권한에 따라 버튼 나타내기 / 글작성자,관리자-->
-                    <!--          <button class="btn btn-warning modifyBtn" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or #authentication.principal.username == post.email'')}">수정</button>-->
-                    <button class="btn modifyBtn" th:if="${postDTO.boardCode ne 'qna'}">수정</button>
-                    <button class="btn modify_qBtn" th:if="${postDTO.boardCode eq 'qna'}">수정</button>
+                    <button class="btn modifyBtn" th:if="${postDTO.boardCode ne 'qna'} and (${username} == ${postDTO.userId})">수정</button>
+                    <button class="btn modify_qBtn" th:if="${postDTO.boardCode eq 'qna'} and (${username} == ${postDTO.userId})">수정</button>
                     <!--삭제 버튼 권한에 따라 버튼 나타내기 / 글작성자,관리자-->
-                    <!--          <button class="btn btn-warning ms-2 deletePostBtn" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or #authentication.principal.username == post.email'')}">삭제</button>-->
-                    <button class="btn ms-2 deletePostBtn">삭제</button>
+                    <button class="btn ms-2 deletePostBtn" th:if="${role eq 'ROLE_ADMIN'} or (${username} == ${postDTO.userId})">삭제</button>
                 </div>
             </div>
         </div> <!--글 상세 내용 영역-->
@@ -206,13 +204,13 @@
                                        th:text="${#temporals.format(reply.regDate, 'yyyy-MM-dd HH:mm:ss')}">작성일</small>
                                 <div class="card-footer" th:text="${reply.replyContent}">댓글 내용</div>
                             </div>
-                            <div class="justify-content-end">
+                            <div class="justify-content-end btnSection">
                                 <!--댓글신고버튼-->
-                                <button class="btn btn-warning reportReplyButton"
+                                <button class="btn reportReplyBtn"
                                         th:attr="data-reply-no=${reply.replyNo}">
                                     신고
                                 </button>
-                                <button class="btn deleteReplyBtn"
+                                <button class="btn deleteReplyBtn" th:if="${role eq 'ROLE_ADMIN'} or (${username} == ${reply.userId})"
                                         th:attr="data-reply-no=${reply.replyNo}">
                                     삭제
                                 </button>
@@ -384,14 +382,19 @@
     }, false)
 
     //deletePostBtn 버튼 클릭 이벤트
-    document.querySelector(".deletePostBtn").addEventListener("click", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (confirm('정말 이 게시물을 삭제하시겠습니까?')) {
-            let postNo = [[${postDTO.postNo}]]
-            location.href = '/board/delete/' + postNo;
+    document.addEventListener("DOMContentLoaded", function() {
+        const deletePostBtn = document.querySelector(".deletePostBtn");
+        if (deletePostBtn) {
+            deletePostBtn.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (confirm('정말 이 게시물을 삭제하시겠습니까?')) {
+                    let postNo = [[${postDTO.postNo}]];
+                    location.href = '/board/delete/' + postNo;
+                }
+            }, false);
         }
-    }, false)
+    });
 
     //replyCountBtn 버튼 클릭 이벤트
     document.querySelectorAll(".replyCountBtn").forEach(function (button) {
@@ -404,20 +407,23 @@
     });
 
     //modifyBtn, modify_qBtn 버튼 클릭 이벤트
-    const modifyBtn = document.querySelector(".modifyBtn");
-    if (modifyBtn) {
-        document.querySelector(".modifyBtn").addEventListener("click", function (e) {
-            e.preventDefault();
-            let postNo = [[${postDTO.postNo}]]
-            location.href = '/board/modify/' + postNo;
-        }, false)
-    } else {
-        document.querySelector(".modify_qBtn").addEventListener("click", function (e) {
-            e.preventDefault();
-            let postNo = [[${postDTO.postNo}]]
-            location.href = '/board/modify_q/' + postNo;
-        }, false)
-    }
+    document.addEventListener("DOMContentLoaded", function() {
+        const modifyBtn = document.querySelector(".modifyBtn");
+        const modify_qBtn = document.querySelector(".modify_qBtn");
+        if (modifyBtn) {
+            document.querySelector(".modifyBtn").addEventListener("click", function (e) {
+                e.preventDefault();
+                let postNo = [[${postDTO.postNo}]]
+                location.href = '/board/modify/' + postNo;
+            }, false)
+        } else if(modify_qBtn) {
+            document.querySelector(".modify_qBtn").addEventListener("click", function (e) {
+                e.preventDefault();
+                let postNo = [[${postDTO.postNo}]]
+                location.href = '/board/modify_q/' + postNo;
+            }, false)
+        }
+    });
 
     $(document).ready(function () {
         //좋아요, 싫어요 상태에 따른 변화
@@ -769,11 +775,11 @@
             divContent.appendChild(cardFooter);
 
             // 댓글신고 버튼 클릭 이벤트
-            const reportReplyButton = document.createElement('button');
-            reportReplyButton.classList.add('btn', 'btn-warning', 'ms-2', 'reportReplyButton');
-            reportReplyButton.textContent = '신고';
+            const reportReplyBtn = document.createElement('button');
+            reportReplyBtn.classList.add('btn', 'ms-2', 'reportReplyBtn');
+            reportReplyBtn.textContent = '신고';
 
-            reportReplyButton.addEventListener('click', function (e) {
+            reportReplyBtn.addEventListener('click', function (e) {
                 e.preventDefault();
                 const replyNo = reply.replyNo;
 
@@ -793,34 +799,44 @@
 
             });
 
-            const deleteButton = document.createElement('button');
-            deleteButton.classList.add('btn', 'btn-danger', 'ms-2', 'deleteReplyBtn');
-            deleteButton.textContent = '삭제';
+            let role = '[[${role}]]';
+            let username = '[[${username}]]';
+            if (role === 'ROLE_ADMIN' || username === reply.userId) {
+                const deleteButton = document.createElement('button');
+                deleteButton.classList.add('btn', 'ms-2', 'deleteReplyBtn');
+                deleteButton.textContent = '삭제';
 
-            deleteButton.addEventListener('click', function (e) {
-                e.preventDefault();
-                let replyNo = reply.replyNo;
+                deleteButton.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    let replyNo = reply.replyNo;
 
-                if (confirm('정말 댓글을 삭제하시겠습니까?')) {
-                    fetch(`/replies/${replyNo}`, {
-                        method: 'DELETE'
-                    }).then(response => {
-                        if (response.ok) {
-                            replyCard.remove();
-                            location.reload();
-                        } else {
-                            console.error('Failed to delete reply');
-                        }
-                    });
-                }
-            });
+                    if (confirm('정말 댓글을 삭제하시겠습니까?')) {
+                        fetch(`/replies/${replyNo}`, {
+                            method: 'DELETE'
+                        }).then(response => {
+                            if (response.ok) {
+                                replyCard.remove();
+                                location.reload();
+                            } else {
+                                console.error('Failed to delete reply');
+                            }
+                        });
+                    }
+                });
 
-            div.appendChild(divContent);
-            div.appendChild(reportReplyButton)
-            div.appendChild(deleteButton);
-            replyCard.appendChild(div);
+                div.appendChild(divContent);
+                div.appendChild(reportReplyBtn);
+                div.appendChild(deleteButton);
+                replyCard.appendChild(div);
 
-            return replyCard;
+                return replyCard;
+            } else {
+                div.appendChild(divContent);
+                div.appendChild(reportReplyBtn);
+                replyCard.appendChild(div);
+
+                return replyCard;
+            }
         }
     });
 
