@@ -68,4 +68,8 @@ public class SampleController extends BaseController {
 		model.addAttribute("searchResponseDTO", responseDTO);
 	}
 
+	@GetMapping("/notice")
+	public void notice() {
+
+	}
 }

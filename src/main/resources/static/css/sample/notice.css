@@ -1,0 +1,16 @@
+
+.container {
+    max-width: 800px;
+    min-height: 300px;
+    margin: 0 auto; /* 중앙 정렬 */
+    display: flex;
+}
+
+.accordion:active {
+    color: black;
+}
+
+.noticeContent {
+    width: 800px;
+    min-height: 500px;
+}
