@@ -106,16 +106,6 @@
 </body>
 <div th:include="include/footer :: footer"></div>
 <script>
-    //cancel 버튼 클릭 이벤트
-    document.querySelector(".modifyCancelBtn").addEventListener("click", function (e) {
-        e.preventDefault();
-    }, false);
-
-    //modifyBtn 버튼 클릭 이벤트
-    document.querySelector(".modifyBtn").addEventListener("click", function (e) {
-        e.preventDefault();
-    }, false);
-
     function checkForm() {
         let postTitle = document.querySelector('input[name="postTitle"]').value.trim();
         let boardCode = document.querySelector('select[name="boardCode"]').value;

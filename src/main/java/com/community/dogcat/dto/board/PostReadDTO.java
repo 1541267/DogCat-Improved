@@ -68,24 +68,4 @@ public class PostReadDTO {
 
 	private boolean dislikeState;
 
-	// Entity -> DTO
-	// public PostReadDTO(Post post) {
-	// 	this.postNo = post.getPostNo();
-	// 	this.userId = post.getUserId().getUserId();
-	// 	this.nickname = post.getUserId().getNickname();
-	// 	this.exp = post.getUserId().getExp();
-	// 	this.userVet = post.getUserId().isUserVet();
-	// 	this.boardCode = post.getBoardCode();
-	// 	this.postTitle = post.getPostTitle();
-	// 	this.postContent = post.getPostContent();
-	// 	this.regDate = post.getRegDate();
-	// 	this.modDate = post.getModDate();
-	// 	this.postTag = post.getPostTag();
-	// 	this.secret = post.isSecret();
-	// 	this.likeCount = post.getLikeCount();
-	// 	this.dislikeCount = post.getDislikeCount();
-	// 	this.viewCount = post.getViewCount();
-	// 	this.replyAuth = post.isReplyAuth();
-	// 	this.imgBoards = post.getImages().stream().toList();
-	// }
 }

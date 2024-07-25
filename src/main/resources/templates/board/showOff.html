@@ -45,7 +45,7 @@
             <span>
                 <!--삭제 버튼 추가 / 권한에 따라 버튼 나타내기-->
                 <!--          <button class="btn ms-3 removeBtn" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">글 삭제</button>-->
-                <button class="btn btn-danger deleteBtn">글 삭제</button>
+                <button class="btn deleteBtn" th:if="${role eq 'ROLE_ADMIN'}">글 삭제</button>
                 </span> <!--버튼-->
         </div> <!--상단-->
 
@@ -60,9 +60,8 @@
                         <!--게시물 정보 받아오기-->
                         <tbody>
                         <tr th:each="dto:${responseDTO.dtoList}" class="showOffList">
-                            <td class="align-middle checkBox">
+                            <td class="align-middle checkBox" th:if="${role eq 'ROLE_ADMIN'}">
                                 <!--td에 추가 삭제 체크 박스 권한에 따라 버튼 나타내기-->
-                                <!--                  <input class="form-check-input" type="checkbox" id="" value="" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">-->
                                 <input class="form-check-input" type="checkbox" th:value="${dto.postNo}"
                                        th:attr="data-postNo=${dto.postNo}">
                             </td>
@@ -171,7 +170,7 @@
                                 class="bi bi-pencil-fill"></i>글쓰기</button>
                 <!--삭제 버튼 권한에 따라 버튼 나타내기-->
                 <!--          <button class="btn ms-2 deleteBtn" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">삭제</button>-->
-                         <button class="btn btn-danger ms-2 deleteBtn">글 삭제</button>
+                         <button class="btn ms-2 deleteBtn" th:if="${role eq 'ROLE_ADMIN'}">글 삭제</button>
                     </span> <!--버튼-->
         </div> <!--하단-->
         <!-- 검색 -->
@@ -277,7 +276,7 @@
     //deleteBtn 버튼 클릭 이벤트
     document.querySelectorAll(".deleteBtn").forEach(function (button) {
         button.addEventListener("click", function (e) {
-            e.preventDefault(); //권한 설정 추가 할 것
+            e.preventDefault();
             e.stopPropagation();
 
             // 선택된 체크박스들을 모두 찾음
@@ -299,14 +298,17 @@
                                 window.location.reload();
                             }
                         },
-                        error: function (error) {
-                            console.log('선택된 게시글이 없습니다: ' + error);
-                            alert('선택된 게시글이 없습니다');
+                        error: function () {
+                            completedRequests++;
+                            if (completedRequests === postNos.length) {
+                                // 모든 요청이 끝난 후 페이지 새로고침
+                                window.location.reload();
+                            }
                         }
                     });
                 });
             } else {
-                alert('삭제할 항목을 선택하세요.');
+                alert('선택된 게시글이 없습니다.');
             }
         });
     }, false)

@@ -112,17 +112,6 @@
 </body>
 <div th:include="include/footer :: footer"></div>
 <script>
-    //cancel 버튼 클릭 이벤트
-    document.querySelector(".cancelBtn").addEventListener("click", function (e) {
-        e.preventDefault();
-    }, false);
-
-    //submit 버튼 클릭 이벤트, 게시글 먼저 등록 후 이미지 업로드 위해 기능 막음 - ys
-    document.querySelector(".submitBtn").addEventListener("click", function (e) {
-        e.preventDefault();
-
-    }, false);
-
     function checkForm() {
         let postTitle = document.querySelector('input[name="postTitle"]').value.trim();
         let boardCode = document.querySelector('select[name="boardCode"]').value;

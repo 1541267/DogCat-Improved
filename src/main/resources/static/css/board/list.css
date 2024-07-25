@@ -143,6 +143,20 @@ td > a {
     --bs-btn-hover-bg: #67cafe;
 }
 
+.secret {
+    color: gray;
+}
+
+.secretPost {
+    font-size: 18px;
+    color: gray;
+    margin-bottom: 0;
+}
+
+.bi-file-lock {
+    font-size: 20px;
+}
+
 .noSearch {
     display: flex;
     justify-content: center;
@@ -164,6 +178,8 @@ td > a {
 
 .blank,
 .btnSection {
+    display: flex;
+    justify-content: flex-end;
     width: 180px;
 }
 
@@ -171,7 +187,9 @@ td > a {
     background-color: #E8FFFF;
     border-color: white;
     color: #000;
-    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-color: #000;
+    --bs-btn-hover-border-color: red;
+    --bs-btn-hover-bg: red;
 }
 
 .page-item .page-link {

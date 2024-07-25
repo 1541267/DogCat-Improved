@@ -31,8 +31,10 @@
         <h2 class="allSearchTitle">통합검색</h2>
         <br>
         <h4 class="allSearchTitle">
-            전체 게시판 내 <span class="allSearchContent">'고양이'</span>
-            검색 결과 : 총 <span class="allSearchContent">'10'</span> 건
+            전체 게시판 내
+            <span class="allSearchContent" th:text="'\''+${searchResponseDTO?.keyword}+'\''" th:if="${searchResponseDTO?.keyword!=null}"></span>
+            <span class="allSearchContent" th:text="'\''+'\''" th:if="${searchResponseDTO?.keyword==null}"></span>
+            검색 결과 : 총 <span class="allSearchContent" th:text="'\''+${searchResponseDTO?.total}+'\''"></span> 건
         </h4>
 
         <!--본문-->

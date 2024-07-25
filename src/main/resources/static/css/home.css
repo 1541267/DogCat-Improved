@@ -172,15 +172,19 @@ td {
     overflow-y: hidden;
 }
 
+.boardEmpty {
+    text-align: center;
+    color: gray;
+
 .loginId,
 .loginPw{
     width: 220px;
 }
-
+  
 .loginOpt {
     height: 65px;
 }
-
+  
 .etcOpt {
     height: 30px;
 }

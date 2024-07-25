@@ -183,7 +183,10 @@ public class BoardController extends BaseController {
 
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
+		String role = userService.getRole(userId);
+
 		log.info("-----------------------userId" + userId);
+		log.info("-----------------------role" + role);
 
 		// 로그인 사용자 확인
 		if (userId == null) {
@@ -197,7 +200,7 @@ public class BoardController extends BaseController {
 		}
 
 		// 게시글 작성자 확인
-		if (!userId.equals(postDTO.getUserId())) {
+		if (!userId.equals(postDTO.getUserId()) && !role.equals("ROLE_ADMIN")) {
 			return "redirect:/error/403"; // 권한이 없는 경우 403 오류 페이지로 리다이렉트
 		}
 		// 삭제시 해당 게시판 목록으로 돌아가기 위해 boardCode 저장

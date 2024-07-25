@@ -25,6 +25,7 @@
                         <a class="ms-3 align-content-end viewMore" href="/board/showoff">더 보기</a>
                     </div>
                     <hr>
+                    <div class="board" th:if="${!showOffList.isEmpty()}">
                     <table class="table showOff">
                         <tbody>
                         <tr>
@@ -38,15 +39,33 @@
                                     <img src="/img/board/no_photo.png" class="boardImg"
                                          alt="Image">
                                     </span>
-                                    <div>
-                                        <p class="showoffTitle mb-0" th:text="${dto.postTitle}">제목</p>
-                                        <p class="showoffWriter mb-0" th:text="${dto.nickname}">글쓴이</p>
+                                    <div class="mt-3">
+                                        <p class="mb-0" th:text="${dto.postTitle}">제목</p>
+                                        <span class="d-flex title sub">
+                                        <p class="mb-0" th:text="${dto.nickname}">글쓴이</p>
+                                        <span class="ms-1">
+                                                    <img class="level" src="/img/level/red.png" alt="레벨이미지 red"
+                                                         th:if="${dto.exp < 200}">
+                                                    <img class="level" src="/img/level/orange.png" alt="레벨이미지 orange"
+                                                         th:if="${dto.exp >= 200 and dto.exp < 400}">
+                                                    <img class="level" src="/img/level/yellow.png" alt="레벨이미지 yellow"
+                                                         th:if="${dto.exp >= 400 and dto.exp < 600}">
+                                                    <img class="level" src="/img/level/mint.png" alt="레벨이미지 mint"
+                                                         th:if="${dto.exp >= 600 and dto.exp < 800}">
+                                                    <img class="level" src="/img/level/purple.png" alt="레벨이미지 purple"
+                                                         th:if="${dto.exp >= 800}">
+                                        </span>
+                                        </span>
                                     </div>
                                 </a>
                             </td>
                         </tr>
                         </tbody>
                     </table>
+                    </div>
+                    <div class="boardEmpty" th:if="${showOffList.isEmpty()}">
+                        <p>등록된 게시물이 없습니다.</p>
+                    </div>
                 </div>
                 <div class="p-4 mb-4 generalBoard">
                     <div class="d-flex justify-content-between px-2 generalBgc">
@@ -54,7 +73,7 @@
                         <a class="ms-3 align-content-end viewMore" href="/board/general">더 보기</a>
                     </div>
                     <hr class="boardHr">
-                    <div class="board">
+                    <div class="board" th:if="${!generalList.isEmpty()}">
                         <table class="table read">
                             <tbody>
                             <tr th:each="dto:${generalList}">
@@ -113,6 +132,9 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="boardEmpty" th:if="${generalList.isEmpty()}">
+                        <p>등록된 게시물이 없습니다.</p>
+                    </div>
                 </div> <!--general-->
 
                 <div class="p-4 tipBoard">
@@ -121,7 +143,7 @@
                         <a class="ms-3 align-content-end viewMore" href="/board/tip">더 보기</a>
                     </div>
                     <hr class="boardHr">
-                    <div class="board">
+                    <div class="board" th:if="${!tipList.isEmpty()}">
                         <table class="table read">
                             <tbody>
                             <tr th:each="dto:${tipList}">
@@ -179,6 +201,9 @@
                             </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div class="boardEmpty" th:if="${tipList.isEmpty()}">
+                        <p>등록된 게시물이 없습니다.</p>
                     </div>
                 </div> <!--tipBoard-->
 
@@ -314,11 +339,11 @@
                     </div>
                 </div>
 
-                <div class="ms-4 mb-4 currentHotBoard">
-                    <div class="p-4">
+
+                <div class="ms-4 mb-4 p-4 currentHotBoard">
                         <p class="boardTitle px-2 bestPost">실시간 인기 게시글</p>
                         <hr class="boardHr">
-                        <div class="board">
+                        <div class="board" th:if="${!todayList.isEmpty()}">
                             <table class="table read">
                                 <tbody>
                                 <tr th:each="dto:${todayList}">
@@ -385,19 +410,20 @@
                                 </tbody>
                             </table>
                         </div>
-
-                    </div>
+                        <div class="boardEmpty" th:if="${todayList.isEmpty()}">
+                            <p>오늘 등록된 게시물이 없습니다.</p>
+                        </div>
 
                 </div> <!--currentHotBoard-->
 
-                <div class="ms-4 mb-4 qnaBoard">
-                    <div class="p-4">
+
+                <div class="ms-4 mb-4 p-4 qnaBoard">
                         <div class="d-flex justify-content-between px-2 qnaBgc">
                             <p class="boardTitle">QnA 게시판</p>
                             <a class="ms-3 align-content-end viewMore" href="/board/qna">더 보기</a>
                         </div>
                         <hr class="boardHr">
-                        <div class="board">
+                        <div class="board" th:if="${!qnaList.isEmpty()}">
                             <table class="table read">
                                 <tbody>
                                 <tr th:each="dto:${qnaList}">
@@ -460,6 +486,8 @@
                                 </tbody>
                             </table>
                         </div>
+                    <div class="boardEmpty" th:if="${qnaList.isEmpty()}">
+                        <p>등록된 게시물이 없습니다.</p>
                     </div>
                 </div> <!--qnaBoard-->
             </div>
