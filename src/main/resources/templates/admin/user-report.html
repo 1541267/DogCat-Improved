@@ -34,8 +34,6 @@
 
         .popup {
             padding: 20px;
-            width: 900px;
-            height: 400px;
             margin-top: 0px;
             box-sizing: border-box; /* 패딩 포함 너비 계산 */
         }
@@ -44,15 +42,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 900px;
         }
 
         .header-top .log img {
-            width: 60px;
-            height: 48px;
-        }
-
-        .header-top .title {
-            margin-right: 10px;
+            width: 65px;
+            height: 52px;
         }
 
         .border {
@@ -60,22 +55,40 @@
         }
 
         .col-custom {
-            flex: 0 0 48%;
-            max-width: 48%;
+            flex: 1;
+            width: 450px;
         }
 
         .content {
-            height: calc(100% - 140px); /* 팝업창 높이에서 헤더 높이와 패딩을 뺀 높이 */
-            overflow-y: auto; /* 내용이 넘칠 경우 스크롤 가능하도록 설정 */
-            padding-top: 10px; /* 헤더와 겹치지 않도록 패딩 추가 */
+            height: calc(100% - 140px);
+            overflow-y: auto;
+            padding-top: 10px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .d-flex {
             margin: 0; /* 좌우 간격 제거 */
         }
 
+        .no-data-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+        }
 
+        .no-data-image {
+            width: 15%;
+            height: auto;
+        }
 
+        .no-data-message {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            color: #6c757d;
+        }
     </style>
 </head>
 <body>
@@ -89,52 +102,71 @@
                 <span class="title" th:text="${reportNickname}"></span>
                 <h3>받은 신고</h3>
             </div>
-            <button class=" btn btn-danger square-button" onclick="closeWindow()">X</button>
+            <button class="btn btn-danger square-button" onclick="closeWindow()">X</button>
         </div>
     </header>
 
     <div class="content">
+        <!-- 게시물 신고와 댓글 신고가 둘 다 없는 경우에 이미지를 가운데에 배치하고 메시지 추가 -->
+        <div class="no-data-container" th:if="${#lists.isEmpty(reportedPosts) && #lists.isEmpty(reportedReplys)}">
+            <img src="/img/board/no_search.png" alt="No data image" class="no-data-image">
+            <div class="no-data-message">신고 받은게 없다옹~</div>
+        </div>
 
-        <div class="d-flex flex-row justify-content-start mb-1">
+        <!-- 게시물 신고와 댓글 신고가 있는 경우에만 표시 -->
+        <div class="d-flex flex-row justify-content-center mb-1"
+             th:if="${!#lists.isEmpty(reportedPosts) || !#lists.isEmpty(reportedReplys)}">
 
-            <!--게시글 신고부분-->
-            <div class="col-custom border p-2">
+            <!-- 게시물 신고 부분 -->
+            <div class="col-custom border p-2" th:if="${!#lists.isEmpty(reportedPosts)}">
                 <h5>게시물</h5>
                 <div th:each="post : ${reportedPosts}" th:if="${post.postNo != null}"
                      class="d-flex justify-content-between align-items-center mb-2">
                     <div>
+                        <!--게시판 구분-->
                         <span th:switch="${post.boardCode}"
-                              class="badge" style="background-color: #0056b3; color: white; padding: 5px; border-radius: 3px;">
+                              class="badge"
+                              style="background-color: #0056b3; color: white; padding: 5px; border-radius: 3px;">
                             <span th:case="'general'">자유</span>
                             <span th:case="'showoff'">자랑</span>
                             <span th:case="'tip'">정보</span>
                             <span th:case="'qna'">QnA</span>
                         </span>
-                        <a class="d-inline-block" style="max-width: 180px; cursor: pointer;" th:text="${post.postTitle}"
+
+                        <!--신고내역확인-->
+                        <a class="d-inline-block" style="max-width: 220px; cursor: pointer;" th:text="${post.postTitle}"
                            th:onclick="|openReportDetailPopup('${post.reportNo}')|"></a>
                     </div>
+
+                    <!--게시글 작성 시간, 신고삭제-->
                     <div class="text-right">
-                        <span th:text="${#dates.format(post.regDate, 'yyyy-MM-dd')}"></span>
+                        <span th:text="${#dates.format(post.regDate, 'yyyy-MM-dd')}" style="font-size: x-small"></span>
                         <button class="btn btn-danger ml-2 btn-sm" th:onclick="|deleteReportLog(${post.reportNo})|">신고삭제
                         </button>
                     </div>
                 </div>
             </div>
 
-
-            <!--댓글 신고부분-->
-            <div class="col-custom border p-2">
+            <!-- 댓글 신고 부분 -->
+            <div class="col-custom border p-2" th:if="${!#lists.isEmpty(reportedReplys)}">
                 <h5>댓글</h5>
+
+                <!--댓글내용-->
                 <div th:each="reply : ${reportedReplys}" th:if="${reply.replyNo != null}"
                      class="d-flex justify-content-between align-items-center mb-2">
-                    <div>
-                        <span style="width: 35px;" class="badge bg-dark text-white"> 댓글</span>
-                        <a class="d-inline-block" style="max-width: 180px; cursor: pointer;"
+                    <div class="d-flex align-items-center">
+                        <span style="width: 35px;" class="badge bg-dark text-white">댓글</span>
+
+                        <!--댓글 작성 시간, 신고삭제-->
+                        <a class="d-inline-block ms-2" style="max-width: 220px; cursor: pointer;"
                            th:text="${reply.replyContent}"
-                           th:onclick="|openReportDetailPopup('${reply.reportNo}')|"></a>
+                           th:onclick="|openReportDetailPopup('${reply.reportNo}')|">
+                        </a>
                     </div>
+
                     <div class="text-right">
-                        <span th:text="${#dates.format(reply.regDate, 'yyyy-MM-dd')}"></span>
+                        <span th:text="${#dates.format(reply.ReplyregDate, 'yyyy-MM-dd')}"
+                              style="font-size: x-small"></span>
                         <button class="btn btn-danger m-0 btn-sm" th:onclick="|deleteReportLog(${reply.reportNo})|">신고삭제
                         </button>
                     </div>

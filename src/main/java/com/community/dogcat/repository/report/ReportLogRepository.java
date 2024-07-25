@@ -7,6 +7,7 @@ import com.community.dogcat.dto.report.ReportLogDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -36,6 +37,10 @@ public interface ReportLogRepository extends JpaRepository<ReportLog, Long> {
 
     @Query("SELECT COUNT(r) FROM ReportLog r WHERE r.reportTitle LIKE %:keyword%")
     long countByReportTitleContaining(@Param("keyword") String keyword);
+
+    @Modifying
+    @Query("DELETE FROM ReportLog rl WHERE rl.reportNo = :reportNo")
+    int deleteReportLog(@Param("reportNo") Long reportNo);
 
 
 }
