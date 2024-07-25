@@ -29,11 +29,8 @@ import java.util.stream.Collectors;
 public class AdminService {
 
     private final ReportLogRepository reportLogRepository;
-    private final UserRepository userRepository;
     private final AdminRepository adminRepository;
     private final UsersAuthRepository usersAuthRepository;
-    private final BoardRepository boardRepository;
-    private final ReplyRepository replyRepository;
 
     public List<AdminUserDetailDTO> findAllUsers(BoardPageRequestDTO pageRequestDTO) {
         Pageable pageable = pageRequestDTO.getPageable("userId");
@@ -41,7 +38,7 @@ public class AdminService {
 
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
-            userPage = adminRepository.findByBlockFalseAndNicknameContainingOrBlockFalseAndUserNameContaining(keyword, keyword, pageable);
+            userPage = adminRepository.findByBlockFalseKeyword(keyword, keyword, pageable);
         } else {
             userPage = adminRepository.findByBlockFalse(pageable);
         }
@@ -52,6 +49,7 @@ public class AdminService {
                         .userName(user.getUserName())
                         .regDate(user.getRegDate())
                         .nickname(user.getNickname())
+                        .userVet(user.isUserVet())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -59,7 +57,7 @@ public class AdminService {
     public int countAllUsers(BoardPageRequestDTO pageRequestDTO) {
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
-            return (int) adminRepository.countByBlockFalseAndNicknameContainingOrUserNameContaining(keyword, keyword);
+            return (int) adminRepository.countByBlockFalseKeyword(keyword, keyword);
         } else {
             return (int) adminRepository.countByBlockFalse();
         }
@@ -147,7 +145,7 @@ public class AdminService {
 
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
-            blockUserPage = adminRepository.findByBlockTrueAndNicknameContainingOrBlockTrueAndUserNameContaining(keyword, keyword, pageable);
+            blockUserPage = adminRepository.findByBlockTrueKeyword(keyword, keyword, pageable);
         } else {
             blockUserPage = adminRepository.findByBlockIsTrue(pageable);
         }
@@ -158,30 +156,23 @@ public class AdminService {
                         .userName(user.getUserName())
                         .regDate(user.getRegDate())
                         .block(user.isBlock())
+                        .nickname(user.getNickname())
+                        .userVet(user.isUserVet())
                         .build())
                 .collect(Collectors.toList());
     }
-
 
     public int countAllBlockUsers(BoardPageRequestDTO pageRequestDTO) {
 
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
-            return (int) adminRepository.countByBlockTrueAndNicknameContainingOrUserNameContaining(keyword, keyword);
+            return (int) adminRepository.countByBlockTrueKeyword(keyword, keyword);
         } else {
             return (int) adminRepository.countByBlockTrue();
         }
-
-
-//        int count = (int) userRepository.countByBlock(true);
-//        log.info(count);
-//
-//        return (int) userRepository.countByBlock(true);
-
-
     }
 
-
+    //유저 차단
     public void blockUser(String userId) {
         int updatedCount = adminRepository.blockUserByUserId(userId);
         if (updatedCount > 0) {
@@ -191,12 +182,14 @@ public class AdminService {
         }
     }
 
+    //관리자 지정
     public void designateAdministrator(String userId) {
         UsersAuth usersAuth = UsersAuth.builder().userId(userId).authorities("ROLE_ADMIN").build();
 
         usersAuthRepository.save(usersAuth);
     }
 
+    //유저 차단 해제
     public void restoreUser(String userId) {
         int updateCount = adminRepository.restoreUserByUserId(userId);
         if (updateCount < 1) {
@@ -204,12 +197,6 @@ public class AdminService {
         } else {
             log.warn("User not found with userId '" + userId + "'.");
         }
-    }
-
-
-    @Transactional
-    public void deleteReportLog(Long reportNo) {
-        adminRepository.deleteReportLog(reportNo);
     }
 
 }
