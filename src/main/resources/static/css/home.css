@@ -175,7 +175,8 @@ td {
 .boardEmpty {
     text-align: center;
     color: gray;
-
+}
+    
 .loginId,
 .loginPw{
     width: 220px;
