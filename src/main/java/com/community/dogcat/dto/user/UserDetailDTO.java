@@ -10,10 +10,12 @@ import lombok.Data;
 public class UserDetailDTO {
 
 	private String userId;
-	private String password;
+	private String userPw;
 	private String userName;
 	private String nickname;
 	private String tel;
 	private boolean social;
+	private boolean userVet;
 	private Instant regDate;
+
 }

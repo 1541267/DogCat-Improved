@@ -27,40 +27,64 @@ public class ReissueService {
 	public boolean reissue(HttpServletRequest request, HttpServletResponse response) {
 
 		Cookie[] cookies = request.getCookies();
+
 		String refresh = null;
+
 		if (cookies != null) {
+
 			for (Cookie cookie : cookies) {
+
 				if (cookie.getName().equals("refresh")) {
+
 					refresh = cookie.getValue();
+
 				}
 			}
+
 		}
 
 		if (refresh == null) {
+
 			Cookie accessCookie = new Cookie("access", null);
+
 			accessCookie.setMaxAge(0);
 			accessCookie.setPath("/");
 			response.addCookie(accessCookie);
+
 			return false;
+
 		}
 
 		try {
+
 			jwtUtil.isExpired(refresh);
+
 		} catch (ExpiredJwtException e) {
+
 			log.info("Refresh token has expired");
+
 			return false;
+
 		}
 
 		String category = jwtUtil.getCategory(refresh);
+
 		if (!category.equals("refresh")) {
+
 			log.info("Invalid refresh token");
+
 			return false;
+
 		}
 
 		boolean isExist = refreshRepository.existsByRefresh(refresh);
+
 		if (!isExist) {
+
 			log.info("Invalid refresh token");
+
 			return false;
+
 		}
 
 		String username = jwtUtil.getUsername(refresh);
@@ -72,7 +96,6 @@ public class ReissueService {
 		refreshRepository.deleteByRefresh(refresh);
 		addRefreshEntity(username, newRefresh);
 
-		// 기존 쿠키 삭제 후 새 쿠키 추가
 		for (Cookie cookie : cookies) {
 			if (cookie.getName().equals("refresh") || cookie.getName().equals("access")) {
 				cookie.setMaxAge(0);
@@ -81,32 +104,36 @@ public class ReissueService {
 			}
 		}
 
-		// 새 쿠키 추가
 		response.addCookie(createCookie("access", newAccess));
 		response.addCookie(createCookie("refresh", newRefresh));
 
 		return true;
+
 	}
 
 	private void addRefreshEntity(String username, String refresh) {
-		// 현재 시간에 일주일을 더한 시간 계산
+
 		Date date = new Date(System.currentTimeMillis() + 604800000L);
 
 		RefreshEntity refreshEntity = RefreshEntity.builder()
 			.username(username)
 			.refresh(refresh)
-			.expiration(date.toString()) // 날짜를 문자열로 저장
+			.expiration(date.toString())
 			.build();
 
 		refreshRepository.save(refreshEntity);
+
 	}
 
 	private Cookie createCookie(String key, String value) {
+
 		Cookie cookie = new Cookie(key, value);
-		cookie.setMaxAge(7 * 24 * 60 * 60); // 1주일 유효 기간 설정 (초 단위)
-		cookie.setHttpOnly(true); // JavaScript 에서 접근 불가 설정
-		cookie.setPath("/"); // 모든 경로에서 접근 가능하도록 설정
+		cookie.setMaxAge(7 * 24 * 60 * 60);
+		cookie.setHttpOnly(true);
+		cookie.setPath("/");
 
 		return cookie;
+
 	}
+
 }
