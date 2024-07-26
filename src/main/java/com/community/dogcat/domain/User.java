@@ -71,8 +71,23 @@ public class User {
 	@ColumnDefault("false")
 	private boolean userVet;
 
-  	public void incrementExp() {
-		this.exp = (this.exp == null) ? 0 : this.exp + 2;
+	// exp 값을 증가시키는 메서드
+	public void incrementExp() {
+
+		if (this.exp == null) {
+
+			this.exp = 0L;
+
+		} else if (this.exp < 2999) {
+
+			this.exp += 2;
+
+		} else if (this.exp == 2999) {
+
+			this.exp += 1;
+
+		}
+
 	}
 
 	// exp 값을 증가시키는 메서드 (게시글 작성)
