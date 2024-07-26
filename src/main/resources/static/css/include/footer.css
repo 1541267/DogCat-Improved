@@ -1,3 +1,8 @@
+.footer {
+    max-width: 1200px;
+    margin: 0 auto; /* 중앙 정렬 */
+}
+
 .footer-nav {
     margin: 30px;
     display: flex;

@@ -49,31 +49,31 @@
                                 <span class="align-middle" th:if="${postDTO.replyAuth==true}">
                                     <img class="replyAuthImg" src="/img/tag/vetScope.png" alt="수의사만 답변 가능">
                                 </span>
-                            <span>
+                                <span>
                                     <img class="tag" src="/img/tag/tag_dog.png" th:if="${postDTO.postTag eq '강아지'}"
                                          alt="강아지태그">
                                     <img class="tag" src="/img/tag/tag_cat.png" th:if="${postDTO.postTag eq '고양이'}"
                                          alt="고양이태그">
                                 </span>
-                            <span class="readTitle" th:text="${postDTO.postTitle}">
+                                <span class="readTitle" th:text="${postDTO.postTitle}">
                                 </span>
-                            <span class="icon secret" th:if="${postDTO.secret != false}">
+                                <span class="icon secret" th:if="${postDTO.secret != false}">
                                     <i class="bi bi-file-lock"></i>
                                 </span>
                             <br>
                             <div class="readTitle sub">
                                 <span th:text="${postDTO.nickname}">작성자</span>
                                 <span>
-                                    <img class="level" src="/img/level/red.png" alt="레벨이미지 red"
-                                         th:if="${postDTO.exp < 200}">
-                                    <img class="level" src="/img/level/orange.png" alt="레벨이미지 orange"
-                                         th:if="${postDTO.exp >= 200 and postDTO.exp < 400}">
-                                    <img class="level" src="/img/level/yellow.png" alt="레벨이미지 yellow"
-                                         th:if="${postDTO.exp >= 400 and postDTO.exp < 600}">
-                                    <img class="level" src="/img/level/mint.png" alt="레벨이미지 mint"
-                                         th:if="${postDTO.exp >= 600 and postDTO.exp < 800}">
-                                    <img class="level" src="/img/level/purple.png" alt="레벨이미지 purple"
-                                         th:if="${postDTO.exp >= 800}">
+                                    <img class="level" src="/img/level/red.png" alt="User Level Image"
+                                         th:if="${postDTO.exp < 750}">
+                                    <img class="level" src="/img/level/orange.png" alt="User Level Image"
+                                         th:if="${postDTO.exp >= 750 and postDTO.exp < 1500}">
+                                    <img class="level" src="/img/level/yellow.png" alt="User Level Image"
+                                         th:if="${postDTO.exp >= 1500 and postDTO.exp < 2250}">
+                                    <img class="level" src="/img/level/mint.png" alt="User Level Image"
+                                         th:if="${postDTO.exp >= 2250 and postDTO.exp < 3000}">
+                                    <img class="level" src="/img/level/purple.png" alt="User Level Image"
+                                         th:if="${postDTO.exp >= 3000}">
                                 </span>
                                 <span th:if="${postDTO.modDate == null}"
                                       th:text="${#temporals.format(postDTO.regDate, 'yyyy-MM-dd')}">작성일</span>
@@ -218,15 +218,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- 댓글이 없는 경우 -->
-                <!--                    <div class="no-reply" th:if="${#lists.isEmpty(replies)}">-->
-                <!--                        <div class="no-reply">-->
-                <!--                            <img class="mx-auto d-block" src="/img/board/no_reply.png" alt="해당 게시판에 댓글이 존재하지 않습니다">-->
-                <!--                            <div class="text-center mt-3 mb-3">-->
-                <!--                                아직 댓글이 없습니다.-->
-                <!--                            </div>-->
-                <!--                        </div>-->
-                <!--                    </div>-->
             </div>
             <form id="formReply" th:action="@{/replies/}" method="post">
                 <table class="mt-4 w-100 replyRegister">
@@ -366,7 +357,6 @@
                             <a class="page-link" th:data-num="${i}">[[${i}]]</a>
                         </li>
                     </th:block>
-
                     <li class="page-item" th:if="${responseDTO.next}">
                         <a class="page-link" th:data-num="${responseDTO.end}+1">
                             <i class="bi bi-caret-right-fill"></i></a></li>

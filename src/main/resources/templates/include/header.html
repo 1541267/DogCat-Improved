@@ -14,14 +14,18 @@
     <!--부트스트랩 아이콘 사이즈 조절-->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
+    <div class="header">
     <div class="header-top">
-        <div class="log" style="width: 192px"><a href="/sample/home"><img class="bi me-2" th:src="@{/img/logo/logo.png}" width="120" height="120" alt="로고"></a></div>
-        <div class="title"><a href="/sample/home">
-            <img class="bi me-2" th:src="@{/img/logo/title.png}" width="400" height="150" alt="타이틀"></a>
+        <div class="log"><a href="/sample/home"><img class="bi me-2" th:src="@{/img/logo/logo.png}"
+                                                                          width="120" height="120"
+                                                                          alt="로고"></a></div>
+        <div class="title"><a href="/sample/home"><img class="bi me-2" th:src="@{/img/logo/title.png}" width="400"
+                                                       height="150"
+                                                       alt="타이틀"></a>
         </div>
         <div class="auth d-flex flex-column justify-content-between" id="auth">
             <!-- Thymeleaf 조건문을 사용하여 로그인 상태에 따라 다른 내용 표시 -->
-            <div class="d-flex justify-content-start">
+            <div class="d-flex justify-content-end">
             <span th:if="${username == null}" class="logged-out">
                 <a href="/user/login">로그인</a>
                 <a href="/user/join">회원가입</a>
@@ -66,6 +70,8 @@
             </button>
         </form>
     </div>
+    </div>
+
     <!-- Thymeleaf 조건식으로 현재 보고 있는 게시판을 nav 태그에 표시 -->
     <!-- 공통 nav -->
     <div style="background-color: #67cafe;">
@@ -157,7 +163,6 @@
                     style="color: white; font-weight: bold; margin-top: 20px; margin-bottom: 20px;">QnA</a></span>
         </nav>
     </div>
-
     <script>
         function logout() {
             const form = document.createElement('form');

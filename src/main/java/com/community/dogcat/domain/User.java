@@ -92,6 +92,6 @@ public class User {
 
 	// exp 값을 증가시키는 메서드 (게시글 작성)
 	public void incrementPostExp() {
-		this.exp = (this.exp == null) ? 1 : this.exp + 1;
+		this.exp = (this.exp != null) ? (this.exp >= 3000 ? 3000 : this.exp + 1) : 0;
 	}
 }

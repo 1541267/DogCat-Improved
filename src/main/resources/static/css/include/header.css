@@ -3,10 +3,15 @@ header {
     padding-bottom: 10px;
 }
 
+.header {
+    max-width: 1200px;
+    margin: 0 auto; /* 중앙 정렬 */
+}
+
 .header-top {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     padding: 30px 20px 0 20px;
     background-color: #fff;
     margin-bottom: 0;
@@ -21,6 +26,7 @@ header {
 
 .log {
     font-weight: bold;
+    width: 310px;
 }
 
 .title {
@@ -29,6 +35,7 @@ header {
 
 .auth {
     font-size: 0.9em;
+    width: 310px;
 }
 
 .auth a {
