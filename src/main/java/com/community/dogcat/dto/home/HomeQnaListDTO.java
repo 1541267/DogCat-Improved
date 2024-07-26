@@ -1,4 +1,4 @@
-package com.community.dogcat.dto.sample.home;
+package com.community.dogcat.dto.home;
 
 import java.time.Instant;
 import java.util.List;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SampleTodayListDTO {
+public class HomeQnaListDTO {
 
 	private Long postNo;
 

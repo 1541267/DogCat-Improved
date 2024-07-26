@@ -7,13 +7,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.community.dogcat.dto.board.BoardListDTO;
+import com.community.dogcat.dto.home.HomeGeneralListDTO;
+import com.community.dogcat.dto.home.HomeQnaListDTO;
+import com.community.dogcat.dto.home.HomeShowOffListDTO;
+import com.community.dogcat.dto.home.HomeTipListDTO;
+import com.community.dogcat.dto.home.HomeTodayListDTO;
 import com.community.dogcat.dto.myPage.activity.UserPostsActivityDTO;
-import com.community.dogcat.dto.sample.home.SampleGeneralListDTO;
-import com.community.dogcat.dto.sample.home.SampleQnaListDTO;
-import com.community.dogcat.dto.sample.home.SampleShowOffListDTO;
-import com.community.dogcat.dto.sample.home.SampleTipListDTO;
-import com.community.dogcat.dto.sample.home.SampleTodayListDTO;
-import com.community.dogcat.dto.sample.search.AllSearchDTO;
+import com.community.dogcat.dto.home.search.AllSearchDTO;
 
 public interface BoardSearch {
 
@@ -31,18 +31,18 @@ public interface BoardSearch {
 	Page<UserPostsActivityDTO> postListWithUser(String[] types, String keyword, Pageable pageable, String userId);
 
 	// 홈 : 실시간 인기 게시글 리스트
-	List<SampleTodayListDTO> todayList(Instant startOfDay, Instant endOfDay, int size);
+	List<HomeTodayListDTO> todayList(Instant startOfDay, Instant endOfDay, int size);
 
 	// 홈 : showOff 리스트
-	List<SampleShowOffListDTO> showOffList(int size);
+	List<HomeShowOffListDTO> showOffList(int size);
 
 	// 홈 : general 리스트
-	List<SampleGeneralListDTO> generalList(int size);
+	List<HomeGeneralListDTO> generalList(int size);
 
 	// 홈 : tip 리스트
-	List<SampleTipListDTO> tipList(int size);
+	List<HomeTipListDTO> tipList(int size);
 
 	// 홈 : qna 리스트
-	List<SampleQnaListDTO> qnaList(int size);
+	List<HomeQnaListDTO> qnaList(int size);
 
 }

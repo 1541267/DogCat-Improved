@@ -1,4 +1,4 @@
-package com.community.dogcat.dto.sample.search;
+package com.community.dogcat.dto.home.search;
 
 import java.util.Collections;
 import java.util.List;
@@ -9,7 +9,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class SampleResponseDTO<E> {
+public class HomeResponseDTO<E> {
 
 	private int page;
 	private int total;
@@ -35,7 +35,7 @@ public class SampleResponseDTO<E> {
 	private String keyword;
 
 	@Builder(builderMethodName = "withAll")
-	public SampleResponseDTO(SamplePageRequestDTO pageRequestDTO, List<E> dtoList, int total, String keyword) {
+	public HomeResponseDTO(HomePageRequestDTO pageRequestDTO, List<E> dtoList, int total, String keyword) {
 
 		this.page = pageRequestDTO.getPage();
 		this.size = pageRequestDTO.getSize();

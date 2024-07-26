@@ -1,4 +1,4 @@
-package com.community.dogcat.dto.sample.search;
+package com.community.dogcat.dto.home;
 
 import java.time.Instant;
 import java.util.List;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AllSearchDTO {
+public class HomeShowOffListDTO {
 
 	private Long postNo;
 
@@ -54,8 +54,5 @@ public class AllSearchDTO {
 
 	// 게시물의 첨부파일 정보
 	private List<ImgBoard> imgBoards;
-
-	// 게시물에 달린 댓글 수
-	private Long replyCount;
 
 }

@@ -1,4 +1,4 @@
-package com.community.dogcat.service.sample;
+package com.community.dogcat.service.home;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -11,14 +11,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.community.dogcat.dto.sample.home.SampleGeneralListDTO;
-import com.community.dogcat.dto.sample.home.SampleQnaListDTO;
-import com.community.dogcat.dto.sample.home.SampleShowOffListDTO;
-import com.community.dogcat.dto.sample.home.SampleTipListDTO;
-import com.community.dogcat.dto.sample.home.SampleTodayListDTO;
-import com.community.dogcat.dto.sample.search.AllSearchDTO;
-import com.community.dogcat.dto.sample.search.SamplePageRequestDTO;
-import com.community.dogcat.dto.sample.search.SampleResponseDTO;
+import com.community.dogcat.dto.home.HomeGeneralListDTO;
+import com.community.dogcat.dto.home.HomeQnaListDTO;
+import com.community.dogcat.dto.home.HomeShowOffListDTO;
+import com.community.dogcat.dto.home.HomeTipListDTO;
+import com.community.dogcat.dto.home.HomeTodayListDTO;
+import com.community.dogcat.dto.home.search.AllSearchDTO;
+import com.community.dogcat.dto.home.search.HomePageRequestDTO;
+import com.community.dogcat.dto.home.search.HomeResponseDTO;
 import com.community.dogcat.repository.board.BoardRepository;
 import com.community.dogcat.repository.board.reply.ReplyRepository;
 
@@ -29,14 +29,14 @@ import lombok.extern.log4j.Log4j2;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class SampleServiceImpl implements SampleService {
+public class HomeServiceImpl implements HomeService {
 
 	private final BoardRepository boardRepository;
 	private final ReplyRepository replyRepository;
 
 	// 통합 검색 : 첨부파일 유/무 + 비밀글 제외
 	@Override
-	public SampleResponseDTO<AllSearchDTO> searchAll(SamplePageRequestDTO pageRequestDTO) {
+	public HomeResponseDTO<AllSearchDTO> searchAll(HomePageRequestDTO pageRequestDTO) {
 		String[] types = pageRequestDTO.getTypes();
 		String keyword = pageRequestDTO.getKeyword();
 		Pageable pageable = pageRequestDTO.getPageable("postNo");
@@ -54,7 +54,7 @@ public class SampleServiceImpl implements SampleService {
 			.collect(Collectors.toList());
 		log.info("-----------dtoList----" + dtoList);
 
-		return SampleResponseDTO.<AllSearchDTO>withAll()
+		return HomeResponseDTO.<AllSearchDTO>withAll()
 			.pageRequestDTO(pageRequestDTO)
 			.dtoList(result.getContent())
 			.total((int)result.getTotalElements())
@@ -63,7 +63,7 @@ public class SampleServiceImpl implements SampleService {
 	}
 
 	// 실시간 인기 게시글 리스트
-	public List<SampleTodayListDTO> getPostsForToday() {
+	public List<HomeTodayListDTO> getPostsForToday() {
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 		Instant startOfDay = today.atStartOfDay(ZoneId.of("Asia/Seoul")).toInstant();
 		Instant endOfDay = today.atTime(23, 59, 59).atZone(ZoneId.of("Asia/Seoul")).toInstant();
@@ -72,22 +72,22 @@ public class SampleServiceImpl implements SampleService {
 	}
 
 	// showOff 게시글 리스트
-	public List<SampleShowOffListDTO> getShowOffPosts() {
+	public List<HomeShowOffListDTO> getShowOffPosts() {
 		return boardRepository.showOffList(3);
 	}
 
 	// general 게시글 리스트
-	public List<SampleGeneralListDTO> getGeneralPosts() {
+	public List<HomeGeneralListDTO> getGeneralPosts() {
 		return boardRepository.generalList(10);
 	}
 
 	// tip 게시글 리스트
-	public List<SampleTipListDTO> getTipPosts() {
+	public List<HomeTipListDTO> getTipPosts() {
 		return boardRepository.tipList(10);
 	}
 
 	// qna 게시글 리스트
-	public List<SampleQnaListDTO> getQnaPosts() {
+	public List<HomeQnaListDTO> getQnaPosts() {
 		return boardRepository.qnaList(10);
 	}
 

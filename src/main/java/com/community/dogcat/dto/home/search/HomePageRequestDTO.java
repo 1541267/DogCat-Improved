@@ -1,4 +1,4 @@
-package com.community.dogcat.dto.sample.search;
+package com.community.dogcat.dto.home.search;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SamplePageRequestDTO {
+public class HomePageRequestDTO {
 
 	@Builder.Default
 	private int page = 1;
