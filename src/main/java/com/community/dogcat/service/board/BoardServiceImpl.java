@@ -126,7 +126,7 @@ public class BoardServiceImpl implements BoardService {
 		String auth = usersAuthRepository.findByUserId(userId).getAuthorities();
 		log.info(auth);
 
-		// 회원 아이디로 작성한 게시글이 맞으면 삭제
+		// 로그인한 회원이 작성한 게시글이 맞거나 로그인한 계정이 관리자면 삭제 가능
 		if (post.isPresent() || auth.equals("ROLE_ADMIN")) {
 			List<ImgBoard> images = uploadRepository.findByPostNo(postNo);
 			for (ImgBoard image : images) {
@@ -234,29 +234,33 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public Long modify(PostDTO postDTO) {
+	public Long modify(PostDTO postDTO, String userId) {
 		// 게시물 번호 조회
 		Post post = boardRepository.findById(postDTO.getPostNo()).orElseThrow();
 		log.info("modify / postNo: {}, postContent: {}", post.getPostNo(), post.getPostContent());
 
-		if (postDTO.getPostContent().contains(oldUrl)) {
-			postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
+		// 게시물 작성자 확인
+		if (postDTO.getUserId().equals(userId)) {
+
+			if (postDTO.getPostContent().contains(oldUrl)) {
+				postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
+			}
+
+			// 수정시간 추가
+			postDTO.setModDate(Instant.now());
+
+			// 게시물 수정
+			post.modify(
+				postDTO.getBoardCode(),
+				postDTO.getPostTitle(),
+				postDTO.getPostContent(),
+				postDTO.getModDate(),
+				postDTO.getPostTag(),
+				postDTO.isSecret(),
+				postDTO.isReplyAuth());
+
+			boardRepository.save(post);
 		}
-
-		// 수정시간 추가
-		postDTO.setModDate(Instant.now());
-
-		// 게시물 수정
-		post.modify(
-			postDTO.getBoardCode(),
-			postDTO.getPostTitle(),
-			postDTO.getPostContent(),
-			postDTO.getModDate(),
-			postDTO.getPostTag(),
-			postDTO.isSecret(),
-			postDTO.isReplyAuth());
-
-		boardRepository.save(post);
 		return post.getPostNo();
 	}
 

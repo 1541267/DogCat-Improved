@@ -94,17 +94,17 @@
                                         <div class="title sub">
                                             <span th:text="${dto.nickname}">작성자</span>
                                             <span>
-                                                    <img class="level" src="/img/level/red.png" alt="레벨이미지 red"
-                                                         th:if="${dto.exp < 200}">
-                                                    <img class="level" src="/img/level/orange.png" alt="레벨이미지 orange"
-                                                         th:if="${dto.exp >= 200 and dto.exp < 400}">
-                                                    <img class="level" src="/img/level/yellow.png" alt="레벨이미지 yellow"
-                                                         th:if="${dto.exp >= 400 and dto.exp < 600}">
-                                                    <img class="level" src="/img/level/mint.png" alt="레벨이미지 mint"
-                                                         th:if="${dto.exp >= 600 and dto.exp < 800}">
-                                                    <img class="level" src="/img/level/purple.png" alt="레벨이미지 purple"
-                                                         th:if="${dto.exp >= 800}">
-                                                </span>
+                                                    <img class="level" src="/img/level/red.png" alt="User Level Image"
+                                                         th:if="${dto.exp < 750}">
+                                                    <img class="level" src="/img/level/orange.png" alt="User Level Image"
+                                                         th:if="${dto.exp >= 750 and dto.exp < 1500}">
+                                                    <img class="level" src="/img/level/yellow.png" alt="User Level Image"
+                                                         th:if="${dto.exp >= 1500 and dto.exp < 2250}">
+                                                    <img class="level" src="/img/level/mint.png" alt="User Level Image"
+                                                         th:if="${dto.exp >= 2250 and dto.exp < 3000}">
+                                                    <img class="level" src="/img/level/purple.png" alt="User Level Image"
+                                                         th:if="${dto.exp >= 3000}">
+                                            </span>
                                             <span class="mx-1">조회수 <span th:text="${dto?.viewCount}">5</span></span>
                                             <span class="mx-1" th:if="${dto?.modDate == null}"
                                                   th:text="${#temporals.format(dto.regDate, 'yyyy-MM-dd')}">작성일</span>

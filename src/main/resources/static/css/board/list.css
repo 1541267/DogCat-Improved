@@ -46,6 +46,9 @@ body {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 .read {
@@ -141,6 +144,9 @@ td > a {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 .secret {
@@ -155,6 +161,10 @@ td > a {
 
 .bi-file-lock {
     font-size: 20px;
+}
+
+.bi-file-earmark-image {
+    font-size: 18px;
 }
 
 .noSearch {
@@ -190,6 +200,9 @@ td > a {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: red;
     --bs-btn-hover-bg: red;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: red;
+    --bs-btn-active-bg: red;
 }
 
 .page-item .page-link {
@@ -245,6 +258,9 @@ td > a {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 .searchForm .searchBtn:hover {
@@ -284,6 +300,9 @@ td > a {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 div.text-muted {
@@ -300,6 +319,9 @@ div.text-muted {
     --bs-btn-hover-color: #fff;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 .boardInfo {

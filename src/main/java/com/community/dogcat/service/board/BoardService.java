@@ -24,7 +24,7 @@ public interface BoardService {
 	// 게시글 상세보기
 	PostReadDTO readDetail(Long postNo, String userId);
 
-	Long modify(PostDTO postDTO);
+	Long modify(PostDTO postDTO, String userId);
 
 	// readDetail 하단 list
 	BoardPageResponseDTO<BoardListDTO> readList(BoardPageRequestDTO pageRequestDTO);

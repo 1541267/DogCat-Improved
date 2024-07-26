@@ -32,9 +32,9 @@ public class BoardPageRequestDTO {
 
 	private String boardCode;
 
-	// list용
+	// BoardList
 	private String postTag;
-	// list용
+	// BoardList
 	private String order;
 
 	public String[] getTypes() {

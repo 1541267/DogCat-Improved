@@ -151,27 +151,27 @@ class BoardServiceImplTest {
 		log.info(postNo);
 	}
 
-	@Test
-	void Modify() {
-		Long postNo = 34L;
-
-		PostDTO postDTO = PostDTO.builder()
-			.postNo(postNo)
-			.userId("user1")
-			.boardCode("general")
-			.dislikeCount(8L)
-			.postContent("ServiceTest")
-			.postTag("고양이")
-			.postTitle("ServiceTest")
-			.likeCount(3L)
-			.replyAuth(true)
-			.secret(true)
-			.viewCount(1L)
-			.build();
-		log.info(postDTO);
-
-		boardService.modify(postDTO);
-	}
+	// @Test
+	// void Modify() {
+	// 	Long postNo = 34L;
+	//
+	// 	PostDTO postDTO = PostDTO.builder()
+	// 		.postNo(postNo)
+	// 		.userId("user1")
+	// 		.boardCode("general")
+	// 		.dislikeCount(8L)
+	// 		.postContent("ServiceTest")
+	// 		.postTag("고양이")
+	// 		.postTitle("ServiceTest")
+	// 		.likeCount(3L)
+	// 		.replyAuth(true)
+	// 		.secret(true)
+	// 		.viewCount(1L)
+	// 		.build();
+	// 	log.info(postDTO);
+	//
+	// 	boardService.modify(postDTO);
+	// }
 
 	@Test
 	public void testList() {

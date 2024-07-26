@@ -6,11 +6,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <link rel="stylesheet" th:href="@{/css/footer.css}">
     <title>Document</title>
 </head>
 <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+    <link rel="stylesheet" th:href="@{/css/include/footer.css}">
+
     <hr class="mb-0">
+    <div class="footer">
     <div class="d-flex justify-content-between">
         <div class="col-md-4 footer-nav justify-content-start">
             <img class="bi me-2" th:src="@{/img/logo/logo.png}" width="120" height="120" alt="Logo">
@@ -19,10 +21,11 @@
                 <li class="nav-item">Copyrightⓒ 2024 DogCat All rights reserved.</li>
             </ul>
         </div>
-        <div class="d-flex flex-column mx-3 justify-content-center"><img th:src="@{/img/logo/footprint.png}" width="50"
+        <div class="d-flex p-3 flex-column mx-3 justify-content-center"><img th:src="@{/img/logo/footprint.png}" width="50"
                                                                          alt="헤더이미지"
                                                                          style="transform: rotate(300deg);">
         </div>
+    </div>
     </div>
 </footer>
 

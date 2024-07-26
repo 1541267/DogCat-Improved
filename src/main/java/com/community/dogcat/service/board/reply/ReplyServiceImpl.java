@@ -35,25 +35,48 @@ public class ReplyServiceImpl implements ReplyService {
 
 	@Override
 	public Long register(ReplyDTO replyDTO) {
+
 		// 로그인한 회원정보를 받아 userId 조회
 		String userId = replyDTO.getUserId();
 		User user = userRepository.findById(userId).orElseThrow();
 		// 조회한 회원정보 DTO에 추가
 		replyDTO.setNickname(user.getNickname());
+
 		// 댓글 작성을 위해 게시물 번호 조회
 		Post post = boardRepository.findById(replyDTO.getPostNo()).orElseThrow();
+		
+		// 게시물이 비밀글인 경우
+		boolean secret = post.isSecret();
+		// 댓글 권한이 수의사만 가능한 경우
+		boolean replyAuth = post.isReplyAuth();
+		// 관리자거나, 수의사거나
+		String auth = usersAuthRepository.findByUserId(userId).getAuthorities();
+		// 로그인한 유저가 게시글 작성자일때
+		Optional<Post> postUser = boardRepository.findByPostNoAndUserId(post.getPostNo(), user);
 
-		// 댓글 작성
+		if (secret || replyAuth) {
+			if (postUser.isPresent() || auth.equals("ROLE_ADMIN") ||  auth.equals("ROLE_VET")) {
+				// 댓글 작성
+				Reply reply = Reply.builder()
+					.replyContent(replyDTO.getReplyContent())
+					.regDate(replyDTO.getRegDate())
+					.userId(user)
+					.postNo(post)
+					.build();
+				replyRepository.save(reply);
+			}
+		} else {
+		// 비밀글이 아닐때 누구나 댓글 작성 가능
 		Reply reply = Reply.builder()
 			.replyContent(replyDTO.getReplyContent())
 			.regDate(replyDTO.getRegDate())
 			.userId(user)
 			.postNo(post)
 			.build();
-		Long replyNo = replyDTO.getReplyNo();
 		replyRepository.save(reply);
+		}
 
-		return replyNo;
+		return replyDTO.getReplyNo();
 	}
 
 	@Override

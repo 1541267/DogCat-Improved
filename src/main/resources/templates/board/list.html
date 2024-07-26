@@ -84,7 +84,7 @@
                             </td>
 
                             <!--비밀글이 아닐때-->
-                            <td class="align-middle listOne" th:if="${dto.secret==false} or (${dto.secret == true} and (${username} == ${dto.userId})) or ((${dto.secret == true} and (${username} != ${dto.userId}))and(${role} == 'ROLE_ADMIN'))">
+                            <td class="align-middle listOne" th:if="${dto.secret==false} or (${dto.secret == true} and (${username} == ${dto.userId})) or ((${dto.secret == true} and (${username} != ${dto.userId}))and(${role ne 'ROLE_USER'}))">
                                 <a th:href="@{'/board/read/'+${dto.postNo}}">
                                     <div class="d-flex align-items-center">
                                         <div class="replyAuth" th:if="${dto.replyAuth==true}">
@@ -116,16 +116,16 @@
                                             <div class="title sub">
                                                 <span th:text="${dto.nickname}">작성자</span>
                                                 <span>
-                                                    <img class="level" src="/img/level/red.png" alt="레벨이미지 red"
-                                                         th:if="${dto.exp < 200}">
-                                                    <img class="level" src="/img/level/orange.png" alt="레벨이미지 orange"
-                                                         th:if="${dto.exp >= 200 and dto.exp < 400}">
-                                                    <img class="level" src="/img/level/yellow.png" alt="레벨이미지 yellow"
-                                                         th:if="${dto.exp >= 400 and dto.exp < 600}">
-                                                    <img class="level" src="/img/level/mint.png" alt="레벨이미지 mint"
-                                                         th:if="${dto.exp >= 600 and dto.exp < 800}">
-                                                    <img class="level" src="/img/level/purple.png" alt="레벨이미지 purple"
-                                                         th:if="${dto.exp >= 800}">
+                                                    <img class="level" src="/img/level/red.png" alt="User Level Image"
+                                                         th:if="${dto.exp < 750}">
+                                                    <img class="level" src="/img/level/orange.png" alt="User Level Image"
+                                                         th:if="${dto.exp >= 750 and dto.exp < 1500}">
+                                                    <img class="level" src="/img/level/yellow.png" alt="User Level Image"
+                                                         th:if="${dto.exp >= 1500 and dto.exp < 2250}">
+                                                    <img class="level" src="/img/level/mint.png" alt="User Level Image"
+                                                         th:if="${dto.exp >= 2250 and dto.exp < 3000}">
+                                                    <img class="level" src="/img/level/purple.png" alt="User Level Image"
+                                                         th:if="${dto.exp >= 3000}">
                                                 </span>
                                                 <span class="mx-1">조회수 <span th:text="${dto?.viewCount}">5</span></span>
                                                 <span class="mx-1" th:if="${dto?.modDate == null}"
@@ -137,31 +137,24 @@
                                     </div>
                                 </a>
                             </td>
+                            <td class="text-end align-middle reply" th:if="${dto.secret==false} or (${dto.secret == true} and (${username} == ${dto.userId})) or ((${dto.secret == true} and (${username} != ${dto.userId}))and(${role ne 'ROLE_USER'}))">
+                                <button class="btn replyCountBtn"
+                                        th:attr="data-postNo=${dto.postNo}">댓글수
+                                    <span th:text="${dto?.replyCount}"></span>
+                                </button>
+                            </td>
 
                             <!--비밀글일때-->
-                            <td class="align-middle listOne" th:if="((${dto.secret==true} and (${username} != ${dto.userId}))and(${role} != 'ROLE_ADMIN'))">
+                            <td class="align-middle listOne" colspan="2" th:if="((${dto.secret==true} and (${username} != ${dto.userId}))and(${role eq 'ROLE_USER'}))">
                                 <!--비밀글여부-->
                                 <a th:href="@{'/board/read/'+${dto.postNo}}" class="d-flex align-items-center">
                                 <span class="icon secret">
                                      <i class="bi bi-file-lock d-flex flex-fill"></i>
                                 </span>
-                                <p class="ms-2 secretPost d-flex flex-column justify-content-center">
-                                     비밀글입니다.
-                                </p>
+                                    <p class="ms-2 secretPost d-flex flex-column justify-content-center">
+                                        비밀글입니다.
+                                    </p>
                                 </a>
-                            </td>
-
-                            <!--비밀글이 아닐때-->
-                            <td class="text-end align-middle reply" th:if="${dto.secret==false} or (${dto.secret == true} and (${username} == ${dto.userId})) or ((${dto.secret == true} and (${username} != ${dto.userId}))and(${role} == 'ROLE_ADMIN'))">
-                                <button class="btn replyCountBtn"
-                                        th:attr="data-postNo=${dto.postNo}">댓글수
-                                    <span th:text="${dto?.replyCount}">5</span>
-                                </button>
-                            </td>
-
-                            <!--비밀글이 일때-->
-                            <td class="text-end align-middle reply" th:if="((${dto.secret==true} and (${username} != ${dto.userId}))and(${role} != 'ROLE_ADMIN'))">
-
                             </td>
 
                         </tr>
@@ -223,15 +216,15 @@
                     <!--type선택-->
                     <span class="p-0">
                             <select class="form-select" name="type">
-                                <option value="tcu" th:selected="${pageRequestDTO.type == 'tcu'}">---</option>
+                                <option value="tcu" th:selected="${pageRequestDTO.type eq 'tcu'}">---</option>
                                 <option value="t"
-                                        th:selected="${pageRequestDTO.type == 't'}">제목</option>
+                                        th:selected="${pageRequestDTO.type eq 't'}">제목</option>
                                 <option value="c"
-                                        th:selected="${pageRequestDTO.type == 'c'}">내용</option>
+                                        th:selected="${pageRequestDTO.type eq 'c'}">내용</option>
                                 <option value="u"
-                                        th:selected="${pageRequestDTO.type == 'u'}">작성자</option>
+                                        th:selected="${pageRequestDTO.type eq 'u'}">작성자</option>
                                 <option value="tc"
-                                        th:selected="${pageRequestDTO.type == 'tc'}">제목+내용</option>
+                                        th:selected="${pageRequestDTO.type eq 'tc'}">제목+내용</option>
                             </select>
                         </span> <!--type선택-->
                     <input type="text" class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}">
@@ -265,13 +258,13 @@
                     <form action="#" th:action="@{/board/{boardCode}(boardCode=${boardCode})}" method="get">
                         <select class="form-select" name="postTag" aria-label="게시판선택">
                             <option value="">전체</option>
-                            <option value="강아지" th:selected="${pageRequestDTO.postTag == '강아지'}">강아지</option>
-                            <option value="고양이" th:selected="${pageRequestDTO.postTag == '고양이'}">고양이</option>
+                            <option value="강아지" th:selected="${pageRequestDTO.postTag eq '강아지'}">강아지</option>
+                            <option value="고양이" th:selected="${pageRequestDTO.postTag eq '고양이'}">고양이</option>
                         </select>
                         <select class="form-select mt-1" name="order" aria-label="정렬">
-                            <option value="l" th:selected="${pageRequestDTO.order == 'l'}">최신순</option>
-                            <option value="r" th:selected="${pageRequestDTO.order == 'r'}">댓글많은순</option>
-                            <option value="v" th:selected="${pageRequestDTO.order == 'v'}">조회많은순</option>
+                            <option value="l" th:selected="${pageRequestDTO.order eq 'l'}">최신순</option>
+                            <option value="r" th:selected="${pageRequestDTO.order eq 'r'}">댓글많은순</option>
+                            <option value="v" th:selected="${pageRequestDTO.order eq 'v'}">조회많은순</option>
                         </select>
                         <button type="submit" class="btn filterBtn my-2">적용</button>
                     </form>

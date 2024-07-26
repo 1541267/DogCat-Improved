@@ -54,7 +54,6 @@ public class BoardController extends BaseController {
 	public ResponseEntity<Map<String, Long>> register(@ModelAttribute PostDTO postDTO, Model model) {
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
-		log.info("-----------------------userId" + userId);
 
 		if (userId == null) {
 			return ResponseEntity.status(401).build(); // 인증되지 않은 경우(로그인 필요)
@@ -62,14 +61,11 @@ public class BoardController extends BaseController {
 
 		postDTO.setUserId(userId);
 
-		log.info("-------- register postDTO: {}", postDTO);
 		Long id = boardService.register(postDTO);
 
 		Map<String, Long> response = new HashMap<>();
 		response.put("postNo", id);
 
-		log.info("----------------- register postNo: {}", id);
-		log.info("----------------- register postContent: {}", postDTO.getPostContent());
 		// 게시글 등록 먼저, postNo을 response 로 담아  summernote 로 받고 이미지 업로드 진행
 		return ResponseEntity.ok(response);
 	}
@@ -79,25 +75,22 @@ public class BoardController extends BaseController {
 		Model model) {
 		// 게시글 유무 - ys
 		Post post = boardService.findPostByPostNo(postNo);
-		log.info("-------------------: read postNo: {}", postNo);
 		// 조회수 증가
 		boardService.updateViewCount(postNo);
+
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 		// 상세페이지 출력
 		PostReadDTO postDTO = boardService.readDetail(postNo, userId);
-
 		// 게시글 정보
 		model.addAttribute("postDTO", postDTO);
 
 		// postDTO에서 boardCode 추출
 		String boardCode = postDTO.getBoardCode();
-		log.info("boardCode: {}", boardCode);
 		// pageRequestDTO에 받아온 boardCode 값을 설정
 		pageRequestDTO.setBoardCode(boardCode);
 
 		BoardPageResponseDTO<BoardListDTO> responseDTO = boardService.readList(pageRequestDTO);
-		// log.info(responseDTO);
 
 		model.addAttribute("pageRequestDTO", pageRequestDTO);
 		model.addAttribute("responseDTO", responseDTO);
@@ -118,11 +111,9 @@ public class BoardController extends BaseController {
 	@GetMapping({"/modify/{postNo}", "/modify_q/{postNo}"})
 	public String modify(@PathVariable Long postNo, Model model, HttpServletRequest request) {
 		PostDTO postDTO = boardService.readOne(postNo);
-		log.info(postDTO);
 
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
-		log.info("-----------------------userId" + userId);
 
 		// 로그인 사용자 확인
 		if (userId == null) {
@@ -135,7 +126,6 @@ public class BoardController extends BaseController {
 		}
 
 		model.addAttribute("postDTO", postDTO);
-		log.info("modify postNo: " + postDTO.getPostNo());
 
 		if (request.getRequestURI().contains("/modify_q")) {
 			return "board/modify_q";
@@ -153,7 +143,7 @@ public class BoardController extends BaseController {
 			return ResponseEntity.status(403).build(); // 권한이 없는 경우 403 오류 페이지로 리다이렉트
 		}
 
-		Long id = boardService.modify(postDTO);
+		Long id = boardService.modify(postDTO, userId);
 
 		Map<String, Long> response = new HashMap<>();
 		response.put("modifyPostNo", id);
@@ -170,7 +160,7 @@ public class BoardController extends BaseController {
 			return ResponseEntity.status(403).build(); // 권한이 없는 경우 403 오류 페이지로 리다이렉트
 		}
 
-		Long id = boardService.modify(postDTO);
+		Long id = boardService.modify(postDTO, userId);
 
 		Map<String, Long> response = new HashMap<>();
 		response.put("modifyPostNo", id);
@@ -184,9 +174,6 @@ public class BoardController extends BaseController {
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 		String role = userService.getRole(userId);
-
-		log.info("-----------------------userId" + userId);
-		log.info("-----------------------role" + role);
 
 		// 로그인 사용자 확인
 		if (userId == null) {
@@ -206,7 +193,6 @@ public class BoardController extends BaseController {
 		// 삭제시 해당 게시판 목록으로 돌아가기 위해 boardCode 저장
 		String boardCode = postDTO.getBoardCode();
 
-		log.info("delete PostNo: {}", postNo);
 		boardService.delete(postNo, userId);
 
 		return "redirect:/board/" + boardCode;
@@ -215,10 +201,10 @@ public class BoardController extends BaseController {
 	//게시판별목록
 	@GetMapping("/{boardCode}")
 	public String list(@PathVariable String boardCode, BoardPageRequestDTO pageRequestDTO, Model model) {
+
 		model.addAttribute("boardCode", boardCode);
 
 		BoardPageResponseDTO<BoardListDTO> responseDTO = boardService.list(pageRequestDTO);
-		log.info(responseDTO);
 
 		model.addAttribute("pageRequestDTO", pageRequestDTO);
 		model.addAttribute("responseDTO", responseDTO);
