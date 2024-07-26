@@ -105,10 +105,10 @@ dependencies {
 
 }
 //TODO 배포시 활성화
-//task copyPrivate(type: Copy) {
-//    copy {
-//        from './Secret-DogCat/yml'
-//        include "*.yml"
-//        into 'src/main/resources'
-//   }
+//processResources.dependsOn('copySecret')
+//
+//tasks.register('copySecret', Copy) {
+//    from './서브모듈 디렉토리 경로'
+//    include "application*.yml"  // 복사할 파일들
+//    into 'src/main/resources'  // 복사 위치
 //}
