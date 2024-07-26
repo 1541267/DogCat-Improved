@@ -35,30 +35,25 @@ public class ReportController extends BaseController {
 
     @PostMapping("/reportLog")
     public ResponseEntity<String> createReportLog(@RequestBody ReportLogDTO reportLogDTO) {
-        log.info(reportLogDTO);
+        //신고 저장
         reportService.createReportLog(reportLogDTO);
         return ResponseEntity.ok("Report log created successfully.");
-
     }
 
     @GetMapping("/post-report/{postNo}")
     public String postReport(@PathVariable Long postNo, Model model) {
-        log.info("Report postNo: {}", postNo);
 
+        //게시글 신고
         Post postReport = boardServiceImpl.findPostByPostNo(postNo);
-        log.info(postReport);
-
         model.addAttribute("postReport", postReport);
         return "report/post-report";
     }
 
     @GetMapping("/reply-report/{replyNo}")
     public String replyReport(@PathVariable Long replyNo, Model model) {
-        log.info("Report replyNo: {}", replyNo);
 
+        //댓글 신고
         Reply replyReport = replyServiceImpl.findReplyByReplyNo(replyNo);
-        log.info(replyReport);
-
         model.addAttribute("replyReport", replyReport);
         return "report/reply-report";
     }

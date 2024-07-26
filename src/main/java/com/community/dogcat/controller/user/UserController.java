@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.community.dogcat.domain.User;
 import com.community.dogcat.dto.user.JoinDTO;
@@ -35,9 +36,12 @@ public class UserController {
 	}
 
 	@PostMapping("/join")
-	public String joinProc(JoinDTO dto) {
+	public String joinProc(JoinDTO dto, RedirectAttributes redirectAttributes) {
 
 		joinService.joinProcess(dto);
+
+		redirectAttributes
+			.addFlashAttribute("message", "환영합니다, " + dto.getNickname() + "님!");
 
 		return "redirect:/user/login";
 	}

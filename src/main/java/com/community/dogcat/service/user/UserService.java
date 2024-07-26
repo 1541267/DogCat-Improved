@@ -127,6 +127,7 @@ public class UserService {
 			.userName(user.getUserName())
 			.nickname(user.getNickname())
 			.tel(user.getTel())
+			.userVet(user.isUserVet())
 			.social(user.isSocial())
 			.regDate(user.getRegDate())
 			.build();

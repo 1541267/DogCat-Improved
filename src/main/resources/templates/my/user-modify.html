@@ -129,7 +129,7 @@
                         <div id="telFeedback" class="feedback"></div>
                     </div>
                     <input type="hidden" name="tel" id="tel" th:value="${user.tel}" required>
-                    <input type="hidden" id="userVet" name="userVet" value="false">
+                    <input type="hidden" id="userVet" name="userVet" th:value="${user.userVet}"/>
 
                     <div class="blank"></div>
 

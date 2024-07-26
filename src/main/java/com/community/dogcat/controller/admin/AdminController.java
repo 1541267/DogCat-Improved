@@ -14,6 +14,7 @@ import com.community.dogcat.service.admin.AdminService;
 import com.community.dogcat.service.report.ReportService;
 import com.community.dogcat.service.user.UserService;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -40,6 +41,7 @@ public class AdminController extends BaseController {
     private final UserService userService;
     private final ReportService reportService;
 
+
     @GetMapping("/user-list")
     public void adminUserDetail(BoardPageRequestDTO pageRequestDTO, Model model) {
 
@@ -56,6 +58,8 @@ public class AdminController extends BaseController {
         // model에 결과를 담아서 view로 전달
         model.addAttribute("adminUsers", adminUsers);
         model.addAttribute("pageResponse", pageResponseDTO);
+        model.addAttribute("searchKeyword", pageRequestDTO.getKeyword());
+
     }
 
 
@@ -64,16 +68,31 @@ public class AdminController extends BaseController {
                                 Model model) {
         User user = userService.findUserId(userId);
 
-        //게시글, 댓글 신고 정보 가져옴
-        List<UserReportDetailDTO> reportedPosts = reportService.findReportedPostsByUserId(userId);
-        List<UserReportDetailDTO> reportedReplys = reportService.findReportedReplysByUserId(userId);
+        // 신고 정보 가져옴
+        List<UserReportDetailDTO> reportedDetails = reportService.findReportedByUserId(userId);
 
         // model에 결과를 담아서 view로 전달
         model.addAttribute("user", user);
         model.addAttribute("reportNickname", nickname);
-        model.addAttribute("reportedPosts", reportedPosts);
-        model.addAttribute("reportedReplys", reportedReplys);
+        model.addAttribute("reportedDetails", reportedDetails);
     }
+
+
+//    @GetMapping("/user-report")
+//    public void adminUserReport(@RequestParam("userId") String userId, @RequestParam("nickname") String nickname,
+//                                Model model) {
+//        User user = userService.findUserId(userId);
+//
+//        //게시글, 댓글 신고 정보 가져옴
+//        List<UserReportDetailDTO> reportedPosts = reportService.findReportedPostsByUserId(userId);
+//        List<UserReportDetailDTO> reportedReplys = reportService.findReportedReplysByUserId(userId);
+//
+//        // model에 결과를 담아서 view로 전달
+//        model.addAttribute("user", user);
+//        model.addAttribute("reportNickname", nickname);
+//        model.addAttribute("reportedPosts", reportedPosts);
+//        model.addAttribute("reportedReplys", reportedReplys);
+//    }
 
 
     @GetMapping("/report-list")
@@ -93,6 +112,8 @@ public class AdminController extends BaseController {
         // model에 결과를 담아서 view로 전달
         model.addAttribute("reportList", reportLists);
         model.addAttribute("pageResponse", pageResponseDTO);
+        model.addAttribute("searchKeyword", pageRequestDTO.getKeyword());
+
     }
 
 
@@ -113,6 +134,8 @@ public class AdminController extends BaseController {
         // 모델에 결과를 담아서 view로 전달
         model.addAttribute("blockList", blockLists);
         model.addAttribute("pageResponse", pageResponseDTO);
+        model.addAttribute("searchKeyword", pageRequestDTO.getKeyword());
+
     }
 
 

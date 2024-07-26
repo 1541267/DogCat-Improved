@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,8 +34,7 @@ public class ReportService {
 
     public void createReportLog(ReportLogDTO reportLogDTO) {
 
-        //        Optional<Reply> reply = replyRepository.findById(reportLogDTO.getReplyNo());
-
+        //신고 생성
         ReportLog reportLog = ReportLog.builder()
                 .userId(userRepository.findByUserId(reportLogDTO.getUserId()))
                 .postNo(boardRepository.findByPostNo(reportLogDTO.getPostNo()))
@@ -45,27 +45,17 @@ public class ReportService {
                 .build();
 
         reportLogRepository.save(reportLog);
-
     }
 
-    public List<UserReportDetailDTO> findReportedPostsByUserId(String userId) {
 
+    public List<UserReportDetailDTO> findReportedByUserId(String userId) {
         User user = userRepository.findByUserId(userId);
-        List<Post> userPost = boardRepository.findByUserId(user);
-        //userId로 검색한 Post userPost 리스트
-        log.info("-----------userPost {}", userPost);
-
-        List<Long> userPostNos = userPost.stream()
-                .map(Post::getPostNo)
-                .collect(Collectors.toList());
-        log.info("-----------userPostNos {}", userPostNos);
-        //userPost 에서 postNo만 뽑아서 리스트로 만든 것
-
         List<UserReportDetailDTO> userReportDetailDTOS = new ArrayList<>();
 
-        for (Post post : userPost) {
+        // 게시글 신고 정보 가져오기
+        List<Post> userPosts = boardRepository.findByUserId(user);
+        for (Post post : userPosts) {
             List<Long> reportNos = reportLogRepository.findByPostNo(post.getPostNo());
-
             for (Long reportNo : reportNos) {
                 UserReportDetailDTO dto = UserReportDetailDTO.builder()
                         .postNo(post.getPostNo())
@@ -77,29 +67,11 @@ public class ReportService {
                 userReportDetailDTOS.add(dto);
             }
         }
-        return userReportDetailDTOS;
 
-
-    }
-
-    public List<UserReportDetailDTO> findReportedReplysByUserId(String userId) {
-
-        User user = userRepository.findByUserId(userId);
-        List<Reply> userReply = replyRepository.findByUserId(user);
-        //userId로 검색한 Reply userReply 리스트
-        log.info("-----------userReply {}", userReply);
-
-        List<Long> userReplyNos = userReply.stream()
-                .map(Reply::getReplyNo)
-                .collect(Collectors.toList());
-        log.info("-----------userReplyNos {}", userReplyNos);
-        //userPost 에서 postNo만 뽑아서 리스트로 만든 것
-
-        List<UserReportDetailDTO> userReportDetailDTOS = new ArrayList<>();
-
-        for (Reply reply : userReply) {
+        // 댓글 신고 정보 가져오기
+        List<Reply> userReplies = replyRepository.findByUserId(user);
+        for (Reply reply : userReplies) {
             List<Long> reportNos = reportLogRepository.findByReplyNo(reply.getReplyNo());
-
             for (Long reportNo : reportNos) {
                 UserReportDetailDTO dto = UserReportDetailDTO.builder()
                         .replyNo(reply.getReplyNo())
@@ -110,10 +82,71 @@ public class ReportService {
                 userReportDetailDTOS.add(dto);
             }
         }
+
+        // reportNo 순으로 정렬
+        userReportDetailDTOS.sort(Comparator.comparing(UserReportDetailDTO::getReportNo));
+
+
         return userReportDetailDTOS;
-
-
     }
+
+
+
+
+
+//    public List<UserReportDetailDTO> findReportedPostsByUserId(String userId) {
+//
+//        User user = userRepository.findByUserId(userId);
+//        List<Post> userPost = boardRepository.findByUserId(user);
+//        //userId로 검색한 Post userPost 리스트
+//
+//        List<UserReportDetailDTO> userReportDetailDTOS = new ArrayList<>();
+//
+//        for (Post post : userPost) {
+//            List<Long> reportNos = reportLogRepository.findByPostNo(post.getPostNo());
+//
+//            for (Long reportNo : reportNos) {
+//                UserReportDetailDTO dto = UserReportDetailDTO.builder()
+//                        .postNo(post.getPostNo())
+//                        .postTitle(post.getPostTitle())
+//                        .reportNo(reportNo)
+//                        .regDate(post.getRegDate())
+//                        .boardCode(post.getBoardCode())
+//                        .build();
+//                userReportDetailDTOS.add(dto);
+//            }
+//        }
+//        return userReportDetailDTOS;
+//
+//    }
+//
+//    public List<UserReportDetailDTO> findReportedReplysByUserId(String userId) {
+//
+//        User user = userRepository.findByUserId(userId);
+//        List<Reply> userReply = replyRepository.findByUserId(user);
+//        //userId로 검색한 Reply userReply 리스트
+//
+//        List<UserReportDetailDTO> userReportDetailDTOS = new ArrayList<>();
+//
+//        for (Reply reply : userReply) {
+//            List<Long> reportNos = reportLogRepository.findByReplyNo(reply.getReplyNo());
+//
+//            for (Long reportNo : reportNos) {
+//                UserReportDetailDTO dto = UserReportDetailDTO.builder()
+//                        .replyNo(reply.getReplyNo())
+//                        .replyContent(reply.getReplyContent())
+//                        .reportNo(reportNo)
+//                        .ReplyregDate(reply.getRegDate())
+//                        .build();
+//                userReportDetailDTOS.add(dto);
+//            }
+//        }
+//        return userReportDetailDTOS;
+//    }
+
+
+
+
     //신고 삭제
     @Transactional
     public void deleteReportLog(Long reportNo) {

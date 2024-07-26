@@ -9,64 +9,10 @@
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/adminlist.css}">
+
     <title>Admin</title>
-    <style>
-        a:hover {
-            font-weight: bold;
-        }
-        .pagination {
-            width: 1000px;
-            display: flex;
-        }
 
-        .page-item .page-link {
-            color: #000; /* 기본 색상 */
-            background-color: #fff;
-            border: 1px solid #67cafe;
-        }
-
-        .page-item .page-link:hover {
-            background-color: #E8FFFF;
-        }
-
-        .page-item.active .page-link {
-            background-color: #67cafe; /* 활성화된 버튼 배경색 */
-            color: #fff; /* 활성화된 버튼 텍스트 색상 */
-        }
-
-        .countPost1 {
-            background-color: #E8FFFF;
-            border: 1px solid #d5d5d5;
-            border-radius: 0.5rem 0 0 0.5rem;
-            height: 43px;
-            padding: 10px;
-            align-items: center;
-
-        }
-
-        .countPost2 {
-            background-color: #E8FFFF;
-            border: 1px solid #d5d5d5;
-            border-left: white;
-            border-radius: 0;
-            height: 43px;
-            padding: 10px;
-            align-items: center;
-
-        }
-
-        .countPost3 {
-            background-color: #E8FFFF;
-            border: 1px solid #d5d5d5;
-            border-left: white;
-            border-radius: 0 0.5rem 0.5rem 0;
-            height: 43px;
-            padding: 10px;
-            align-items: center;
-
-        }
-
-    </style>
 
 
 </head>
@@ -95,26 +41,26 @@
                                 <!--전체회원, 신고목록, 차단회원 이동메뉴-->
                                 <div class="d-flex flex-row justify-content-around" style="width: 65%">
                                     <a href="user-list"
-                                       class="btn btn-outline-secondary align-items-center countPost1"
+                                       class="btn btn-outline-secondary align-items-center user-list"
                                        type="button" style="width: 40%">
                                         전체 회원
                                     </a>
 
                                     <a href="report-list"
-                                       class="btn btn-outline-secondary align-items-center countPost2"
-                                       type="button" style="width: 40%; background-color: #67cafe; color: white;">
+                                       class="btn btn-outline-secondary align-items-center report-list-active"
+                                       type="button">
                                         신고 목록
                                     </a>
 
                                     <a href="block-list"
-                                       class="btn btn-outline-secondary align-items-center countPost3"
-                                       type="button" style="width: 40%">
+                                       class="btn btn-outline-secondary align-items-center block-list"
+                                       type="button">
                                         차단 회원
                                     </a>
                                 </div>
 
 
-                                <!-- 검색 폼 추가 -->
+                                <!--검색기능-->
                                 <form class="d-flex input-group justify-content-end" style="width: 30%;" method="get"
                                       action="/admin/report-list">
                                     <input type="text" class="form-control" name="keyword" placeholder="검색어 입력"
@@ -123,15 +69,15 @@
                                         <i class="bi bi-search"></i>
                                     </button>
                                 </form>
-
                             </div>
+
                             <div class="d-flex flex-column py-md-2">
                                 <div class="list-group">
                                     <div th:each="user : ${reportList}" class="list-group-item d-inline gap-3 py-3"
                                          aria-current="true">
                                         <div class="d-flex gap-2 w-100 justify-content-between">
 
-                                            <div>
+                                            <div class="justify-content-center align-content-center">
                                                 <!--신고제목-->
                                                 <a style="cursor: pointer; color: inherit; text-decoration: none; font-size: large"
                                                    class="my-2"
@@ -166,12 +112,12 @@
 
                                             <div class="d-flex flex-column justify-content-between gap-3">
                                                 <!--차단버튼-->
-                                                <button class="btn border-danger fw-bold"
+                                                <button class="btn btn-outline-danger fw-bold"
                                                         th:onclick="blockUser([[${user.userId.userId}]])">유저 차단
                                                 </button>
 
                                                 <!--삭제버튼-->
-                                                <button class="btn btn-danger fw-bold"
+                                                <button class="btn btn-outline-danger fw-bold"
                                                         th:onclick="|deleteReportLog(${user.reportNo})|">신고 삭제
                                                 </button>
                                             </div>
@@ -192,9 +138,9 @@
                             <ul class="pagination justify-content-center">
 
                                 <!-- 이전 -->
-                                <li class="page-item" th:if="${!pageResponse.prev}">
+                                <li class="page-item" th:if="${pageResponse.prev}">
                                     <a class="page-link"
-                                       th:href="@{/admin/report-list(page=${pageResponse.page - 1}, size=${pageResponse.size}, keyword=${searchKeyword})}"
+                                       th:href="@{/report/user-list(page=${pageResponse.page - 1}, size=${pageResponse.size}, keyword=${searchKeyword})}"
                                        aria-label="Previous">
                                         <i class="bi bi-caret-left-fill" aria-hidden="true"></i>
                                     </a>
@@ -213,7 +159,7 @@
                                 </th:block>
 
                                 <!-- 다음 -->
-                                <li class="page-item" th:if="${!pageResponse.next}">
+                                <li class="page-item" th:if="${pageResponse.next}">
                                     <a class="page-link"
                                        th:href="@{/admin/report-list(page=${pageResponse.page + 1}, size=${pageResponse.size}, keyword=${searchKeyword})}"
                                        aria-label="Next">
