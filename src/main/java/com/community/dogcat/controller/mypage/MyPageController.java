@@ -1,8 +1,13 @@
 package com.community.dogcat.controller.mypage;
 
+import java.io.IOException;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.community.dogcat.controller.BaseController;
 import com.community.dogcat.dto.user.UserDetailDTO;
@@ -52,18 +58,51 @@ public class MyPageController extends BaseController {
 	}
 
 	@PostMapping("/user-modify")
-	public String userModifyConfirm(@ModelAttribute UserDetailDTO dto) {
+	public String userModifyConfirm(@ModelAttribute UserDetailDTO dto, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 
-		userService.userModify(dto);
+		boolean needsLogout = userService.userModify(dto);
+
+		if (needsLogout) {
+
+			clearCookies(response);
+
+			redirectAttributes
+				.addFlashAttribute("message", "회원수정이 완료되었습니다. 다시 로그인해주세요.");
+
+			return "redirect:/user/login";
+
+		}
+
 		return "redirect:/my/user-detail";
 
 	}
+
 
 	@PostMapping("/delete-user")
 	public String deleteUser(HttpServletResponse response, @RequestParam("userId") String userId) {
 
 		userService.deleteUserById(response, userId);
 		return "redirect:/user/login";
+
+	}
+
+	private void clearCookies(HttpServletResponse response) {
+
+		Cookie refreshCookie = new Cookie("refresh", null);
+		refreshCookie.setMaxAge(0);
+		refreshCookie.setPath("/");
+
+		Cookie accessCookie = new Cookie("access", null);
+		accessCookie.setMaxAge(0);
+		accessCookie.setPath("/");
+
+		Cookie sessionCookie = new Cookie("JSESSIONID", null);
+		sessionCookie.setMaxAge(0);
+		sessionCookie.setPath("/");
+
+		response.addCookie(refreshCookie);
+		response.addCookie(accessCookie);
+		response.addCookie(sessionCookie);
 
 	}
 

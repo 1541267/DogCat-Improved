@@ -1,6 +1,7 @@
 package com.community.dogcat.repository.report;
 
 import com.community.dogcat.domain.Post;
+import com.community.dogcat.domain.Reply;
 import com.community.dogcat.domain.ReportLog;
 import com.community.dogcat.domain.User;
 import com.community.dogcat.dto.report.ReportLogDTO;
@@ -38,5 +39,7 @@ public interface ReportLogRepository extends JpaRepository<ReportLog, Long> {
     @Query("DELETE FROM ReportLog rl WHERE rl.reportNo = :reportNo")
     int deleteReportLog(@Param("reportNo") Long reportNo);
 
+    void deleteByPostNo(Post post);
+    void deleteByReplyNo(Reply reply);
 
 }
