@@ -31,6 +31,10 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class UploadImageServiceImpl implements UploadImageService {
 
+	// TODO
+	// @Value("${baseUrl}")
+	// private String baseUrl;
+
 	@Value("${tempUploadPath}")
 	private String tempUploadPath;
 
