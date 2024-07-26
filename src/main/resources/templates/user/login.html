@@ -119,7 +119,7 @@
         axios.post("/user/loginProc", null, {params: data})
             .then(res => {
                 // 로그인 성공 시
-                window.location.href = "/sample/home";
+                window.location.href = "/";
             })
             .catch(error => {
                 if (error.response) {

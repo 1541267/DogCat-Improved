@@ -132,7 +132,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	private void redirectToHome(HttpServletResponse response, HttpServletRequest request) {
 
 		try {
-			response.sendRedirect(request.getContextPath() + "/sample/home");
+			response.sendRedirect(request.getContextPath() + "/");
 		} catch (IOException e) {
 			log.error("IOException occurred while redirecting", e);
 		}

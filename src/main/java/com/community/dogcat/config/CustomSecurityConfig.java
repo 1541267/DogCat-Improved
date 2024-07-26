@@ -70,7 +70,7 @@ public class CustomSecurityConfig {
 
 		http.authorizeRequests()
 			.antMatchers("/admin/**").hasRole("ADMIN")
-			.antMatchers("/user/**", "/sample/home", "/check/**", "/login/**", "/oauth2/**","/error/**").permitAll()
+			.antMatchers("/user/**", "/", "/check/**", "/login/**", "/oauth2/**","/error/**").permitAll()
 			.antMatchers("/css/**","/fonts/**", "/js/**", "/img/**", "/static/**").permitAll()
 			.anyRequest().authenticated();
 

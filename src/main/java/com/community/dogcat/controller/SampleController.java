@@ -21,7 +21,6 @@ import com.community.dogcat.service.sample.SampleService;
 import com.community.dogcat.service.user.UserService;
 
 @Controller
-@RequestMapping("/sample")
 public class SampleController extends BaseController {
 
 	private final SampleService sampleService;
@@ -32,7 +31,7 @@ public class SampleController extends BaseController {
 		this.sampleService = sampleService;
 	}
 
-	@GetMapping("/home")
+	@GetMapping("/")
 	public String home(Model model) {
 
 		List<SampleTodayListDTO> todayList = sampleService.getPostsForToday();
@@ -57,7 +56,7 @@ public class SampleController extends BaseController {
 		// 모델에 추가
 		model.addAttribute("userLevelInfo", userLevelInfo);
 
-		return "/sample/home";  // home.html 뷰를 반환
+		return "/home";  // home.html 뷰를 반환
 	}
 
 	// 통합검색

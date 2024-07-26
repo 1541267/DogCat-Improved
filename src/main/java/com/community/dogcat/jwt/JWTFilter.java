@@ -55,7 +55,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
 			if (reissued) {
 
-				response.sendRedirect("/sample/home");
+				response.sendRedirect("/");
 
 			}
 
