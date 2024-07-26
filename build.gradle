@@ -104,24 +104,11 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 }
-
-tasks.named('test') {
-    useJUnitPlatform()
-}
-// 테스트 빌드 최적화
-
-tasks.withType(Test) {
-    maxParallelForks = 4
-}
-
-tasks.withType(JavaCompile) {
-    options.fork = true
-}
-
-tasks.withType(JavaCompile) {
-    options.incremental = true
-}
-
-tasks.withType(Test) {
-    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
-}
+//TODO 배포시 활성화
+//task copyPrivate(type: Copy) {
+//    copy {
+//        from './Secret-DogCat/yml'
+//        include "*.yml"
+//        into 'src/main/resources'
+//   }
+//}
