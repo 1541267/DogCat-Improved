@@ -7,10 +7,7 @@ import com.community.dogcat.dto.admin.ReportListDTO;
 import com.community.dogcat.dto.board.BoardPageRequestDTO;
 import com.community.dogcat.dto.report.ReportDetailDTO;
 import com.community.dogcat.repository.admin.AdminRepository;
-import com.community.dogcat.repository.board.BoardRepository;
-import com.community.dogcat.repository.board.reply.ReplyRepository;
 import com.community.dogcat.repository.report.ReportLogRepository;
-import com.community.dogcat.repository.user.UserRepository;
 import com.community.dogcat.repository.user.UsersAuthRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -36,25 +33,33 @@ public class AdminService {
         Pageable pageable = pageRequestDTO.getPageable("userId");
         Page<User> userPage;
 
+        // null, 값이 없는유저 제외
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
+            // keyword로 검색하여 block되지 않은 유저목록 불러옴
             userPage = adminRepository.findByBlockFalseKeyword(keyword, keyword, pageable);
         } else {
             userPage = adminRepository.findByBlockFalse(pageable);
         }
 
+        //userPage담아 반환
         return userPage.getContent().stream()
-                .map(user -> AdminUserDetailDTO.builder()
-                        .userId(user.getUserId())
-                        .userName(user.getUserName())
-                        .regDate(user.getRegDate())
-                        .nickname(user.getNickname())
-                        .userVet(user.isUserVet())
-                        .build())
+                .map(user -> {
+                    UsersAuth userAuth = usersAuthRepository.findByUserId(user.getUserId());
+                    return AdminUserDetailDTO.builder()
+                            .userId(user.getUserId())
+                            .userName(user.getUserName())
+                            .regDate(user.getRegDate())
+                            .nickname(user.getNickname())
+                            .userVet(user.isUserVet())
+                            .authorities(userAuth != null ? userAuth.getAuthorities() : null)//유저 권한 가져옴
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 
     public int countAllUsers(BoardPageRequestDTO pageRequestDTO) {
+        // 차단당하지 않은 유저 숫자
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
             return (int) adminRepository.countByBlockFalseKeyword(keyword, keyword);
@@ -63,21 +68,22 @@ public class AdminService {
         }
     }
 
-
     public List<ReportListDTO> findAllReportedUsers(BoardPageRequestDTO pageRequestDTO) {
         Pageable pageable = pageRequestDTO.getPageable("userId");
         Page<ReportLog> reportLogPage;
 
+        // null, 값이 없는유저 제외
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
-            reportLogPage = reportLogRepository.findAllByReportTitleContaining(keyword, pageable);
+            // 신고 목록 불러옴
+            reportLogPage = reportLogRepository.findByReportTitleContaining(keyword, pageable);
         } else {
             reportLogPage = reportLogRepository.findAll(pageable);
         }
 
         return reportLogPage.getContent().stream()
                 .filter(reportLog -> {
-                    // Null 체크 및 차단된 유저 필터링
+                    // Null 체크, 차단된 유저 필터링
                     boolean postNotBlocked = reportLog.getPostNo() != null && !reportLog.getPostNo().getUserId().isBlock();
                     boolean replyNotBlocked = reportLog.getReplyNo() != null && !reportLog.getReplyNo().getUserId().isBlock();
                     return postNotBlocked || replyNotBlocked;
@@ -96,6 +102,7 @@ public class AdminService {
     }
 
     public int countAllReportUser(BoardPageRequestDTO pageRequestDTO) {
+        // 신고당한 유저 숫자
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
             return (int) reportLogRepository.countByReportTitleContaining(keyword);
@@ -104,20 +111,20 @@ public class AdminService {
         }
     }
 
-
     public ReportDetailDTO findByReportDetail(Long reportNo) {
-        ReportLog reportDetail = reportLogRepository.findById(reportNo).orElse(null);
+        ReportLog reportLog = reportLogRepository.findById(reportNo).orElse(null);
 
-        if (reportDetail == null) {
+        if (reportLog == null) {
             return null;
         }
 
-        User user = reportDetail.getUserId();
-        Post post = reportDetail.getPostNo();
-        Reply reply = reportDetail.getReplyNo();
+        User user = reportLog.getUserId();
+        Post post = reportLog.getPostNo();
+        Reply reply = reportLog.getReplyNo();
 
         String userName = user.getUserName();
         String nickname = user.getNickname();
+        //reportLog에 post나 reply 값중 하나만 들어있음
         String postTitle = post != null ? post.getPostTitle() : null;
         String replyContent = reply != null ? reply.getReplyContent() : null;
 
@@ -125,10 +132,10 @@ public class AdminService {
                 .userId(user)
                 .userName(userName)
                 .nickname(nickname)
-                .reportNo(reportDetail.getReportNo())
-                .reportTitle(reportDetail.getReportTitle())
-                .reportContent(reportDetail.getReportContent())
-                .regDate(reportDetail.getRegDate())
+                .reportNo(reportLog.getReportNo())
+                .reportTitle(reportLog.getReportTitle())
+                .reportContent(reportLog.getReportContent())
+                .regDate(reportLog.getRegDate())
                 .postNo(post)
                 .postTitle(postTitle)
                 .replyNo(reply)
@@ -138,11 +145,11 @@ public class AdminService {
         return reportDetailDTO;
     }
 
-    // public List<BlockListDTO> findBlockUsers() {
     public List<BlockListDTO> findBlockUsers(BoardPageRequestDTO pageRequestDTO) {
-        Pageable pageable = pageRequestDTO.getPageable("userId"); // 기본 정렬 필드는 userId로 예시
+        Pageable pageable = pageRequestDTO.getPageable("userId");
         Page<User> blockUserPage;
 
+        // null, 값이 없는유저 제외
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
             blockUserPage = adminRepository.findByBlockTrueKeyword(keyword, keyword, pageable);
@@ -163,7 +170,6 @@ public class AdminService {
     }
 
     public int countAllBlockUsers(BoardPageRequestDTO pageRequestDTO) {
-
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
             return (int) adminRepository.countByBlockTrueKeyword(keyword, keyword);

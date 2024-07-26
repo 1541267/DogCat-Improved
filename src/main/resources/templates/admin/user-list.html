@@ -12,69 +12,10 @@
     <!-- 부트스트랩 아이콘 사용 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <link rel="stylesheet" th:href="@{/css/board/read.css}">
-    <link rel="stylesheet" th:href="@{/css/board/list.css}">
-
+    <link rel="stylesheet" th:href="@{/css/admin/adminlist.css}">
 
     <title>Admin</title>
-    <style>
-        a:hover {
-            font-weight: bold;
-        }
 
-        .pagination {
-            width: 1000px;
-            display: flex;
-        }
-
-        .page-item .page-link {
-            color: #000; /* 기본 색상 */
-            background-color: #fff;
-            border: 1px solid #67cafe;
-        }
-
-        .page-item .page-link:hover {
-            background-color: #E8FFFF;
-        }
-
-        .page-item.active .page-link {
-            background-color: #67cafe; /* 활성화된 버튼 배경색 */
-            color: #fff; /* 활성화된 버튼 텍스트 색상 */
-        }
-
-        .countPost1 {
-            background-color: #90E4FF;
-            border: 1px solid #d5d5d5;
-            border-radius: 0.5rem 0 0 0.5rem;
-            height: 43px;
-            padding: 10px;
-            align-items: center;
-
-        }
-
-        .countPost2 {
-            background-color: #E8FFFF;
-            border: 1px solid #d5d5d5;
-            border-left: white;
-            border-radius: 0;
-            height: 43px;
-            padding: 10px;
-            align-items: center;
-
-        }
-
-        .countPost3 {
-            background-color: #E8FFFF;
-            border: 1px solid #d5d5d5;
-            border-left: white;
-            border-radius: 0 0.5rem 0.5rem 0;
-            height: 43px;
-            padding: 10px;
-            align-items: center;
-        }
-
-
-    </style>
 </head>
 <body>
 <div th:include="include/header :: header"></div>
@@ -98,20 +39,19 @@
                                 <!--전체회원, 신고목록, 차단회원 이동메뉴-->
                                 <div class="d-flex flex-row justify-content-around" style="width: 65%">
                                     <a th:href="@{/admin/user-list}"
-                                       class="btn btn-outline-secondary align-items-center countPost1"
-                                       type="button"
-                                       style="width: 40%; background-color: #67cafe; color: white">
+                                       class="btn btn-outline-secondary align-items-center user-list-active"
+                                       type="button">
                                         전체 회원
                                     </a>
 
                                     <a th:href="@{/admin/report-list}"
-                                       class="btn btn-outline-secondary align-items-center countPost2"
+                                       class="btn btn-outline-secondary align-items-center report-list"
                                        type="button" style="width: 40%">
                                         신고 목록
                                     </a>
 
                                     <a th:href="@{/admin/block-list}"
-                                       class="btn btn-outline-secondary align-items-center countPost3"
+                                       class="btn btn-outline-secondary align-items-center block-list"
                                        type="button" style="width: 40%">
                                         차단 회원
                                     </a>
@@ -127,6 +67,7 @@
                                     </button>
                                 </form>
                             </div>
+
                             <div class="d-flex flex-column py-md-2">
                                 <div class="list-group">
                                     <div th:each="user : ${adminUsers}"
@@ -142,6 +83,12 @@
                                                       class="my-2" th:text="${user.nickname}"
                                                       style="font-size: x-large; text-decoration: none; color: #131314">
                                                 </a>
+
+                                                <!-- 관리자인 경우 "(관리자)" 표시 -->
+                                                <span th:if="${user.authorities} == 'ROLE_ADMIN'" class="Admin">
+                                                    (관리자)
+                                                </span>
+
 
                                                 <!--수의사면 이미지로 표시-->
                                                 <span th:if="${user.userVet}">
@@ -161,27 +108,26 @@
 
                                             <!--우측버튼메뉴-->
                                             <div class="d-flex flex-column justify-content-between ">
-                                                <!--관리자 지정 버튼-->
-                                                <button class="btn btn-primary fw-bold mb-1"
+
+                                                <!-- 관리자 지정 버튼 -->
+                                                <button th:if="${user.authorities != 'ROLE_ADMIN'}"
+                                                        class="btn administratiorBtn fw-bold mb-1 "
                                                         th:data-userid="${user.userId}"
-                                                        style="font-size: 0.75rem; padding: 0.5rem ;"
                                                         onclick="administrator(this.getAttribute('data-userid'))">관리자지정
                                                 </button>
 
                                                 <!--차단버튼-->
-                                                <button class="btn btn-danger fw-bold mb-1"
+                                                <button class="btn blockUserBtn fw-bold mb-1 "
                                                         th:data-userid="${user.userId}"
-                                                        style="font-size: 0.75rem; padding: 0.5rem;"
-                                                        onclick="blockUser(this.getAttribute('data-userid'))">차단
+                                                        onclick="blockUser(this.getAttribute('data-userid'))">차 &nbsp;단
                                                 </button>
 
                                                 <!--받은 신고 버튼-->
-                                                <button class="btn btn-warning mb-1"
-                                                        style="font-size: 0.75rem; padding: 0.5rem;"
+                                                <button class="btn reportDetailBtn mb-1 "
                                                         th:data-userid="${user.userId}"
                                                         th:data-nickname="${user.nickname}"
                                                         onclick="openReportPopup(this.getAttribute('data-userid'), this.getAttribute('data-nickname'))">
-                                                    받은 신고
+                                                    받은 &nbsp;&nbsp;신고
                                                 </button>
                                             </div>
 
@@ -198,7 +144,7 @@
                             <ul class="pagination justify-content-center">
 
                                 <!-- 이전 -->
-                                <li class="page-item" th:if="${!pageResponse.prev}">
+                                <li class="page-item" th:if="${pageResponse.prev}">
                                     <a class="page-link"
                                        th:href="@{/admin/user-list(page=${pageResponse.page - 1}, size=${pageResponse.size}, keyword=${searchKeyword})}"
                                        aria-label="Previous">
@@ -207,8 +153,7 @@
                                 </li>
 
                                 <!-- 페이지 번호 -->
-                                <th:block class="page-item"
-                                          th:each="pageNumber : ${#numbers.sequence(pageResponse.start, pageResponse.end)}">
+                                <th:block th:each="pageNumber : ${#numbers.sequence(pageResponse.start, pageResponse.end)}">
                                     <li th:class="${pageResponse.page == pageNumber} ? 'page-item active' : 'page-item'">
                                         <a class="page-link"
                                            th:data-num="${pageNumber}"
@@ -218,9 +163,8 @@
                                     </li>
                                 </th:block>
 
-
                                 <!-- 다음 -->
-                                <li class="page-item" th:if="${!pageResponse.next}">
+                                <li class="page-item" th:if="${pageResponse.next}">
                                     <a class="page-link"
                                        th:href="@{/admin/user-list(page=${pageResponse.page + 1}, size=${pageResponse.size}, keyword=${searchKeyword})}"
                                        aria-label="Next">
@@ -241,7 +185,7 @@
     function openReportPopup(userId, nickname) {
         const url = `../admin/user-report?userId=${userId}&nickname=${nickname}`;
         const windowName = "Report";
-        const windowFeatures = "width=940,height=400,scrollbars=yes";
+        const windowFeatures = "width=550,height=530,scrollbars=yes";
         window.open(url, windowName, windowFeatures);
     }
 
@@ -264,6 +208,7 @@
             axios.post(`/admin/administrator/${userId}`)
                 .then(response => {
                     alert('관리자로 지정되었습니다.');
+                    location.reload();
                 })
                 .catch(error => {
                     alert('관리자 지정에 실패했습니다.');

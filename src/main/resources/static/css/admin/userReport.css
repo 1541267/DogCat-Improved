@@ -1,0 +1,80 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    /*overflow-y: hidden;*/
+    display: flex;
+    align-items: flex-start;
+}
+a{
+    text-decoration: none;
+    color: #1a1e21;
+}
+.border-thick {
+    border-width: 3px; /* 원하는 두께로 설정 */
+}
+
+a:hover {
+    font-weight: bold;
+}
+
+header {
+    width: 500px;
+    height: 100px; /* 팝업창 높이에 맞게 조정 */
+}
+
+.popup {
+    padding: 20px;
+    margin-top: 0px;
+    box-sizing: border-box; /* 패딩 포함 너비 계산 */
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-top .log img {
+    width: 65px;
+    height: 52px;
+}
+
+.border {
+    border: 1px solid #dee2e6;
+}
+
+.col-custom {
+    flex: 1;
+}
+
+.content {
+    height: calc(100% - 140px);
+    overflow-y: auto;
+    padding-top: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.d-flex {
+    margin: 0; /* 좌우 간격 제거 */
+}
+
+.no-data-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+}
+
+.no-data-image {
+    width: 15%;
+    height: auto;
+}
+
+.no-data-message {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    color: #6c757d;
+}

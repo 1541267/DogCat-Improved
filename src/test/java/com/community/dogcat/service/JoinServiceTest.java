@@ -56,7 +56,7 @@ class JoinServiceTest {
 	public void createMultipleUsers() {
 		int numberOfUsers = 50; // 생성할 유저 수
 
-		for (int i = 3; i < numberOfUsers; i++) {
+		for (int i = 60; i < numberOfUsers; i++) {
 			JoinDTO joinDTO = JoinDTO.builder()
 				.userId("user" + i + "@example.com")
 				.userPw(bCryptPasswordEncoder.encode("password" + i))

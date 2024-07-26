@@ -18,14 +18,7 @@ public interface ReportLogRepository extends JpaRepository<ReportLog, Long> {
 
     ReportLog findByUserId(User userId);
 
-    List<ReportLog> findAllByUserId(User userId);
-
-    Optional<ReportLog> findByReportNo(Long reportNo);
-
     ReportLog save(ReportLogDTO reportLog);
-
-    @Query("SELECT r.postNo FROM ReportLog r WHERE r.userId.userId = :userId")
-    List<Post> findReportedPostsByUserId(@Param("userId") String userId);
 
     @Query("SELECT r.reportNo FROM ReportLog r WHERE r.postNo.postNo = :postNo")
     List<Long> findByPostNo(@Param("postNo") Long postNo);
@@ -33,11 +26,14 @@ public interface ReportLogRepository extends JpaRepository<ReportLog, Long> {
     @Query("SELECT r.reportNo FROM ReportLog r WHERE r.replyNo.replyNo = :replyNo")
     List<Long> findByReplyNo(@Param("replyNo") Long replyNo);
 
-    Page<ReportLog> findAllByReportTitleContaining(String keyword, Pageable pageable);
+    // 받은 신고 목록
+    Page<ReportLog> findByReportTitleContaining(String keyword, Pageable pageable);
 
+    // 받은 신고 숫자
     @Query("SELECT COUNT(r) FROM ReportLog r WHERE r.reportTitle LIKE %:keyword%")
     long countByReportTitleContaining(@Param("keyword") String keyword);
 
+    // 신고 삭제
     @Modifying
     @Query("DELETE FROM ReportLog rl WHERE rl.reportNo = :reportNo")
     int deleteReportLog(@Param("reportNo") Long reportNo);
