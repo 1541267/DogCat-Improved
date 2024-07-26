@@ -19,5 +19,8 @@ public class AdminUserDetailDTO {
 
 	private boolean userVet;
 
+	private String authorities;
+
+
 
 }

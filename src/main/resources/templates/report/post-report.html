@@ -10,59 +10,11 @@
 
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/report/createReport.css}">
+
     <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
     <title>Report Detail</title>
-    <style>
 
-        body {
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            overflow-y: hidden;
-            display: flex;
-            align-items: flex-start;
-
-        }
-
-        .report-detail {
-            padding: 20px;
-            width: 500px;
-            margin-top: 0px;
-            box-sizing: border-box; /* 패딩 포함 너비 계산 */
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .details, .content {
-            margin-bottom: 20px;
-        }
-
-        .details div {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .report-title, .report-content {
-            margin-bottom: 10px;
-        }
-
-        .delete-report {
-            text-align: right;
-            cursor: pointer;
-            color: red;
-            text-decoration: underline;
-        }
-
-        .report-button-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-        }
-    </style>
 
 
 </head>
@@ -113,7 +65,7 @@
 
         <div class="report-content">
             <label for="reportContent" class="form-label">신고 내용</label>
-            <textarea name="reportContent" id="reportContent" class="form-control" rows="4"></textarea>
+            <textarea name="reportContent" id="reportContent" class="form-control" rows="6" style="resize: none"></textarea>
         </div>
 
 
