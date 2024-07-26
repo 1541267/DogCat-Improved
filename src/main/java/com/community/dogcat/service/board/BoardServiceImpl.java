@@ -158,6 +158,7 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	@Transactional
 	public PostReadDTO readDetail(Long postNo, String userId) {
+		//TODO ElseThrow 예외처리 해 주기
 		// 게시물 번호 조회 (게시물 정보 확인용)
 		Post post = boardRepository.findById(postNo).orElseThrow();
 
