@@ -46,6 +46,8 @@ public class CustomSecurityConfig {
 	private final CustomSuccessHandler customSuccessHandler;
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+	private final CustomAccessDeniedHandler accessDeniedHandler;
+
 
 	@Bean
 	public BCryptPasswordEncoder cryptPasswordEncoder() {
@@ -60,12 +62,15 @@ public class CustomSecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+		http.exceptionHandling(exceptionHandling -> exceptionHandling
+			.accessDeniedHandler(accessDeniedHandler));
+
 		http.csrf(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable);
 
 		http.authorizeRequests()
 			.antMatchers("/admin/**").hasRole("ADMIN")
-			.antMatchers("/user/**", "/sample/home", "/check/**", "/login/**", "/oauth2/**").permitAll()
+			.antMatchers("/user/**", "/sample/home", "/check/**", "/login/**", "/oauth2/**","/error/**").permitAll()
 			.antMatchers("/css/**","/fonts/**", "/js/**", "/img/**", "/static/**").permitAll()
 			.anyRequest().authenticated();
 
@@ -92,16 +97,21 @@ public class CustomSecurityConfig {
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		return http.build();
+
 	}
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
+
 		return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+
 	}
 
 	@Bean
 	public RequestContextListener requestContextListener() {
+
 		return new RequestContextListener();
+
 	}
 }
 

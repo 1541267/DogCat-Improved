@@ -31,7 +31,15 @@
 
 </head>
 <body>
-
+<!-- 플래시 메시지 처리 -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var flashMessage = [[${message}]];
+    if (flashMessage) {
+        alert(flashMessage);
+    }
+    /*]]>*/
+</script>
 <div th:include="include/header :: header">
 
 

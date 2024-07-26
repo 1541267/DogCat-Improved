@@ -1,0 +1,14 @@
+.home-button {
+    background-color: white;
+    border: 1px solid #67cafe;
+    border-radius: 0.375rem;
+    color: #67cafe;
+    width: 400px;
+    height: 65px;
+}
+
+.home-button:hover {
+    background-color: #67cafe;
+    color: white;
+    border: 1px solid #67cafe;
+}
