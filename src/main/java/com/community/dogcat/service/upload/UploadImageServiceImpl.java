@@ -31,9 +31,9 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class UploadImageServiceImpl implements UploadImageService {
 
-	// TODO
-	// @Value("${baseUrl}")
-	// private String baseUrl;
+
+	@Value("${baseUrl}")
+	private String baseUrl;
 
 	@Value("${tempUploadPath}")
 	private String tempUploadPath;
@@ -84,11 +84,6 @@ public class UploadImageServiceImpl implements UploadImageService {
 				List<Integer> imagesLength = calcImageLength(multipartFile);
 
 				FileUtils.copyInputStreamToFile(fileStream, targetFile);
-
-				// 요청의 절대 경로 -> localhost:10000
-				String baseUrl =
-					request.getRequestURL().substring(0, request.getRequestURL().indexOf(request.getRequestURI()))
-						+ request.getContextPath();
 
 				// 이미지의 URL 생성
 				String imageUrl = baseUrl + "/temp/" + saveFileName;

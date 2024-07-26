@@ -121,9 +121,8 @@ tempResource: file:///C:/testupload/temp/
 # tempUploadPath: ${user.home}/testupload/temp/
 
 # summernote 로 업로드된 postContent 의 이미지 링크를 로컬에서 S3링크로 변환
+baseUrl: http://localhost:10000
 oldUrl: http://localhost:10000/temp/
-
-# 리눅스 oldUrl: http://dogcat.n-e.kr/temp/
 newUrl: https://dogcat-s3-teamproject.s3.ap-northeast-2.amazonaws.com/
 
 
