@@ -129,6 +129,9 @@ body {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 .modify_qBtn, .modifyBtn {
@@ -138,6 +141,9 @@ body {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #ffc107;
     --bs-btn-hover-bg: #ffc107;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #ffc107;
+    --bs-btn-active-bg: #ffc107;
 }
 
 .deletePostBtn {
@@ -147,15 +153,9 @@ body {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: red;
     --bs-btn-hover-bg: red;
-}
-
-.deleteReplyBtn {
-    color: #fff;
-    background-color: #67cafe;
-    border: 1px solid #67cafe;
-    --bs-btn-hover-color: #000;
-    --bs-btn-hover-border-color: red;
-    --bs-btn-hover-bg: red;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: red;
+    --bs-btn-active-bg: red;
 }
 
 .reportReplyBtn {
@@ -165,6 +165,21 @@ body {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #ffc107;
     --bs-btn-hover-bg: #ffc107;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #ffc107;
+    --bs-btn-active-bg: #ffc107;
+}
+
+.deleteReplyBtn {
+    color: #fff;
+    background-color: #67cafe;
+    border: 1px solid #67cafe;
+    --bs-btn-hover-color: #000;
+    --bs-btn-hover-border-color: red;
+    --bs-btn-hover-bg: red;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: red;
+    --bs-btn-active-bg: red;
 }
 
 table.replyRegister {
@@ -204,6 +219,9 @@ tr.replyBody > td.align-middle {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 #readList {
@@ -226,6 +244,24 @@ td > a {
 
 .listOne {
     width: auto;
+}
+
+.listSecret {
+    color: gray;
+}
+
+.secretPost {
+    font-size: 18px;
+    color: gray;
+    margin-bottom: 0;
+}
+
+.bi-file-lock {
+    font-size: 20px;
+}
+
+.bi-file-earmark-image {
+    font-size: 18px;
 }
 
 .listTag {
@@ -253,6 +289,9 @@ td > a {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 .page-item .page-link {
@@ -277,5 +316,7 @@ td > a {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
-

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <title>Board Read</title>
+    <title>말랑발자국 - 글 상세</title>
     <!-- 부트스트랩 CSS 로드 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <!-- 부트스트랩 아이콘 사용 -->
@@ -270,7 +270,8 @@
                             <!--게시물 정보 받아오기-->
                             <tbody>
                             <tr class="postList" th:each="dto:${responseDTO.dtoList}">
-                                <td class="align-middle listOne">
+                                <!-- 게시글이 비밀글이 아닐 때 -->
+                                <td class="align-middle listOne" th:if="${dto.secret==false} or (${dto.secret == true} and (${username} == ${dto.userId})) or ((${dto.secret == true} and (${username} != ${dto.userId}))and(${role ne 'ROLE_USER'}))">
                                     <a th:href="@{'/board/read/'+${dto.postNo}}">
                                         <!--                                        <a class="readDetail" th:attr="data-postNo=${dto.postNo}">-->
                                         <span class="align-middle" th:if="${dto.replyAuth==true}">
@@ -288,30 +289,30 @@
                                             게시물 제목
                                         </span>
                                         <!--비밀글여부-->
-                                        <span class="icon secret" th:if="${dto.secret == true}">
-                                         <i class="bi bi-file-lock"></i>
+                                        <span class="icon listSecret" th:if="${dto.secret == true}">
+                                         <i class="bi bi-file-lock flex-fill"></i>
                                         </span>
                                         <!--비밀글일경우 첨부파일이 존재해도 표시안하고 비밀글처리 ~> 첨부파일 표시하려면 비밀글값이 0이어야함(디폴트값)-->
-                                        <span class="icon file"
+                                        <span class="icon listFile"
                                               th:if="${dto.imgBoards != null && dto.imgBoards.size() > 0 && dto.secret == false}">
-                                        <i class="bi bi-file-earmark-image"></i>
+                                        <i class="bi bi-file-earmark-image flex-fill"></i>
                                         </span>
                                     </a>
                                     <br>
                                     <div class="title sub">
                                         <span th:text="${dto.nickname}">작성자</span>
                                         <span>
-                                    <img class="listLevel" src="/img/level/red.png" alt="레벨이미지 red"
-                                         th:if="${dto.exp < 200}">
-                                    <img class="listLevel" src="/img/level/orange.png" alt="레벨이미지 orange"
-                                         th:if="${dto.exp >= 200 and dto.exp < 400}">
-                                    <img class="listLevel" src="/img/level/yellow.png" alt="레벨이미지 yellow"
-                                         th:if="${dto.exp >= 400 and dto.exp < 600}">
-                                    <img class="listLevel" src="/img/level/mint.png" alt="레벨이미지 mint"
-                                         th:if="${dto.exp >= 600 and dto.exp < 800}">
-                                    <img class="listLevel" src="/img/level/purple.png" alt="레벨이미지 purple"
-                                         th:if="${dto.exp >= 800}">
-                                </span>
+                                            <img class="listLevel" src="/img/level/red.png" alt="User Level Image"
+                                                 th:if="${dto.exp < 750}">
+                                            <img class="listLevel" src="/img/level/orange.png" alt="User Level Image"
+                                                 th:if="${dto.exp >= 750 and dto.exp < 1500}">
+                                            <img class="listLevel" src="/img/level/yellow.png" alt="User Level Image"
+                                                 th:if="${dto.exp >= 1500 and dto.exp < 2250}">
+                                            <img class="listLevel" src="/img/level/mint.png" alt="User Level Image"
+                                                 th:if="${dto.exp >= 2250 and dto.exp < 3000}">
+                                            <img class="listLevel" src="/img/level/purple.png" alt="User Level Image"
+                                                 th:if="${dto.exp >= 3000}">
+                                        </span>
                                         <span class="mx-1">조회수 <span th:text="${dto?.viewCount}">5</span></span>
                                         <span class="mx-1" th:if="${dto?.modDate == null}"
                                               th:text="${#temporals.format(dto.regDate, 'yyyy-MM-dd')}">작성일</span>
@@ -319,11 +320,25 @@
                                               th:text="${#temporals.format(dto?.modDate, 'yyyy-MM-dd')}">작성일</span>
                                     </div>
                                 </td>
-                                <td class="text-end align-middle reply">
+                                <td class="text-end align-middle reply" th:if="${dto.secret==false} or (${dto.secret == true} and (${username} == ${dto.userId})) or ((${dto.secret == true} and (${username} != ${dto.userId}))and(${role ne 'ROLE_USER'}))">
                                     <button class="btn replyCountBtn"
                                             th:attr="data-postNo=${dto.postNo}">댓글수
-                                        <span th:text="${dto?.replyCount}">5</span>
+                                        <span th:text="${dto?.replyCount}"></span>
                                     </button>
+                                </td>
+
+
+                                <!--비밀글일때-->
+                                <td class="align-middle listOne" colspan="2" th:if="((${dto.secret==true} and (${username} != ${dto.userId}))and(${role eq 'ROLE_USER'}))">
+                                    <!--비밀글여부-->
+                                    <a th:href="@{'/board/read/'+${dto.postNo}}" class="d-flex align-items-center">
+                                <span class="icon listSecret">
+                                     <i class="bi bi-file-lock d-flex flex-fill"></i>
+                                </span>
+                                        <p class="ms-2 secretPost d-flex flex-column justify-content-center">
+                                            비밀글입니다.
+                                        </p>
+                                    </a>
                                 </td>
                             </tr>
                             </tbody>
@@ -828,7 +843,6 @@
                 });
 
                 div.appendChild(divContent);
-                div.appendChild(reportReplyBtn);
                 div.appendChild(deleteButton);
                 replyCard.appendChild(div);
 
@@ -930,4 +944,3 @@
 
 </script>
 </html>
-
