@@ -111,6 +111,10 @@ spring:
 s3UploadPath: C:/testupload/s3/
 tempUploadPath: C:/testupload/temp/
 
+s3Resource: file:///C:/testupload/s3/
+tempResource: file:///C:/testupload/temp/
+
+
 # TODO 리눅스 업로드 경로
 # multipartUploadPath: ${user.home}/testupload/multipart/
 # s3UploadPath: ${user.home}/testupload/s3/
@@ -121,6 +125,7 @@ oldUrl: http://localhost:10000/temp/
 
 # 리눅스 oldUrl: http://dogcat.n-e.kr/temp/
 newUrl: https://dogcat-s3-teamproject.s3.ap-northeast-2.amazonaws.com/
+
 
 logging:
   level:

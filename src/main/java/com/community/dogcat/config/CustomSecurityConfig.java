@@ -71,7 +71,7 @@ public class CustomSecurityConfig {
 		http.authorizeRequests()
 			.antMatchers("/admin/**").hasRole("ADMIN")
 			.antMatchers("/user/**", "/", "/check/**", "/login/**", "/oauth2/**","/error/**").permitAll()
-			.antMatchers("/css/**","/fonts/**", "/js/**", "/img/**", "/static/**").permitAll()
+			.antMatchers("/css/**","/fonts/**", "/js/**", "/img/**", "/static/**", "/home/home").permitAll()
 			.anyRequest().authenticated();
 
 		http.formLogin()
