@@ -95,6 +95,10 @@ public class Post {
 	@Column(name = "reply_auth", nullable = false)
 	private boolean replyAuth;
 
+	@ColumnDefault("false")
+	@Column(name = "complete_Qna")
+	private boolean completeQna;
+
 	// 게시판 등록시 이미지도 참조
 	@OneToMany(mappedBy = "postNo", cascade = CascadeType.ALL,
 		orphanRemoval = true, fetch = FetchType.LAZY)
