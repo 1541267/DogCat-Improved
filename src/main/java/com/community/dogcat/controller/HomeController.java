@@ -55,7 +55,7 @@ public class HomeController extends BaseController {
 		// 모델에 추가
 		model.addAttribute("userLevelInfo", userLevelInfo);
 
-		return "/home/home";  // home.html 뷰를 반환
+		return "home/home";  // home.html 뷰를 반환
 	}
 
 	// 통합검색
@@ -65,12 +65,12 @@ public class HomeController extends BaseController {
 		model.addAttribute("searchPageRequestDTO", pageRequestDTO);
 		model.addAttribute("searchResponseDTO", responseDTO);
 
-		return "/home/allSearch";
+		return "home/allSearch";
 	}
 
 	@GetMapping("/notice")
 	public String notice() {
 
-		return "/home/notice";
+		return "home/notice";
 	}
 }
