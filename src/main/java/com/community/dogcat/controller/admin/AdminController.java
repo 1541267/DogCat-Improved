@@ -78,23 +78,6 @@ public class AdminController extends BaseController {
     }
 
 
-//    @GetMapping("/user-report")
-//    public void adminUserReport(@RequestParam("userId") String userId, @RequestParam("nickname") String nickname,
-//                                Model model) {
-//        User user = userService.findUserId(userId);
-//
-//        //게시글, 댓글 신고 정보 가져옴
-//        List<UserReportDetailDTO> reportedPosts = reportService.findReportedPostsByUserId(userId);
-//        List<UserReportDetailDTO> reportedReplys = reportService.findReportedReplysByUserId(userId);
-//
-//        // model에 결과를 담아서 view로 전달
-//        model.addAttribute("user", user);
-//        model.addAttribute("reportNickname", nickname);
-//        model.addAttribute("reportedPosts", reportedPosts);
-//        model.addAttribute("reportedReplys", reportedReplys);
-//    }
-
-
     @GetMapping("/report-list")
     public void reportList(BoardPageRequestDTO pageRequestDTO, Model model) {
 

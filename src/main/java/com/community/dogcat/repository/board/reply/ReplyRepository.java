@@ -49,4 +49,6 @@ public interface ReplyRepository extends JpaRepository<Reply, Long>, ReplySearch
     @Transactional
     void deleteAllByUserId(User user);
 
+    List<Reply> findAllByUserId(User user);
+
 }

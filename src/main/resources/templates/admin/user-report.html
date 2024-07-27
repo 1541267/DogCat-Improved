@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <title>Document</title>
+    <title>말랑발자국 - 신고 내역</title>
 
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" th:href="@{/css/admin/userReport.css}">
@@ -30,17 +30,23 @@
     </header>
 
     <div class="content">
+
         <!-- 게시물 신고와 댓글 신고가 둘 다 없는 경우에 이미지를 가운데에 배치하고 메시지 추가 -->
         <div class="no-data-container" th:if="${#lists.isEmpty(reportedDetails)}">
-            <img src="/img/board/no_search.png" alt="No data image" class="no-data-image">
-            <div class="no-data-message">신고 받은게 없다옹~</div>
+            <div>
+                <img src="/img/board/no_search.png" alt="No data image"
+                     class="no-data-image"
+                     style="width: 200px">
+                <div class="no-data-message">클린유저다옹~</div>
+            </div>
         </div>
 
         <!-- 신고가 있는 경우에만 표시 -->
         <div class="d-flex flex-row justify-content-center mb-1" th:if="${!#lists.isEmpty(reportedDetails)}">
             <div class="col-custom border border-3 p-2">
                 <h5>목록</h5>
-                <div th:each="detail : ${reportedDetails}" class="d-flex justify-content-between align-items-center mb-2">
+                <div th:each="detail : ${reportedDetails}"
+                     class="d-flex justify-content-between align-items-center mb-2">
                     <div>
                         <!--게시판 구분-->
                         <span th:switch="${detail.boardCode}"
@@ -65,8 +71,10 @@
 
                     <!-- 작성 시간, 신고삭제 -->
                     <div class="text-right">
-                        <span th:text="${detail.postNo != null ? #dates.format(detail.regDate, 'yyyy-MM-dd') : #dates.format(detail.ReplyregDate, 'yyyy-MM-dd')}" style="font-size: x-small"></span>
-                        <button class="btn btn-danger ml-2 btn-sm" th:onclick="|deleteReportLog(${detail.reportNo})|">신고삭제
+                        <span th:text="${detail.postNo != null ? #dates.format(detail.regDate, 'yyyy-MM-dd') : #dates.format(detail.ReplyregDate, 'yyyy-MM-dd')}"
+                              style="font-size: x-small"></span>
+                        <button class="btn btn-danger ml-2 btn-sm" th:onclick="|deleteReportLog(${detail.reportNo})|">
+                            신고삭제
                         </button>
                     </div>
                 </div>
@@ -107,7 +115,7 @@
         }
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         // 게시물 정렬
         const postsSection = document.getElementById('posts-section');
         const postItems = Array.from(postsSection.querySelectorAll('.d-flex')).sort((a, b) => {

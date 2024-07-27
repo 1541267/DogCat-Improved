@@ -64,9 +64,11 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
     text-align: center;
+
+    min-width: 200px; /* 최소 너비 200px 설정 */
 }
+
 
 .no-data-image {
     width: 15%;
@@ -78,3 +80,4 @@ header {
     font-size: 1.2rem;
     color: #6c757d;
 }
+

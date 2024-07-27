@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Notice</title>
+    <title>말랑발자국 - 공지사항</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" th:href="@{/css/home/notice.css}">
@@ -14,11 +14,11 @@
 <div class="container">
     <div class="d-flex justify-content-center align-items-center">
         <div>
-            <div class="d-flex justify-content-center align-items-center" style="height: 100px; width: 800px; margin-bottom: 50px">
-                <h1 style="color: #67cafe"><b>공지 사항</b></h1>
+            <div class="d-flex justify-content-center align-items-center noticeTitle">
+                <h1><b>공지 사항</b></h1>
             </div>
             <div class="d-flex flex-column justify-content-start align-items-center noticeContent">
-                <div class="d-flex flex-column justify-content-between" style="width: 800px;">
+                <div class="d-flex flex-column justify-content-between">
                     <div class="accordion" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingOne">
@@ -26,16 +26,15 @@
                                     #1 게시판 이용규칙
                                 </button>
                             </h2>
-                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
                                 <div class="accordion-body">
-                                    <div>1. 게시판 공통 규칙</div>
-                                        <div>- 아래 각 항목에 해당하는 자료는 제재를 받을 수 있으며, 게시자는 활동에 제한을 받을 수 있습니다.</div><br>
-                                        <div>1) 음란물/혐오자료 등 부적절한 게시글</div><br>
-                                        <div>2) 타인의 자료를 무단으로 도용할 경우</div><br>
-                                        <div>3) 게시판의 성격에 맞지 않은 게시물</div><br>
-                                        <div>4) 타인에 대한 악성 비방글, 심한 욕설, 비하 발언, 격한 표현</div><br>
-                                        <div>5) 분란 야기, 갈등 조장, 정치 관련 게시글</div><br>
-                                        <div>6) 허위사실 유포</div>
+                                    <div>♠ 아래 각 항목에 해당하는 자료는 제재를 받을 수 있으며, 게시자는 활동에 제한을 받을 수 있습니다. ♠</div><br>
+                                    <div>1) 음란물/혐오자료 등 부적절한 게시글</div><br>
+                                    <div>2) 타인의 자료를 무단으로 도용할 경우</div><br>
+                                    <div>3) 게시판의 성격에 맞지 않은 게시물</div><br>
+                                    <div>4) 타인에 대한 악성 비방글, 심한 욕설, 비하 발언, 격한 표현</div><br>
+                                    <div>5) 분란 야기, 갈등 조장, 정치 관련 게시글</div><br>
+                                    <div>6) 허위사실 유포</div>
                                 </div>
                             </div>
                         </div>
@@ -45,28 +44,36 @@
                                     #2 등급과 경험치
                                 </button>
                             </h2>
-                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo">
                                 <div class="accordion-body">
-                                    <div>- 경험치는 출석하면 2점, 게시물 작성 시마다 1점씩 부여됩니다.</div>
-                                    <div>- 등급표</div>
+                                    <div>♣ 경험치는 출석하면 2점, 게시물 작성 시마다 1점씩 부여됩니다. ♣</div><br>
+                                    <div>♣ 등급표 ♣</div><br>
                                     <div>
-                                        <table>
-                                            <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>2</td>
-                                                    <td>3</td>
-                                                    <td>4</td>
-                                                    <td>5</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>6</td>
-                                                    <td>7</td>
-                                                    <td>8</td>
-                                                    <td>9</td>
-                                                    <td>0</td>
-                                                </tr>
-                                            </tbody>
+                                        <table class="levelTable">
+                                            <tr>
+                                                <th>경험치</th>
+                                                <th>등급</th>
+                                            </tr>
+                                            <tr>
+                                                <td>0~749</td>
+                                                <td><img class="level" src="/img/level/red.png" alt="등급1"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>750~1499</td>
+                                                <td><img class="level" src="/img/level/orange.png" alt="등급2"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>1500~2249</td>
+                                                <td><img class="level" src="/img/level/yellow.png" alt="등급3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>2250~2999</td>
+                                                <td><img class="level" src="/img/level/mint.png" alt="등급4"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>3000</td>
+                                                <td><img class="level" src="/img/level/purple.png" alt="등급5"></td>
+                                            </tr>
                                         </table>
                                     </div>
                                 </div>
@@ -78,14 +85,14 @@
                                     #3 신고 및 제재
                                 </button>
                             </h2>
-                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree">
                                 <div class="accordion-body">
-                                    <div>※ 신고 ※</div><br>
-                                    <div>- 게시물 이용규칙을 위반한 게시물 또는 댓글은 다른 회원에 의해 신고가 가능합니다.</div><br>
-                                    <div>- 신고된 게시물 또는 댓글은 관리자에 의해 삭제될 수 있습니다.</div><br><br>
-                                    <div>※ 제재 ※</div><br>
-                                    <div>- 신고된 게시물 또는 댓글을 작성한 회원은 관리자에 의해 차단될 수 있습니다.</div><br>
-                                    <div>- 차단된 유저는 관리자가 복구하기 전까지 로그인을 할 수 없고, 동일한 이메일로 재가입이 불가능합니다.</div>
+                                    <div>♠ 신고 ♠</div><br>
+                                    <div>1) 게시물 이용규칙을 위반한 게시물 또는 댓글은 다른 회원에 의해 신고가 가능합니다.</div><br>
+                                    <div>2) 신고된 게시물 또는 댓글은 관리자에 의해 삭제될 수 있습니다.</div><br><br>
+                                    <div>♠ 제재 ♠</div><br>
+                                    <div>1) 신고된 게시물 또는 댓글을 작성한 회원은 관리자에 의해 차단될 수 있습니다.</div><br>
+                                    <div>2) 차단된 유저는 관리자가 복구하기 전까지 로그인을 할 수 없고, 동일한 이메일로 재가입이 불가능합니다.</div>
                                 </div>
                             </div>
                         </div>
@@ -95,11 +102,12 @@
                                     #4 문의하기
                                 </button>
                             </h2>
-                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour">
                                 <div class="accordion-body">
-                                    <div></div><br>
-                                    <div></div><br>
-                                    <div></div><br>
+                                    <div>♣ 말랑발자국 사이트 이용 시 불편한 점이나 문의사항은 아래 연락처로 연락바랍니다. ♣</div><br>
+                                    <div>대표 : 김윤섭</div>
+                                    <div>E-Mail : 1541267@naver.com</div>
+                                    <div>Tel. 010-1234-5678</div>
                                 </div>
                             </div>
                         </div>

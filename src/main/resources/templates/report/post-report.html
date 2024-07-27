@@ -13,7 +13,7 @@
     <link rel="stylesheet" th:href="@{/css/report/createReport.css}">
 
     <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
-    <title>Report Detail</title>
+    <title>말랑발자국 - 글 신고</title>
 
 
 
@@ -68,6 +68,10 @@
             <textarea name="reportContent" id="reportContent" class="form-control" rows="6" style="resize: none"></textarea>
         </div>
 
+        <!-- 숨겨진 필드 -->
+        <input type="hidden" id="postOwner" th:value="${postReport.userId.userId}">
+        <input type="hidden" id="reportUser" th:value="${username}">
+
 
     </form>
 </div>
@@ -80,6 +84,15 @@
         const userId = document.getElementById("userName").textContent.trim();
         const reportTitle = document.getElementById("reportTitle").value;
         const reportContent = document.getElementById("reportContent").value;
+        const reportUser = document.getElementById('reportUser').value;
+        const postOwner = document.getElementById('postOwner').value;
+
+        // 자기 자신을 신고하는 경우 처리
+        if (reportUser === postOwner) {
+            alert("자기가 자신을 신고할 수 없습니다.");
+            window.close();
+            return;
+        }
 
         // 입력값 검증
         if (!reportTitle) {
@@ -91,12 +104,12 @@
             return;
         }
 
+
         // 사용자가 취소를 클릭한 경우 종료
         const isConfirmed = confirm("정말로 신고하시겠습니까?");
         if (!isConfirmed) {
             return;
         }
-
 
         // reportLogDTO생성
         const reportLogDTO = {

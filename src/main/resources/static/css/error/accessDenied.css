@@ -12,22 +12,45 @@ body {
 }
 
 .content {
-    width: 800px;
     height: 100%;
 }
 
-.noSearch {
-    height: 100%;
-}
-
-.noSearch img {
+.errorPage {
     height: 300px;
+    width: 300px;
 }
 
-.errorMessage {
+h2 {
     color: #67cafe;
-    font-size: 25px;
     white-space: nowrap;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+h5 {
+    color: #67cafe;
+    white-space: nowrap;
+    font-size: 18px;
+}
+
+hr {
+    border: 1px solid #67cafe;
+    margin: 20px 0;
+}
+
+small {
+    color: #67cafe;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.errorIcon {
+    width: 40px;
+}
+
+hr {
+    margin-top: 30px;
+    margin-bottom: 40px;
 }
 
 .home-button {

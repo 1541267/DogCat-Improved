@@ -6,6 +6,21 @@
     display: flex;
 }
 
+.container > div {
+    margin-bottom: 50px;
+}
+
+.noticeTitle {
+    height: 100px;
+    width: 800px;
+    margin-bottom: 50px;
+    margin-top: 100px;
+}
+
+.noticeTitle > h1 {
+    color: #67cafe;
+}
+
 .accordion:active {
     color: black;
 }
@@ -13,4 +28,39 @@
 .noticeContent {
     width: 800px;
     min-height: 500px;
+}
+
+.noticeContent > div {
+    width: 800px;
+}
+
+
+table {
+    width: 50%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #d5d5d5;
+    padding: 8px;
+    text-align: center;
+}
+th {
+    background-color: #f2f2f2;
+}
+
+.levelTable {
+    width: 300px;
+}
+
+.levelTable tr th {
+    width: 150px;
+    height: 40px;
+}
+
+.levelTable tr td {
+    height: 60px;
+}
+
+.level {
+    width: 40px;
 }

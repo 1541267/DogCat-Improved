@@ -27,17 +27,13 @@ body {
 }
 
 .searchForm .form-control {
-    border-radius: 0;
-    border-top-left-radius: 15px;
-    border-bottom-left-radius: 15px;
+    border-radius: 15px 0 0 15px;
     border: 1px solid #67cafe;
     border-right: none;
 }
 
 .searchForm .searchBtn {
-    border-radius: 0;
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
+    border-radius: 0 15px 15px 0;
     border: 1px solid #67cafe;
     border-left: none;
     color: #000;
@@ -51,9 +47,7 @@ body {
 }
 
 .searchForm .searchBtn:hover {
-    border-radius: 0;
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
+    border-radius: 0 15px 15px 0;
     border: 1px solid #67cafe;
     border-left: none;
     color: #000;
