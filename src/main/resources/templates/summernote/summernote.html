@@ -98,7 +98,7 @@
                                             let height = file.height;
 
                                             // 이미지 크기 비율에 맞춰 조절
-                                            let maxWidth = 100; // 최대 너비 100%
+                                            let maxWidth = 75; // 최대 너비 100%
                                             let ratio = Math.min(maxWidth / width, 100 / height);
                                             let newWidth = width * ratio;
                                             let newHeight = height * ratio;
@@ -295,7 +295,7 @@
                         uploadS3Image(uploadedImages, postNo, imageUUIDs);
                         setTimeout(() => {
                             location.href = '/board/read/' + postNo;
-                        }, 1500);
+                        }, 2000);
                     } else {
                         location.href = '/board/read/' + postNo;
                     }
@@ -359,7 +359,7 @@
                         uploadS3Image(uploadedImages, postNo, imageUUIDs);
                         setTimeout(() => {
                             location.href = '/board/read/' + postNo;
-                        }, 1500);
+                        }, 2000);
                     } else {
                         location.href = '/board/read/' + postNo;
                     }
