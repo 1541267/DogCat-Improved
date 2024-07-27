@@ -170,6 +170,7 @@ public class AdminService {
     }
 
     public int countAllBlockUsers(BoardPageRequestDTO pageRequestDTO) {
+        // 차단 당한 유저 숫자
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
             return (int) adminRepository.countByBlockTrueKeyword(keyword, keyword);
