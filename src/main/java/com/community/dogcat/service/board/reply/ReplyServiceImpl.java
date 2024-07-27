@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.community.dogcat.repository.report.ReportLogRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ public class ReplyServiceImpl implements ReplyService {
 	private final UsersAuthRepository usersAuthRepository;
 	private final BoardRepository boardRepository;
 	private final ReplyRepository replyRepository;
+	private final ReportLogRepository reportLogRepository;
 
 	private final ModelMapper modelMapper;
 
@@ -44,7 +46,7 @@ public class ReplyServiceImpl implements ReplyService {
 
 		// 댓글 작성을 위해 게시물 번호 조회
 		Post post = boardRepository.findById(replyDTO.getPostNo()).orElseThrow();
-		
+
 		// 게시물이 비밀글인 경우
 		boolean secret = post.isSecret();
 		// 댓글 권한이 수의사만 가능한 경우
@@ -103,6 +105,14 @@ public class ReplyServiceImpl implements ReplyService {
 		// 회원 아이디로 작성한 댓글이면 삭제
 		if (reply.isPresent()|| auth.equals("ROLE_ADMIN")) {
 			replyRepository.deleteById(replyNo);
+
+			// 해당 댓글 신고 삭제
+			List<Long> reportLogIds = reportLogRepository.findByReplyNo(replyNo);
+			for (Long reportLogId : reportLogIds) {
+				reportLogRepository.deleteReportLog(reportLogId);
+			}
+
+
 		}
 	}
 

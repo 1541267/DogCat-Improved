@@ -47,7 +47,6 @@ public class ReportService {
         reportLogRepository.save(reportLog);
     }
 
-
     public List<UserReportDetailDTO> findReportedByUserId(String userId) {
         User user = userRepository.findByUserId(userId);
         List<UserReportDetailDTO> userReportDetailDTOS = new ArrayList<>();
@@ -82,69 +81,11 @@ public class ReportService {
                 userReportDetailDTOS.add(dto);
             }
         }
-
         // reportNo 순으로 정렬
         userReportDetailDTOS.sort(Comparator.comparing(UserReportDetailDTO::getReportNo));
 
-
         return userReportDetailDTOS;
     }
-
-
-
-
-
-//    public List<UserReportDetailDTO> findReportedPostsByUserId(String userId) {
-//
-//        User user = userRepository.findByUserId(userId);
-//        List<Post> userPost = boardRepository.findByUserId(user);
-//        //userId로 검색한 Post userPost 리스트
-//
-//        List<UserReportDetailDTO> userReportDetailDTOS = new ArrayList<>();
-//
-//        for (Post post : userPost) {
-//            List<Long> reportNos = reportLogRepository.findByPostNo(post.getPostNo());
-//
-//            for (Long reportNo : reportNos) {
-//                UserReportDetailDTO dto = UserReportDetailDTO.builder()
-//                        .postNo(post.getPostNo())
-//                        .postTitle(post.getPostTitle())
-//                        .reportNo(reportNo)
-//                        .regDate(post.getRegDate())
-//                        .boardCode(post.getBoardCode())
-//                        .build();
-//                userReportDetailDTOS.add(dto);
-//            }
-//        }
-//        return userReportDetailDTOS;
-//
-//    }
-//
-//    public List<UserReportDetailDTO> findReportedReplysByUserId(String userId) {
-//
-//        User user = userRepository.findByUserId(userId);
-//        List<Reply> userReply = replyRepository.findByUserId(user);
-//        //userId로 검색한 Reply userReply 리스트
-//
-//        List<UserReportDetailDTO> userReportDetailDTOS = new ArrayList<>();
-//
-//        for (Reply reply : userReply) {
-//            List<Long> reportNos = reportLogRepository.findByReplyNo(reply.getReplyNo());
-//
-//            for (Long reportNo : reportNos) {
-//                UserReportDetailDTO dto = UserReportDetailDTO.builder()
-//                        .replyNo(reply.getReplyNo())
-//                        .replyContent(reply.getReplyContent())
-//                        .reportNo(reportNo)
-//                        .ReplyregDate(reply.getRegDate())
-//                        .build();
-//                userReportDetailDTOS.add(dto);
-//            }
-//        }
-//        return userReportDetailDTOS;
-//    }
-
-
 
 
     //신고 삭제
