@@ -44,4 +44,6 @@ public interface BoardRepository extends JpaRepository<Post, Long>, BoardSearch 
     @Transactional
     void deleteAllByUserId(User user);
 
+    List<Post> findAllByUserId(User user);
+
 }

@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.community.dogcat.domain.Post;
 import com.community.dogcat.domain.PostLike;
+import com.community.dogcat.domain.Reply;
 import com.community.dogcat.domain.User;
 import com.community.dogcat.domain.UsersAuth;
 import com.community.dogcat.dto.user.JoinDTO;
@@ -28,6 +29,7 @@ import com.community.dogcat.repository.board.BoardRepository;
 import com.community.dogcat.repository.board.postLike.PostLikeRepository;
 import com.community.dogcat.repository.board.reply.ReplyRepository;
 import com.community.dogcat.repository.board.scrap.ScrapRepository;
+import com.community.dogcat.repository.report.ReportLogRepository;
 import com.community.dogcat.repository.user.RefreshRepository;
 import com.community.dogcat.repository.user.UserRepository;
 import com.community.dogcat.repository.user.UsersAuthRepository;
@@ -49,6 +51,7 @@ public class UserService {
 	private final PostLikeRepository postLikeRepository;
 	private final UsersAuthRepository usersAuthRepository;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final ReportLogRepository reportLogRepository;
 
 	public Boolean isNicknameExists(String nickname) {
 
@@ -67,24 +70,40 @@ public class UserService {
 
 	@Transactional
 	public void deleteUserById(HttpServletResponse response, String userId) {
+
 		User deleteUser = userRepository.findByUserId(userId);
+
 		if (deleteUser != null) {
-			// 사용자와 관련된 모든 PostLike 조회
+
+
 			List<PostLike> postLikes = postLikeRepository.findAllByUserId(deleteUser);
+
 			for (PostLike postLike : postLikes) {
+
 				Post post = postLike.getPostNo();
 				if (postLike.isLikeState()) {
-					// 좋아요 상태인 경우 좋아요 카운트 감소
 					post.count(post.getLikeCount() - 1, post.getDislikeCount());
 				}
 				if (postLike.isDislikeState()) {
-					// 싫어요 상태인 경우 싫어요 카운트 감소
 					post.count(post.getLikeCount(), post.getDislikeCount() - 1);
 				}
-				boardRepository.save(post); // 게시물 업데이트
-			}
-			postLikeRepository.deleteAllByUserId(deleteUser); // 사용자 관련 좋아요/싫어요 삭제
 
+				boardRepository.save(post); // 게시물 업데이트
+
+			}
+
+			// 사용자가 작성한 글과 댓글에 대해 접수된 신고 삭제
+			List<Post> userPosts = boardRepository.findAllByUserId(deleteUser);
+			for (Post post : userPosts) {
+				reportLogRepository.deleteByPostNo(post);
+			}
+
+			List<Reply> userReplies = replyRepository.findAllByUserId(deleteUser);
+			for (Reply reply : userReplies) {
+				reportLogRepository.deleteByReplyNo(reply);
+			}
+
+			postLikeRepository.deleteAllByUserId(deleteUser);
 			scrapRepository.deleteAllByUserId(deleteUser);
 			replyRepository.deleteAllByUserId(deleteUser);
 			boardRepository.deleteAllByUserId(deleteUser);
@@ -135,7 +154,7 @@ public class UserService {
 		return userDetailDTO;
 	}
 
-	public void userModify(UserDetailDTO userDetailDTO) {
+	public boolean userModify(UserDetailDTO userDetailDTO) {
 
 		User existingUser = userRepository.findById(userDetailDTO.getUserId())
 			.orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -155,6 +174,25 @@ public class UserService {
 			.build();
 
 		userRepository.save(updatedUser);
+
+		boolean needsLogout = false;
+
+		UsersAuth usersAuth = usersAuthRepository.findByUserId(existingUser.getUserId());
+
+		//ROLE_USER 상태에서 수의사인증을 한 사용자의 경우 JWT 토큰값에 ROLE 정보를 지우기 위해 LOGOUT 처리
+		if (updatedUser.isUserVet() && usersAuth.getAuthorities().equals("ROLE_USER")) {
+
+			usersAuth = UsersAuth.builder()
+				.userId(updatedUser.getUserId())
+				.authorities("ROLE_VET")
+				.build();
+
+			usersAuthRepository.save(usersAuth);
+			needsLogout = true;
+
+		}
+
+		return needsLogout;
 
 	}
 
