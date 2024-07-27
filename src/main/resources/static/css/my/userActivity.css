@@ -25,9 +25,7 @@ body {
 }
 
 .searchForm .form-select {
-    border-radius: 0;
-    border-top-left-radius: 15px;
-    border-bottom-left-radius: 15px;
+    border-radius: 15px 0 0 15px;
     border: 1px solid #67cafe;
     border-right: none;
 }
@@ -41,14 +39,12 @@ body {
 }
 
 .searchForm .searchBtn {
-    border-radius: 0;
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
+    border-radius: 0 15px 15px 0;
     border: 1px solid #67cafe;
     border-left: none;
     color: #000;
     background-color: #E8FFFF;
-    --bs-btn-hover-color: #000;
+    --bs-btn-hover-color: #fff;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
     --bs-btn-active-color: #000;
@@ -57,9 +53,7 @@ body {
 }
 
 .searchForm .searchBtn:hover {
-    border-radius: 0;
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
+    border-radius: 0 15px 15px 0;
     border: 1px solid #67cafe;
     border-left: none;
     color: #000;
