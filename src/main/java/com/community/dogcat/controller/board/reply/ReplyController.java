@@ -72,7 +72,7 @@ public class ReplyController extends BaseController {
 		List<ReplyDTO> list = replyService.getListOfReply(postNo);
 
 		model.addAttribute("replies", list);
-		log.info(list);
+
 		return list;
 	}
 

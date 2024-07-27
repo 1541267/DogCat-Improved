@@ -1,3 +1,30 @@
+.container,
+.container > div{
+    height: 800px;
+}
+
+.errorPage {
+    height: 300px;
+    width: 300px;
+}
+
+h2, h5, hr, small {
+    color: #67cafe;
+}
+
+h2 {
+    margin-bottom: 10px;
+}
+
+.errorIcon {
+    width: 40px;
+}
+
+hr {
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
 .home-button {
     background-color: white;
     border: 1px solid #67cafe;
@@ -12,3 +39,4 @@
     color: white;
     border: 1px solid #67cafe;
 }
+
