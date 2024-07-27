@@ -261,5 +261,5 @@ src/main/generated/
 # Cache of project
 .gradletasknamecache
 
-
-
+# Git Submodule
+Secret-DogCat

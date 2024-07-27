@@ -1,5 +1,6 @@
 package com.community.dogcat.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -8,6 +9,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebMvc
 public class CustomServletConfig implements WebMvcConfigurer {
+
+	@Value("${tempResource}")
+	private String tempResource;
+
+	@Value("${s3Resource}")
+	private String  s3Resource;
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -18,9 +25,9 @@ public class CustomServletConfig implements WebMvcConfigurer {
 		registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/static/assets/");
 		registry.addResourceHandler("/img/**").addResourceLocations("classpath:/static/img/");
 		registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
-		registry.addResourceHandler("/multipart/**").addResourceLocations("file:///C:/testupload/multipart/");
-		registry.addResourceHandler("/s3/**").addResourceLocations("file:///C:/testupload/s3/");
-		registry.addResourceHandler("/temp/**").addResourceLocations("file:///C:/testupload/temp/");
+
+		registry.addResourceHandler("/s3/**").addResourceLocations(s3Resource);
+		registry.addResourceHandler("/temp/**").addResourceLocations(tempResource);
 	}
 
 }
