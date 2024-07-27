@@ -96,7 +96,7 @@ public class Post {
 	private boolean replyAuth;
 
 	@ColumnDefault("false")
-	@Column(name = "complete_Qna")
+	@Column(name = "complete_qna")
 	private boolean completeQna;
 
 	// 게시판 등록시 이미지도 참조
