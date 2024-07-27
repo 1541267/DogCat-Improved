@@ -68,9 +68,8 @@
                             <td class="align-middle listOne">
                                 <a th:href="@{'/board/read/'+${dto.postNo}}">
                                     <div class="d-flex align-items-center listPost">
-                                        <div class="me-4" th:if="${!dto.imgBoards.isEmpty()}"
-                                             th:each="imgDto:${dto.imgBoards}">
-                                            <img th:src="${imgDto.thumbnailPath}" class="boardImg"
+                                        <div class="me-4" th:if="${!dto.imgBoards.isEmpty()}">
+                                            <img th:src="${dto.imgBoards[0].thumbnailPath}" class="boardImg"
                                                  alt="Image">
                                         </div>
                                         <div class="me-4" th:if="${dto.imgBoards.isEmpty()}">
@@ -107,9 +106,9 @@
                                                 </span>
                                                 <span class="mx-1">조회수 <span th:text="${dto?.viewCount}">5</span></span>
                                                 <span class="mx-1" th:if="${dto?.modDate == null}"
-                                                      th:text="${#temporals.format(dto.regDate, 'yyyy-MM-dd')}">작성일</span>
+                                                      th:text="${#temporals.format(dto.regDate, 'yyyy-MM-dd HH:mm')}"></span>
                                                 <span class="mx-1" th:if="${dto?.modDate != null}"
-                                                      th:text="${#temporals.format(dto?.modDate, 'yyyy-MM-dd')}">작성일</span>
+                                                      th:text="${#temporals.format(dto?.modDate, 'yyyy-MM-dd HH:mm')}"></span>
                                             </div> <!--title sub-->
                                         </div>
                                     </div>

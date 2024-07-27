@@ -11,19 +11,18 @@
 <body>
 <div th:include="include/header :: header"></div>
 
-<div class="container" style="height: 800px;">
-    <div class="d-flex justify-content-center align-items-center text-center" style="height: 800px;">
-        <div>
-            <img class="mx-auto d-block" src="/img/board/no_search.png" alt="이미지 로드 실패" style="height: 300px; width: 300px;">
+<div class="container">
+        <div class="noSearch">
+            <img class="mx-auto d-block" src="/img/board/no_search.png" alt="이미지 로드 실패">
             <br>
-            <h3 style="color: #67cafe">죄송합니다, 요청하신 페이지를 찾을 수 없습니다.</h3><br>
-            <h3 style="color: #67cafe">링크가 잘못되었거나 페이지가 삭제되었습니다.</h3>
+            <p class="errorMessage">죄송합니다, 요청하신 페이지를 찾을 수 없습니다.</p>
+            <br>
+            <p class="errorMessage">링크가 잘못되었거나 페이지가 삭제되었습니다.</p>
             <br>
             <button type="button" class="home-button" th:onclick="|location.href='@{/}'|">
                 홈으로 이동
             </button>
         </div>
-    </div>
 </div>
 
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>

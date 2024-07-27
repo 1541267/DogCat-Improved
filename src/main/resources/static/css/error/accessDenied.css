@@ -1,3 +1,35 @@
+body {
+    min-width: 1200px;
+}
+
+.container {
+    width: 800px;
+    min-height: 650px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.content {
+    width: 800px;
+    height: 100%;
+}
+
+.noSearch {
+    height: 100%;
+}
+
+.noSearch img {
+    height: 300px;
+}
+
+.errorMessage {
+    color: #67cafe;
+    font-size: 25px;
+    white-space: nowrap;
+}
+
 .home-button {
     background-color: white;
     border: 1px solid #67cafe;
