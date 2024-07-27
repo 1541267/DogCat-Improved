@@ -75,15 +75,30 @@ public class BoardController extends BaseController {
 		Model model) {
 		// 게시글 유무 - ys
 		Post post = boardService.findPostByPostNo(postNo);
+
 		// 조회수 증가
 		boardService.updateViewCount(postNo);
 
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
+		String role = userService.getRole(userId);
+		// 로그인 사용자 확인
+		if (userId == null) {
+			return "redirect:/user/login"; // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+		}
+
 		// 상세페이지 출력
 		PostReadDTO postDTO = boardService.readDetail(postNo, userId);
 		// 게시글 정보
 		model.addAttribute("postDTO", postDTO);
+		boolean secret = postDTO.isSecret();
+
+		// 게시글 작성자 확인
+		if (secret) {
+			if(!userId.equals(postDTO.getUserId()) && role.equals("ROLE_USER")) {
+				return "redirect:/error/403"; // 권한이 없는 경우 403 오류 페이지로 리다이렉트
+			}
+		}
 
 		// postDTO에서 boardCode 추출
 		String boardCode = postDTO.getBoardCode();
@@ -104,7 +119,7 @@ public class BoardController extends BaseController {
 			return "board/read";
 
 		} else {
-			return "/error/404"; // 해당 게시글이 없을경우, 에러 페이지 만드는게 어떨지?
+			return "redirect:/error/404"; // 해당 게시글이 없을경우, 에러 페이지 만드는게 어떨지?
 		}
 	}
 
@@ -118,6 +133,11 @@ public class BoardController extends BaseController {
 		// 로그인 사용자 확인
 		if (userId == null) {
 			return "redirect:/user/login"; // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+		}
+
+		// 게시글 조회
+		if (postDTO == null) {
+			return "redirect:/error/404"; // 게시글이 존재하지 않는 경우 404 오류 페이지로 리다이렉트
 		}
 
 		// 게시글 작성자 확인
@@ -139,6 +159,12 @@ public class BoardController extends BaseController {
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 
+		// 로그인 사용자 확인
+		if (userId == null) {
+			return ResponseEntity.status(401).build(); // 로그인되지 않은 경우 401 오류 페이지로 리다이렉트
+		}
+
+		// 게시글 작성자 확인
 		if (!userId.equals(postDTO.getUserId())) {
 			return ResponseEntity.status(403).build(); // 권한이 없는 경우 403 오류 페이지로 리다이렉트
 		}
@@ -156,6 +182,12 @@ public class BoardController extends BaseController {
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 
+		// 로그인 사용자 확인
+		if (userId == null) {
+			return ResponseEntity.status(401).build(); // 로그인되지 않은 경우 401 오류 페이지로 리다이렉트
+		}
+
+		// 게시글 작성자 확인
 		if (!userId.equals(postDTO.getUserId())) {
 			return ResponseEntity.status(403).build(); // 권한이 없는 경우 403 오류 페이지로 리다이렉트
 		}

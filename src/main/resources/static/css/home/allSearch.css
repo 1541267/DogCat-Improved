@@ -1,10 +1,10 @@
 body {
-    min-width: 1200px; /* 고정 최소 너비 설정 */
+    min-width: 1200px;
 }
 
 .container {
     max-width: 1000px;
-    margin: 0 auto; /* 중앙 정렬 */
+    margin: 0 auto;
     display: flex;
 }
 
@@ -15,7 +15,7 @@ body {
 
 #list {
     width: 1000px;
-    height: 700px; /* 카드 크기 고정 */
+    height: 700px;
 }
 
 .read {

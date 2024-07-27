@@ -1,6 +1,18 @@
-.container,
-.container > div{
-    height: 800px;
+body {
+    min-width: 1200px;
+}
+
+.container {
+    width: 800px;
+    min-height: 650px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.content {
+    height: 100%;
 }
 
 .errorPage {
@@ -8,12 +20,28 @@
     width: 300px;
 }
 
-h2, h5, hr, small {
+h2 {
     color: #67cafe;
+    white-space: nowrap;
+    font-size: 28px;
+    margin-bottom: 10px;
 }
 
-h2 {
-    margin-bottom: 10px;
+h5 {
+    color: #67cafe;
+    white-space: nowrap;
+    font-size: 18px;
+}
+
+hr {
+    border: 1px solid #67cafe;
+    margin: 20px 0;
+}
+
+small {
+    color: #67cafe;
+    white-space: nowrap;
+    font-size: 14px;
 }
 
 .errorIcon {
@@ -39,4 +67,3 @@ hr {
     color: white;
     border: 1px solid #67cafe;
 }
-

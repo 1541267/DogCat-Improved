@@ -31,8 +31,8 @@
                         <tr>
                             <td class="mb-2 showListOne" th:each="dto:${showOffList}">
                                 <a th:href="@{'/board/read/'+${dto.postNo}}" class="d-flex flex-column justify-content-between">
-                                    <span th:if="${!dto.imgBoards.isEmpty()}" th:each="imgDto:${dto.imgBoards}">
-                                    <img th:src="${imgDto.thumbnailPath}" class="boardImg"
+                                    <span th:if="${!dto.imgBoards.isEmpty()}">
+                                    <img th:src="${dto.imgBoards[0].thumbnailPath}" class="boardImg"
                                          alt="Image">
                                     </span>
                                     <span th:if="${dto.imgBoards.isEmpty()}">
