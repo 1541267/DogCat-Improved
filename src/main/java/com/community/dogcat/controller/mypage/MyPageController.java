@@ -18,19 +18,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.community.dogcat.controller.BaseController;
+import com.community.dogcat.domain.UsersVet;
 import com.community.dogcat.dto.user.UserDetailDTO;
 import com.community.dogcat.jwt.JWTUtil;
 import com.community.dogcat.service.user.UserService;
+import com.community.dogcat.service.user.VetService;
 
 @Controller
 @RequestMapping("/my")
 public class MyPageController extends BaseController {
 
-	public MyPageController(JWTUtil jwtUtil, UserService userService) {
+	public MyPageController(JWTUtil jwtUtil, UserService userService, VetService vetService) {
 
 		super(jwtUtil, userService);
+		this.vetService = vetService;
 
 	}
+
+	private final VetService vetService;
 
 	@GetMapping("/user-detail")
 	public void userDetail(HttpServletRequest request, Model model) {
@@ -58,11 +63,22 @@ public class MyPageController extends BaseController {
 	}
 
 	@PostMapping("/user-modify")
-	public String userModifyConfirm(@ModelAttribute UserDetailDTO dto, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+	public String userModifyConfirm(@ModelAttribute UserDetailDTO dto, HttpServletRequest request ,HttpServletResponse response, RedirectAttributes redirectAttributes) {
 
 		boolean needsLogout = userService.userModify(dto);
 
 		if (needsLogout) {
+
+			String vetName = dto.getUserName();
+			Long vetLicense = Long.valueOf(request.getParameter("vetLicense"));
+			UsersVet vet = vetService.findByVetNameAndVetLicense(vetName, vetLicense);
+
+			if (vet != null && !vet.isVerificationStatus()) {
+
+				vet.setVerificationStatus(true);
+				vetService.save(vet);
+
+			}
 
 			clearCookies(response);
 
