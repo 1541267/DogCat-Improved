@@ -105,6 +105,7 @@
         axios.post('/report/reportLog', reportLogDTO)
             .then(function (response) {
                 console.log("서버 응답:", response.data);
+                alert("신고가 완료되었습니다.");
                 closeWindow();
             })
             .catch(function (error) {
