@@ -80,9 +80,6 @@ public class JoinVerificationController {
 
 		if (vet != null && !vet.isVerificationStatus()) {
 
-			vet.setVerificationStatus(true);
-			vetService.save(vet);
-
 			return ResponseEntity.ok().body("{\"message\": \"수의사 인증이 완료되었습니다.\", \"isVerified\": true}");
 
 		} else if (vet != null) {

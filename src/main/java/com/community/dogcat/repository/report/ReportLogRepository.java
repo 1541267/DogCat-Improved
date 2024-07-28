@@ -13,7 +13,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ReportLogRepository extends JpaRepository<ReportLog, Long> {
 
@@ -27,12 +26,36 @@ public interface ReportLogRepository extends JpaRepository<ReportLog, Long> {
     @Query("SELECT r.reportNo FROM ReportLog r WHERE r.replyNo.replyNo = :replyNo")
     List<Long> findByReplyNo(@Param("replyNo") Long replyNo);
 
-    // 받은 신고 목록
-    Page<ReportLog> findByReportTitleContaining(String keyword, Pageable pageable);
 
-    // 받은 신고 숫자
-    @Query("SELECT COUNT(r) FROM ReportLog r WHERE r.reportTitle LIKE %:keyword%")
-    long countByReportTitleContaining(@Param("keyword") String keyword);
+    // 신고 받았으면서 차단 당하지 않은 사람들 목록
+    @Query("SELECT r FROM ReportLog r " +
+            "LEFT JOIN r.postNo.userId pu " +
+            "LEFT JOIN r.replyNo.userId rpu " +
+            "WHERE (pu.block = false OR rpu.block = false) " +
+            "AND (r.reportContent LIKE %:keyword% OR r.reportTitle LIKE %:keyword%)")
+    Page<ReportLog> findByReportNotBlockedKeyword(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT r FROM ReportLog r " +
+            "LEFT JOIN r.postNo.userId pu " +
+            "LEFT JOIN r.replyNo.userId rpu " +
+            "WHERE pu.block = false OR rpu.block = false")
+    Page<ReportLog> findByReportNotBlocked(Pageable pageable);
+
+
+    // 신고 받았으면서 차단당하지 않은 인원수
+    @Query("SELECT COUNT(r) FROM ReportLog r " +
+            "LEFT JOIN r.postNo.userId pu " +
+            "LEFT JOIN r.replyNo.userId rpu " +
+            "WHERE (pu.block = false OR rpu.block = false) " +
+            "AND (r.reportContent LIKE %:keyword% OR r.reportTitle LIKE %:keyword%)")
+    long countByReportNotBlockedKeyword(@Param("keyword") String keyword);
+
+    @Query("SELECT COUNT(r) FROM ReportLog r " +
+            "LEFT JOIN r.postNo.userId pu " +
+            "LEFT JOIN r.replyNo.userId rpu " +
+            "WHERE pu.block = false OR rpu.block = false")
+    long countByReportNotBlocked();
+
 
     // 신고 삭제
     @Modifying

@@ -24,7 +24,7 @@ public interface AdminRepository extends JpaRepository<User, String> {
     int restoreUserByUserId(@Param("userId") String userId);
 
     // 차단당하지 않은 유저 목록
-    @Query("SELECT u FROM User u WHERE u.block = false AND u.nickname LIKE %:keyword1% AND u.block = false AND u.userName LIKE %:keyword2%")
+    @Query("SELECT u FROM User u WHERE u.block = false AND (u.nickname LIKE %:keyword1% OR u.userName LIKE %:keyword2%)")
     Page<User> findByBlockFalseKeyword(@Param("keyword1") String keyword1, @Param("keyword2") String keyword2, Pageable pageable);
     Page<User> findByBlockFalse(Pageable pageable);
 

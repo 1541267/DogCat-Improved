@@ -33,7 +33,7 @@ public class AdminService {
         Pageable pageable = pageRequestDTO.getPageable("userId");
         Page<User> userPage;
 
-        // null, 값이 없는유저 제외
+        // null, 값이 없는 유저 제외
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
             // keyword로 검색하여 block되지 않은 유저목록 불러옴
@@ -42,8 +42,8 @@ public class AdminService {
             userPage = adminRepository.findByBlockFalse(pageable);
         }
 
-        //userPage담아 반환
-        return userPage.getContent().stream()
+        // 사용자 목록을 가져와 AdminUserDetailDTO 리스트로 변환
+        List<AdminUserDetailDTO> users = userPage.getContent().stream()
                 .map(user -> {
                     UsersAuth userAuth = usersAuthRepository.findByUserId(user.getUserId());
                     return AdminUserDetailDTO.builder()
@@ -52,14 +52,26 @@ public class AdminService {
                             .regDate(user.getRegDate())
                             .nickname(user.getNickname())
                             .userVet(user.isUserVet())
-                            .authorities(userAuth != null ? userAuth.getAuthorities() : null)//유저 권한 가져옴
+                            .authorities(userAuth != null ? userAuth.getAuthorities() : null) // 유저 권한 가져옴
                             .build();
                 })
                 .collect(Collectors.toList());
+
+        // 권한이 "ROLE_ADMIN"인 사용자와 그렇지 않은 사용자로 분리
+        List<AdminUserDetailDTO> adminUsers = users.stream()
+                .filter(user -> user.getAuthorities() != null && user.getAuthorities().contains("ROLE_ADMIN"))
+                .collect(Collectors.toList());
+        List<AdminUserDetailDTO> nonAdminUsers = users.stream()
+                .filter(user -> user.getAuthorities() == null || !user.getAuthorities().contains("ROLE_ADMIN"))
+                .collect(Collectors.toList());
+
+        // 두 리스트를 결합하여 반환 (adminUsers가 뒤로 감)
+        nonAdminUsers.addAll(adminUsers);
+        return nonAdminUsers;
     }
 
     public int countAllUsers(BoardPageRequestDTO pageRequestDTO) {
-        // 차단당하지 않은 유저 숫자
+        // 차단당하지 않은 유저 인원수
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
             return (int) adminRepository.countByBlockFalseKeyword(keyword, keyword);
@@ -76,21 +88,17 @@ public class AdminService {
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
             // 신고 목록 불러옴
-            reportLogPage = reportLogRepository.findByReportTitleContaining(keyword, pageable);
+            reportLogPage = reportLogRepository.findByReportNotBlockedKeyword(keyword, pageable);
         } else {
-            reportLogPage = reportLogRepository.findAll(pageable);
+            reportLogPage = reportLogRepository.findByReportNotBlocked(pageable);
         }
 
         return reportLogPage.getContent().stream()
-                .filter(reportLog -> {
-                    // Null 체크, 차단된 유저 필터링
-                    boolean postNotBlocked = reportLog.getPostNo() != null && !reportLog.getPostNo().getUserId().isBlock();
-                    boolean replyNotBlocked = reportLog.getReplyNo() != null && !reportLog.getReplyNo().getUserId().isBlock();
-                    return postNotBlocked || replyNotBlocked;
-                })
                 .map(reportLog -> ReportListDTO.builder()
-                        .userId(reportLog.getUserId())
+                        .user(reportLog.getUserId()) //신고한 유저
                         .nickname(reportLog.getUserId().getNickname())
+
+                        .reportedUser(reportLog.getPostNo() != null ? reportLog.getPostNo().getUserId() : reportLog.getReplyNo().getUserId())// 신고 받은 유저
                         .reportNo(reportLog.getReportNo())
                         .reportTitle(reportLog.getReportTitle())
                         .reportContent(reportLog.getReportContent())
@@ -102,12 +110,12 @@ public class AdminService {
     }
 
     public int countAllReportUser(BoardPageRequestDTO pageRequestDTO) {
-        // 신고당한 유저 숫자
+        // 신고당한 유저 인원수
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
-            return (int) reportLogRepository.countByReportTitleContaining(keyword);
+            return (int) reportLogRepository.countByReportNotBlockedKeyword(keyword);
         } else {
-            return (int) reportLogRepository.count();
+            return (int) reportLogRepository.countByReportNotBlocked();
         }
     }
 
@@ -170,7 +178,7 @@ public class AdminService {
     }
 
     public int countAllBlockUsers(BoardPageRequestDTO pageRequestDTO) {
-        // 차단 당한 유저 숫자
+        // 차단 당한 유저 인원수
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             String keyword = pageRequestDTO.getKeyword();
             return (int) adminRepository.countByBlockTrueKeyword(keyword, keyword);

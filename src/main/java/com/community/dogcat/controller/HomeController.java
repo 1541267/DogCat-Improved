@@ -45,16 +45,18 @@ public class HomeController extends BaseController {
 		model.addAttribute("tipList", tipList);
 		model.addAttribute("qnaList", qnaList);
 
-		String username = (String)model.getAttribute("username");
+		Boolean isLoggedIn = (Boolean) model.getAttribute("isLoggedIn");
 
-		long userExp = userService.findUserExpByUsername(username);
+		if (isLoggedIn != null && isLoggedIn) {
 
-		// 유저 레벨과 퍼센티지 계산
-		Map<String, Object> userLevelInfo = userService.checkUserLevel(userExp);
+			String username = (String) model.getAttribute("username");
 
-		// 모델에 추가
-		model.addAttribute("userLevelInfo", userLevelInfo);
+			long userExp = userService.findUserExpByUsername(username);
 
+			Map<String, Object> userLevelInfo = userService.checkUserLevel(userExp);
+
+			model.addAttribute("userLevelInfo", userLevelInfo);
+		}
 		return "home/home";  // home.html 뷰를 반환
 	}
 

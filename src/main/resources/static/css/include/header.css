@@ -67,3 +67,7 @@ nav a {
     font-size: 1.1em;
 }
 
+.form-select:focus, .form-control:focus, .searchBtn:focus {
+    outline: none;
+    box-shadow: none;
+}

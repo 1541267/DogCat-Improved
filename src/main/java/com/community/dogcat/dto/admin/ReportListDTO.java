@@ -15,13 +15,15 @@ import lombok.Data;
 @AllArgsConstructor
 public class ReportListDTO {
 	//User에서 가져옴
-	private User userId;
+	private User user;
 
 	private String nickname;
 
 	//ReportLog에서 가져옴
 
 	private Long reportNo;
+
+	private User reportedUser;
 
 	private String reportTitle;
 

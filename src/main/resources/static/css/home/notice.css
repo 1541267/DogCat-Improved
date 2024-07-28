@@ -49,11 +49,11 @@ th {
 }
 
 .levelTable {
-    width: 300px;
+    width: 500px;
 }
 
 .levelTable tr th {
-    width: 150px;
+    width: 100px;
     height: 40px;
 }
 
