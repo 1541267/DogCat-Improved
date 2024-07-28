@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <link rel="stylesheet" th:href="@{/css/admin/adminlist.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/adminList.css}">
     <title>말랑발자국 - 신고 목록</title>
 </head>
 <body>
@@ -95,9 +95,9 @@
                                                 <div class="d-flex justify-content-around h11" style="margin-top: 15px;">
                                                     <span class="m-1 pr-2 opacity-75 badge bg-secondary text-white border">신고자</span>
                                                     <span class="m-1 pr-2 opacity-75"
-                                                          th:text="${user.userId.userId}"></span>
+                                                          th:text="${user.user.userId}"></span>
                                                     <span class="m-1 pr-2 opacity-75"
-                                                          th:text="${user.userId.nickname}"></span>
+                                                          th:text="${user.user.nickname}"></span>
                                                     <span class="m-1 px-2 opacity-75"
                                                           th:text="${#dates.format(user.regDate, 'yyyy-MM-dd')}"></span>
                                                 </div>
@@ -108,7 +108,7 @@
                                             <div class="d-flex flex-column justify-content-between gap-3">
                                                 <!--차단버튼-->
                                                 <button class="btn btn-outline-danger fw-bold"
-                                                        th:onclick="blockUser([[${user.userId.userId}]])">유저 차단
+                                                        th:onclick="blockUser([[${user.reportedUser.userId}]])">유저 차단
                                                 </button>
 
                                                 <!--삭제버튼-->
