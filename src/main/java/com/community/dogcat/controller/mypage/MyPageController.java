@@ -79,9 +79,12 @@ public class MyPageController extends BaseController {
 
 
 	@PostMapping("/delete-user")
-	public String deleteUser(HttpServletResponse response, @RequestParam("userId") String userId) {
+	public String deleteUser(HttpServletResponse response, @RequestParam("userId") String userId, RedirectAttributes redirectAttributes) {
 
 		userService.deleteUserById(response, userId);
+
+		redirectAttributes.addFlashAttribute("message", "회원탈퇴가 완료되었습니다.");
+
 		return "redirect:/user/login";
 
 	}
