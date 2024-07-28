@@ -126,8 +126,6 @@ public class UploadImageServiceImpl implements UploadImageService {
 			imagesLength.add(bufferedImage.getWidth());
 			imagesLength.add(bufferedImage.getHeight());
 
-			log.info("imagesLength: " + imagesLength);
-
 		} catch (IOException e) {
 			log.error("CalcImageLength Error!");
 			throw e;
@@ -143,7 +141,7 @@ public class UploadImageServiceImpl implements UploadImageService {
 		for (int i = 0; i < uuids.size(); i++) {
 			fileNames.add(uuids.get(i) + extensions.get(i));
 		}
-			deleteTempFiles.deleteTempFile(fileNames);
+		deleteTempFiles.deleteTempFile(fileNames);
 
 	}
 
@@ -153,7 +151,6 @@ public class UploadImageServiceImpl implements UploadImageService {
 		for (String fileUrl : deletedImageUrl) {
 			String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
 
-			log.info("Delete File With BackSpace: {}", fileName);
 			deleteTempFiles.deleteSingleTempFile(fileName);
 		}
 	}
@@ -177,16 +174,12 @@ public class UploadImageServiceImpl implements UploadImageService {
 			return ResponseEntity.badRequest().body(error);
 		}
 
-		log.info("Uuid size: {}개, multipartFileSize: {}개", uuids.size(), multipartFile.size());
-
 		for (int i = 0; i < uuids.size(); i++) {
 
 			MultipartFile file = multipartFile.get(i);
 
 			String originalFileName = file.getOriginalFilename();
 			String fileUuid = uuids.get(i);
-
-			log.info("업로드 할 파일: {}, UUID: {}", originalFileName, fileUuid);
 
 			try {
 				// s3업로드 실행 전에 게시글 등록 로직 먼저 실행 후 반환 되는 postNo

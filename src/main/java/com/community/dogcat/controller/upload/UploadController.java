@@ -57,17 +57,14 @@ public class UploadController {
 	public String uploadSummerNoteImage(@RequestParam("files") List<MultipartFile> multipartFile,
 		HttpServletRequest request) throws IOException {
 
-		String localUpload = uploadImageService.uploadSummerNoteImage(multipartFile, request);
-
-		log.info("summernote upload: {}", localUpload);
-
-		return localUpload;
+		return uploadImageService.uploadSummerNoteImage(multipartFile, request);
 	}
 
 	// 게시글 취소, 브라우저 종료시 업로드된 임시파일 삭제
 	@PostMapping("/delete-temp")
 	public void deleteSummernoteTempFile(@RequestParam("uuid") List<String> uuids,
 		@RequestParam("extension") List<String> extensions) {
+
 		uploadImageService.deleteSummernoteImage(uuids, extensions);
 	}
 
@@ -75,8 +72,6 @@ public class UploadController {
 	@PostMapping("/delete-backspace")
 	public void deleteSummernoteTempFileWithBackspace(
 		@RequestParam("deletedImageUrl") List<String> deletedImageUrl) {
-
-		log.info("deleteSummernoteTempFileWithBackspace: {}", deletedImageUrl);
 
 		uploadImageService.deleteSummernoteImageWithBackspace(deletedImageUrl);
 
