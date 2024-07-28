@@ -31,9 +31,6 @@ public class DeleteTempFiles {
 				log.info("Deleting temp file: {}", file.getName());
 				file.delete();
 			}
-
-			log.info("썸머노트 임시파일 리스트 삭제 완료!");
-
 		} catch (Exception e) {
 			log.info("썸머노트 임시파일 리스트 삭제 에러! - 이미 삭제 되었거나 존재하지 않습니다.");
 		}
@@ -46,8 +43,6 @@ public class DeleteTempFiles {
 
 		try {
 			savedTempFile.delete();
-			log.info("썸머노트 임시파일 리스트 삭제 완료!");
-
 		} catch (Exception e) {
 			log.info("썸머노트 임시파일 리스트 삭제 에러! - 이미 삭제 되었거나 존재하지 않습니다.");
 		}
