@@ -65,7 +65,7 @@ body {
     margin-top: 30px;
 }
 
-.countPost1 {
+.myPost {
     background-color: #90E4FF;
     border: 1px solid #d5d5d5;
     border-bottom: white;
@@ -74,7 +74,7 @@ body {
     padding: 10px;
 }
 
-.countPost2 {
+.myReply {
     background-color: #E8FFFF;
     border: 1px solid #d5d5d5;
     border-left: white;
@@ -83,7 +83,7 @@ body {
     padding: 10px;
 }
 
-.countPost3 {
+.myScrap {
     background-color: #E8FFFF;
     border: 1px solid #d5d5d5;
     border-left: white;
@@ -93,20 +93,20 @@ body {
     padding: 10px;
 }
 
-.countPost1 > a,
-.countPost2 > a,
-.countPost3 > a {
+.myPost > a,
+.myReply > a,
+.myScrap > a {
     text-decoration: none;
     color: #000;
 }
 
-.countPost1:hover,
-.countPost2:hover,
-.countPost3:hover {
+.myPost:hover,
+.myReply:hover,
+.myScrap:hover {
     background-color: #90E4FF;
 }
 
-.countScrap1 {
+.myPostScr {
     background-color: #E8FFFF;
     border: 1px solid #d5d5d5;
     border-bottom: white;
@@ -115,7 +115,7 @@ body {
     padding: 10px;
 }
 
-.countScrap2 {
+.myReplyScr {
     background-color: #E8FFFF;
     border: 1px solid #d5d5d5;
     border-left: white;
@@ -124,7 +124,7 @@ body {
     padding: 10px;
 }
 
-.countScrap3 {
+.myScrapScr {
     background-color: #90E4FF;
     border: 1px solid #d5d5d5;
     border-left: white;
@@ -134,16 +134,16 @@ body {
     padding: 10px;
 }
 
-.countScrap1 > a,
-.countScrap2 > a,
-.countScrap3 > a {
+.myPostScr > a,
+.myReplyScr > a,
+.myScrapScr > a {
     text-decoration: none;
     color: #000;
 }
 
 .countScrap1:hover,
-.countScrap2:hover,
-.countScrap3:hover {
+.myReplyScr:hover,
+.myScrapScr:hover {
     background-color: #90E4FF;
 }
 
