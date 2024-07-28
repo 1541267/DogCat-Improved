@@ -12,8 +12,6 @@ spring:
 
   application:
     name: DogCat
-  # TODO 배포시 linux 로 변경
-  environment: dev
 
   #TODO url: jdbc:mariadb://dogcat-project.c30wsegeo29w.ap-northeast-2.rds.amazonaws.com:3306/dogcat
 
@@ -114,6 +112,8 @@ tempUploadPath: C:/testupload/temp/
 s3Resource: file:///C:/testupload/s3/
 tempResource: file:///C:/testupload/temp/
 
+# 로컬 테스트 로깅
+loggingPath: C:/testupload/log/
 
 # TODO 리눅스 업로드 경로
 # multipartUploadPath: ${user.home}/testupload/multipart/
@@ -131,13 +131,17 @@ logging:
     org:
       springframework: info
       community: warn
-      security: trace
+      security: warn
       hibernate:
-        sql: debug
+        sql: warn
     com:
       amazonaws:
         util:
           EC2MetadataUtil: error
+    root: warn
+  file:
+    path: ${user.home}/testupload/log
+    name: DogCatLog.log
 
 cloud:
   aws:

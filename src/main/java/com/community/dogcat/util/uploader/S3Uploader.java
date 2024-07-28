@@ -61,17 +61,11 @@ public class S3Uploader {
 		String fileName = multipartFile.getOriginalFilename();
 		String extension = fileName.substring(fileName.lastIndexOf("."));
 
-		// 파일 여러개 업로드시 List로 받지 않아도 여러개의 uuid값이 한꺼번에 들어옴, 고쳐야함
-		log.info("Uuid: {}", uuid);
 		//S3에 업로드될 이름 저장
 		String saveFileName = uuid + extension;
 
-		log.info("------------ s3Upload fileName: {}", fileName);
-		log.info("------------ saveFileName: {}", saveFileName);
-
 		// S3업로드 전 LocalUpload
 		UploadPostImageResultDTO results = s3LocalUploader.uploadLocal(multipartFile, extension, uuid);
-		log.info("getThumbnailPath: {}", results.getThumbnailPath());
 
 		// 썸네일 존재할시 multipartFile 로 변환 후 s3업로드
 		MultipartFile thumbnailMultipartFile = results.getThumbnailPath() != null ?
@@ -102,10 +96,6 @@ public class S3Uploader {
 		uploadResult.add(uuid);
 		uploadResult.add(fileName);
 
-		log.info("uploadResult: {}", uploadResult);
-
-		// // summernote 임시 파일 삭제
-		// deleteTempFiles.deleteTempFile(saveFileName);
 		// 업로드 후 로컬에 저장된 원본 파일 삭제
 		removeOriginalFile(multipartFile, saveFileName);
 
@@ -154,7 +144,7 @@ public class S3Uploader {
 			if (!Files.exists(filePath) && !Files.exists(thumbfilePath)) {
 				log.info("업로드 원본 파일 삭제 성공 파일 이름: {}", fileName);
 			} else {
-				log.info("업로드 원본 파일 삭제 실패, 파일 이름: {}", fileName);
+				log.error("업로드 원본 파일 삭제 실패, 파일 이름: {}", fileName);
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);

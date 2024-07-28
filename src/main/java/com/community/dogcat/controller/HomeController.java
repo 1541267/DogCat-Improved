@@ -57,7 +57,6 @@ public class HomeController extends BaseController {
 
 			model.addAttribute("userLevelInfo", userLevelInfo);
 		}
-
 		return "home/home";  // home.html 뷰를 반환
 	}
 

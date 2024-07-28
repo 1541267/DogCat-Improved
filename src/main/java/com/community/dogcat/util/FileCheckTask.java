@@ -40,14 +40,8 @@ public class FileCheckTask {
 
 	//TODO 꼭 배포 전에 활성화 시키기
 
-	// 매일 자정에 파일 정리 실행
-	// @Scheduled(cron = "0 0 0 * * *")
-
-	// 테스트용 20초마다 정리 실행
-	// @Scheduled(cron = "0/10 * * * * *")
-
-	// 테스트용 30분마다 정리 실행
-	// @Scheduled(cron = "0 30 * * * *")
+	// 매월 1일 자정에 요일무시 파일 정리 실행
+	// @Scheduled(cron = "0 0 0 1 * ?")
 	@Transactional
 	public void checkFiles() throws Exception {
 		log.info("===========================================");
@@ -60,21 +54,12 @@ public class FileCheckTask {
 			deleteDirectory(Paths.get(tempUploadPath));
 			log.info("SummerNote Temp: 삭제 완료.");
 		} else {
-			log.info("SummerNote Temp: 존재하지 않습니다.");
+			log.info("SummerNote Temp: 남아있는 파일이 없습니다.");
 		}
 		log.info("-------------------------------------------");
 		// S3 버킷과 DB의 이미지 테이블과 비교해 S3에 없는 파일 제거
 		List<String> uploadedFiles = fileListInBucket();
 		deleteUploadedFiles(uploadedFiles);
-
-	}
-
-	// ImgBoard 에서 파일 찾기 위한 Uuid 추출
-	private String extractionUuid(String originalFileName) {
-
-		int lastIndex = originalFileName.lastIndexOf(".");
-
-		return lastIndex != -1 ? originalFileName.substring(0, lastIndex) : originalFileName;
 
 	}
 
@@ -99,6 +84,15 @@ public class FileCheckTask {
 			}
 		}
 		return uploadedFiles;
+	}
+
+	// ImgBoard 에서 파일 찾기 위한 Uuid 추출
+	private String extractionUuid(String originalFileName) {
+
+		int lastIndex = originalFileName.lastIndexOf(".");
+
+		return lastIndex != -1 ? originalFileName.substring(0, lastIndex) : originalFileName;
+
 	}
 
 	// DB에 저장되어있지 않는 업로드 파일들 제거
