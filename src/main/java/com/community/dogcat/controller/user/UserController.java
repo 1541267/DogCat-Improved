@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.community.dogcat.domain.User;
+import com.community.dogcat.domain.UsersVet;
 import com.community.dogcat.dto.user.JoinDTO;
 import com.community.dogcat.service.user.UserService;
+import com.community.dogcat.service.user.VetService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +28,7 @@ public class UserController {
 
 	private final UserService joinService;
 	private final UserService userService;
+	private final VetService vetService;
 
 	@GetMapping("/login")
 	public void login() {
@@ -36,9 +39,21 @@ public class UserController {
 	}
 
 	@PostMapping("/join")
-	public String joinProc(JoinDTO dto, RedirectAttributes redirectAttributes) {
+	public String joinProc(JoinDTO dto, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+
+		String vetName = dto.getUserName();
+		Long vetLicense = Long.valueOf(request.getParameter("vetLicense"));
+		System.out.println("vetName + vetLicense : " + vetName + vetLicense);
+		UsersVet vet = vetService.findByVetNameAndVetLicense(vetName, vetLicense);
 
 		joinService.joinProcess(dto);
+
+		if (vet != null && !vet.isVerificationStatus()) {
+
+			vet.setVerificationStatus(true);
+			vetService.save(vet);
+
+		}
 
 		redirectAttributes
 			.addFlashAttribute("message", "환영합니다, " + dto.getNickname() + "님!");
