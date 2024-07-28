@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.community.dogcat.domain.ImgBoard;
 import com.community.dogcat.domain.Post;
-import com.community.dogcat.dto.uploadImage.FindUploadImageDTO;
 import com.community.dogcat.repository.board.BoardRepository;
 import com.community.dogcat.repository.upload.UploadRepository;
 
@@ -43,23 +42,6 @@ public class UploadRepositoryTest {
 
 				uploadRepository.save(result);
 			}
-		}
-	}
-
-	@Test
-	public void findImage() {
-		String imageId = "be1f9144-253e-419b-9608-f2b39430cbe7";
-
-		Optional<ImgBoard> findImage = uploadRepository.findById(imageId);
-
-		if (findImage.isPresent()) {
-			ImgBoard imgBoard = findImage.get();
-
-			FindUploadImageDTO findImageDTO = FindUploadImageDTO.from(imgBoard);
-
-			log.info("\n" + findImageDTO);
-		} else {
-			log.info("Uploaded Image Not Exist");
 		}
 	}
 

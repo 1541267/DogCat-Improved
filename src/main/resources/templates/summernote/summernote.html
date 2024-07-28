@@ -57,7 +57,8 @@
                             let fileExtension = files[i].name.split('.').pop().toLowerCase()
 
                             // 확장자 체크 and 사이즈 체크 후 문제 없을 시 content 에 insert
-                            if (fileExtension !== 'jpg' && fileExtension !== 'jpeg' && fileExtension !== 'png' && fileExtension !== 'gif') {
+                            if (fileExtension !== 'jpg' && fileExtension !== 'jpeg' && fileExtension !== 'png' && fileExtension !== 'gif' &&
+                            fileExtension !== 'ico' && fileExtension !== 'bmp' && fileExtension !== 'heif' && fileExtension !== 'webp' && fileExtension !== 'svg') {
                                 alert('이미지 파일만 업로드 가능합니다.');
                                 return;
 
@@ -105,7 +106,6 @@
 
                                             // 이미지 삽입과 추가 속성 설정
                                             let $img = $('<img>').attr('src', imageUrl).attr('data-filename', fileName)
-                                                .attr('data-extension', fileExtension).attr('data-uuid', fileUuid)
                                                 .attr('width', `${newWidth}%`).attr('height', `${newHeight}%`);
                                             $('#summernote').summernote('insertNode', $img[0]);
                                         });
@@ -131,20 +131,11 @@
                         const previousFileNames = [];
                         const currentFileNames = [];
 
-                        const previousFileUuids = [];
-                        const currentFileUuids = [];
-
-                        const previousFileExtensions = [];
-                        const currentFileExtensions = [];
-
                         if ($(contents).find('img')) {
                             $(contents).find('img').each(function () {
 
                                 currentUrls.push($(this).attr('src'));
                                 currentFileNames.push($(this).attr('data-filename'));
-                                currentFileUuids.push($(this).attr('data-uuid'));
-                                currentFileExtensions.push($(this).attr('data-filename'));
-
                             });
                         }
 
@@ -153,18 +144,13 @@
 
                                 previousUrls.push($(this).attr('src'));
                                 previousFileNames.push($(this).attr('data-filename'));
-                                previousFileUuids.push($(this).attr('data-uuid'));
-                                previousFileExtensions.push($(this).attr('data-extension'));
-
                             });
                         }
 
                         previousContents = contents;
 
                         trackDeleteImagesInfo(currentUrls, previousUrls,
-                            currentFileNames, previousFileNames,
-                            currentFileUuids, previousFileUuids,
-                            currentFileExtensions, previousFileExtensions)
+                            currentFileNames, previousFileNames)
                     }
                 },
             }
@@ -174,19 +160,13 @@
 
         // 본문 내용을 비교해 삭제 된 이미지의 정보들 추출
         function trackDeleteImagesInfo(currentUrls, previousUrls,
-                                       currentFileNames, previousFileNames,
-                                       /*                 currentFileUuids, previousFileUuids,
-                                                        currentFileExtensions, previousFileExtensions*/) {
+                                       currentFileNames, previousFileNames) {
 
             // 각 배열들에 있는 내용을 현재 내용과 비교해 없는 것들을 deleted 에 저장
             const deletedImagesUrls = previousUrls.filter(urls => !currentUrls.includes(urls));
 
             // 각 배열에 담긴 정보 순서는 모두 한 파일씩 일정하니 파일이름 하나로 기준을 잡음
             const deletedImagesFileName = previousFileNames.filter(names => !currentFileNames.includes(names));
-
-            // 없어도 기능엔 상관 없으나 일단 살려둠
-            // const deletedImagesFileUuid = previousFileUuids.filter(uuids => !currentFileUuids.includes(uuids));
-            // const deletedImagesFileExtension = previousFileExtensions.filter(extensions => !currentFileExtensions.includes(extensions));
 
             // 삭제된 파일이 있을 때만 실행
             if (deletedImagesUrls.length !== 0) {
@@ -372,7 +352,7 @@
                 processData: false,
                 enctype: 'multipart/form-data',
                 error: function (error) {
-                    console.error('Error Uploading Image: ', error);
+                    console.error('Error S3 Uploading Image: ', error);
                 }
             })
         }
@@ -393,7 +373,7 @@
                 contentType: false,
                 processData: false,
                 error: function (error) {
-                    console.error('Error Delete Image: ', error);
+                    console.error('Error Delete Image With Cancel Button: ', error);
                 }
             });
         }
@@ -431,24 +411,14 @@
             }
         });
 
-        // 드롭다운 메뉴 오류 처리
+        // 드롭다운 메뉴 오류 처리 - 코드 줄여놓음 ys
         $(document).on('click', function () {
-            if ($('button.dropdown-toggle.open'))
-                $('button.dropdown-toggle.open').removeClass('open');
+            $('button.dropdown-toggle.open').removeClass('open');
         });
 
         $('button.dropdown-toggle').on('click', function (e) {
             e.stopPropagation();
-            if ($('button.dropdown-toggle.open')) {
-                if ($(this).hasClass('open')) {
-                    $(this).removeClass('open');
-                } else {
-                    $('button.dropdown-toggle.open').removeClass('open');
-                    $(this).addClass('open');
-                }
-            } else {
-                $(this).addClass('open');
-            }
+            $(this).toggleClass('open').siblings('.open').removeClass('open');
         });
 
         $(document).keydown(function (e) {

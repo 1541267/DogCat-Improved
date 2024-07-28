@@ -44,11 +44,10 @@ public class UploadController {
 	@PostMapping(value = "/s3", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<List<String>> cloudUpload(
 		@RequestParam("files") List<MultipartFile> multipartFile,
-		@RequestParam("postNo") Long postNo,
+		@RequestParam("postNo") Post postNo,
 		@RequestParam("uuids") List<String> uuid) {
 
-		Post imgPostNo = Post.builder().postNo(postNo).build();
-		return uploadImageService.uploadS3Image(multipartFile, imgPostNo, uuid);
+		return uploadImageService.uploadS3Image(multipartFile, postNo, uuid);
 	}
 
 	// 게시글 등록 전 썸머노트로 이미지를 임시폴더에 저장

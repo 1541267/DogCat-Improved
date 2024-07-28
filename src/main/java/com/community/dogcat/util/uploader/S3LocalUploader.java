@@ -55,7 +55,6 @@ public class S3LocalUploader {
 				File thumbFile = new File(uploadPath, "t_" + saveFileName);
 
 				String thumbnailPath = thumbFile.getAbsolutePath();
-				log.info("---------------- thumbnailPath: " + thumbnailPath);
 				savePathList.add(uploadPath + "t_" + saveFileName);
 				Thumbnailator.createThumbnail(savePath.toFile(), thumbFile, 200, 200);
 
@@ -69,11 +68,9 @@ public class S3LocalUploader {
 			}
 
 		} catch (Exception e) {
-			log.error("ERROR: " + e.getMessage());
+			log.error("ERROR: {}", e.getMessage());
 			e.printStackTrace();
 		}
-		log.info("--------------------UploadPostImage: {}", Collections.singletonList(uuid + saveFileName));
-
 		return null;
 	}
 

@@ -131,16 +131,16 @@ logging:
     org:
       springframework: info
       community: warn
-      security: trace
+      security: warn
       hibernate:
-        sql: debug
+        sql: warn
     com:
       amazonaws:
         util:
           EC2MetadataUtil: error
     root: warn
   file:
-    path: ${user.home}
+    path: ${user.home}/testupload/log
     name: DogCatLog.log
 
 cloud:
