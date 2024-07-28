@@ -16,10 +16,12 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import com.community.dogcat.domain.RefreshEntity;
+import com.community.dogcat.domain.User;
 import com.community.dogcat.domain.UsersAuth;
 import com.community.dogcat.dto.user.CustomOAuth2User;
 import com.community.dogcat.jwt.JWTUtil;
 import com.community.dogcat.repository.user.RefreshRepository;
+import com.community.dogcat.repository.user.UserRepository;
 import com.community.dogcat.repository.user.UsersAuthRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	private final JWTUtil jwtUtil;
 	private final RefreshRepository refreshRepository;
 	private final UsersAuthRepository usersAuthRepository;
+	private final UserRepository userRepository;
+
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -39,6 +43,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		CustomOAuth2User customUserDetails = (CustomOAuth2User)authentication.getPrincipal();
 		String userId = customUserDetails.getUserId();
 		String role = getAuthoritiesByUserId(userId);
+
+		User user = userRepository.findByUserId(userId);
+
+		if (user != null) {
+			user.incrementExp();
+			userRepository.save(user);
+		}
 
 		String access = jwtUtil.createJwt("access", userId, role, 86400000L); //1day
 		String refresh = jwtUtil.createJwt("refresh", userId, role, 604800000L); //1week
