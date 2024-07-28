@@ -139,10 +139,9 @@ public class UploadImageServiceImpl implements UploadImageService {
 		List<String> fileNames = new ArrayList<>();
 
 		for (int i = 0; i < uuids.size(); i++) {
-			fileNames.add(uuids.get(i) + extensions.get(i));
+			String fileName = uuids.get(i) + extensions.get(i);
+			deleteTempFiles.deleteFile(fileName);
 		}
-		deleteTempFiles.deleteTempFile(fileNames);
-
 	}
 
 	@Override
@@ -151,7 +150,7 @@ public class UploadImageServiceImpl implements UploadImageService {
 		for (String fileUrl : deletedImageUrl) {
 			String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
 
-			deleteTempFiles.deleteSingleTempFile(fileName);
+			deleteTempFiles.deleteFile(fileName);
 		}
 	}
 

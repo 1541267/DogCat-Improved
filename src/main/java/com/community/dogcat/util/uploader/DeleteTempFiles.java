@@ -16,20 +16,7 @@ public class DeleteTempFiles {
 	@Value("${tempUploadPath}")
 	private String tempUploadPath;
 
-	// s3 업로드시 썸머노트 임시 파일 삭제 + 썸머노트 게시글 취소시 파일 삭제
-	public void deleteTempFile(List<String> fileNames) {
-
-		for (String fileName : fileNames) {
-			deleteFile(fileName);
-		}
-	}
-
-	// s3 업로드시 썸머노트 임시 파일 삭제 + 썸머노트 게시글 취소시 파일 삭제
-	public void deleteSingleTempFile(String fileName) {
-		deleteFile(fileName);
-	}
-
-	private void deleteFile(String fileName) {
+	public void deleteFile(String fileName) {
 
 		File file = new File(tempUploadPath, fileName);
 
