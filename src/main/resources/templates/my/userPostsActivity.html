@@ -28,17 +28,17 @@
         <h2 class="myTitle">내 활동</h2>
 
         <div class="d-flex justify-content-center align-items-center nav">
-            <div class="col-4 text-center align-content-center countPost1">
+            <div class="col-4 text-center align-content-center myPost">
                 <a th:href="@{/my/userActivity/{userId}/posts(userId=${userId})}">
                     작성글 <span th:text="${responseDTO?.postCount}"></span>
                 </a>
             </div>
-            <div class="col-4 text-center align-content-center countPost2">
+            <div class="col-4 text-center align-content-center myReply">
                 <a th:href="@{/my/userActivity/{userId}/replies(userId=${userId})}">
                     댓글 <span th:text="${responseDTO?.replyCount}"></span>
                 </a>
             </div>
-            <div class="col-4 text-center align-content-center countPost3">
+            <div class="col-4 text-center align-content-center myScrap">
                 <a th:href="@{/my/userActivity/{userId}/scraps(userId=${userId})}">
                     보관함 <span th:text="${responseDTO?.scrapCount}"></span>
                 </a>
