@@ -15,11 +15,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JWTUtil {
 
-	private final String secretKey;
-
-	public JWTUtil(@Value("${spring.jwt.secret}") String secretKey) {
-		this.secretKey = secretKey;
-	}
+	@Value("${spring.jwt.secret}")
+	private String secretKey;
 
 	public String getUsername(String token) {
 
