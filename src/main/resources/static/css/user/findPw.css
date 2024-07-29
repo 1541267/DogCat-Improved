@@ -1,3 +1,25 @@
+.container,
+.container > div {
+    height: 960px;
+}
+
+.container > div > div {
+    height: 700px;
+    width: 700px;
+}
+
+.findIdTitle {
+    height: 100px;
+    width: 700px;
+}
+
+h1 {
+    color: #67cafe;
+}
+
+.findPwContent {
+    height: 500px;
+}
 
 .appearance-button {
     background-color: #67cafe;
@@ -20,5 +42,5 @@
 }
 
 .blank {
-    height: 20px;
+    margin-bottom: 20px;
 }

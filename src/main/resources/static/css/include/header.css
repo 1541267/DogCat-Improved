@@ -17,20 +17,24 @@ header {
     margin-bottom: 0;
 }
 
-.search-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin: 10px 0 40px;
-}
-
-.log {
+.logo {
     font-weight: bold;
     width: 310px;
 }
 
-.title {
+.logo > a > img {
+    width: 120px;
+    height: 120px;
+}
 
+.title > a > img {
+    width: 400px;
+    height: 150px;
+}
+
+.headerImg {
+    width: 50px;
+    transform: rotate(20deg);
 }
 
 .auth {
@@ -45,8 +49,15 @@ header {
 }
 
 .search-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
     text-align: center;
     margin: 20px 0;
+}
+
+.search-container > form {
+    width: 33%;
 }
 
 .search-container input[type="text"] {
@@ -58,13 +69,60 @@ header {
 nav {
     text-align: center;
     margin-top: 10px;
+    height: 66px;
+    margin-bottom: 20px;
 }
 
-nav a {
+nav span {
+    margin-top: 20px;
+    height: 30px;
+}
+
+.nowNav {
+    border-bottom: 2px solid white;
+}
+
+.nowNav a {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+nav a,
+nav a:hover{
     margin: 0 10px;
     text-decoration: none;
-    color: #333;
+    color: #fff;
     font-size: 1.1em;
+}
+
+.navBar{
+    background-color: #67cafe;
+}
+
+.header-fs {
+    border: 3px solid #67cafe;
+    border-radius: 0;
+    border-right:0;
+}
+
+.header-fc {
+    border: 3px solid #67cafe;
+    border-left: white;
+    border-radius: 0
+}
+
+.header-sb {
+    border: 3px solid #67cafe;
+    border-radius: 0;
+    background-color: #67cafe
+}
+
+.header-sb:hover {
+    background-color: #67cafe;
+}
+
+.header-sb > i {
+    color: #fff;
 }
 
 .form-select:focus, .form-control:focus, .searchBtn:focus {

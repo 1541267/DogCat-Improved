@@ -93,13 +93,6 @@ body {
     padding: 10px;
 }
 
-.myPost > a,
-.myReply > a,
-.myScrap > a {
-    text-decoration: none;
-    color: #000;
-}
-
 .myPost:hover,
 .myReply:hover,
 .myScrap:hover {
@@ -134,14 +127,7 @@ body {
     padding: 10px;
 }
 
-.myPostScr > a,
-.myReplyScr > a,
-.myScrapScr > a {
-    text-decoration: none;
-    color: #000;
-}
-
-.countScrap1:hover,
+.myPostScr:hover,
 .myReplyScr:hover,
 .myScrapScr:hover {
     background-color: #90E4FF;
@@ -156,7 +142,7 @@ body {
     margin-bottom: 0;
 }
 
-td {
+td, tr {
     height: 70px;
 }
 

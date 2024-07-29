@@ -33,131 +33,114 @@
             <!--게시판 명-->
             <p class="boardTitle" th:switch="${boardCode}">
                 <span th:case="general" class="justify-content-start">
-                    <span class="me-3">
-                        자유게시판
-                    </span>
-                    <span class="fs-6 boardInfo">
-                        자유로운 글을 주고 받는 게시판입니다.
-                    </span>
+                    <span class="me-3">자유게시판</span>
+                    <span class="fs-6 boardInfo">자유로운 글을 주고 받는 게시판입니다.</span>
                 </span>
                 <span th:case="tip" class="justify-content-start">
-                    <span class="me-3">
-                        정보게시판
-                    </span>
-                    <span class="fs-6 boardInfo">
-                        반려동물에 대한 다양한 정보를 공유하는 게시판입니다.
-                    </span>
+                    <span class="me-3">정보게시판</span>
+                    <span class="fs-6 boardInfo">반려동물에 대한 다양한 정보를 공유하는 게시판입니다.</span>
                 </span>
                 <span th:case="qna" class="justify-content-start">
-                    <span class="me-3">
-                        QnA
-                    </span>
-                    <span class="fs-6 boardInfo">
-                        궁금한 점을 질문하거나 답변할 수 있는 게시판입니다.
-                    </span>
+                    <span class="me-3">QnA</span>
+                    <span class="fs-6 boardInfo">궁금한 점을 질문하거나 답변할 수 있는 게시판입니다.</span>
                 </span>
             </p>
             <!--버튼-->
             <span>
                 <!--삭제 버튼 추가 / 권한에 따라 버튼 나타내기-->
                 <button class="btn deleteBtn" th:if="${role eq 'ROLE_ADMIN'}">글 삭제</button>
-                </span> <!--버튼-->
+            </span> <!--버튼-->
         </div> <!--상단-->
 
         <!--본문-->
         <div id="list" class="card mb-4">
-
             <!--게시글이 있을 때-->
             <!--글목록-->
             <div th:if="${responseDTO?.dtoList != null}">
                 <div>
-                    <table class="table read">
+                    <table class="table read mb-0">
                         <!--게시물 정보 받아오기-->
                         <tbody class="list ps-3">
-                        <!-- 게시글이 비밀글이 아닐 때 -->
-                        <tr th:each="dto:${responseDTO.dtoList}">
-                            <td class="align-middle checkBox" th:if="${role eq 'ROLE_ADMIN'}">
-                                <!--td에 추가 삭제 체크 박스 권한에 따라 버튼 나타내기-->
-                                <input class="align-items-center form-check-input" type="checkbox"
-                                       th:value="${dto.postNo}"
-                                       th:attr="data-postNo=${dto.postNo}">
-                            </td>
-
-                            <!--비밀글이 아닐때-->
-                            <td class="align-middle listOne" th:if="${dto.secret==false} or (${dto.secret == true} and (${username} == ${dto.userId})) or ((${dto.secret == true} and (${username} != ${dto.userId}))and(${role ne 'ROLE_USER'}))">
-                                <a class="move" href="#" th:attr="data-postNo=${dto.postNo}, data-secret=${dto.secret}, data-userId=${dto.userId}">
-                                    <div class="d-flex align-items-center">
-                                        <div class="replyAuth" th:if="${dto.replyAuth==true}">
-                                            <img class="replyAuthImg" src="/img/tag/vetScope.png" alt="수의사만 답변 가능">
-                                        </div>
-                                        <div>
-                                            <div class="title">
-                                                <span>
-                                                    <img class="tag" src="/img/tag/tag_dog.png"
-                                                         th:if="${dto.postTag eq '강아지'}"
-                                                         alt="강아지태그">
-                                                    <img class="tag" src="/img/tag/tag_cat.png"
-                                                         th:if="${dto.postTag eq '고양이'}"
-                                                         alt="고양이태그">
-                                                </span>
-                                                <span th:text="${dto.postTitle}">
-                                                    게시물 제목
-                                                </span>
-                                                <!--비밀글여부-->
-                                                <span class="icon secret" th:if="${dto.secret == true}">
-                                                 <i class="bi bi-file-lock"></i>
-                                                </span>
-                                                <!--비밀글일경우 첨부파일이 존재해도 표시안하고 비밀글처리 ~> 첨부파잂 표시하려면 비밀글값이 0이어야함(디폴트값)-->
-                                                <span class="icon file"
-                                                      th:if="${dto.imgBoards != null && dto.imgBoards.size() > 0 && dto.secret == false}">
-                                                     <i class="bi bi-file-earmark-image"></i>
-                                                </span>
+                            <!-- 게시글이 비밀글이 아닐 때 -->
+                            <tr th:each="dto:${responseDTO.dtoList}">
+                                <td class="align-middle checkBox" th:if="${role eq 'ROLE_ADMIN'}">
+                                    <!--td에 추가 삭제 체크 박스 권한에 따라 버튼 나타내기-->
+                                    <input class="align-items-center form-check-input" type="checkbox" th:value="${dto.postNo}" th:attr="data-postNo=${dto.postNo}">
+                                </td>
+                                <!--비밀글이 아닐때-->
+                                <td class="align-middle listOne" th:if="${dto.secret==false} or (${dto.secret == true} and (${username} == ${dto.userId})) or ((${dto.secret == true} and (${username} != ${dto.userId}))and(${role ne 'ROLE_USER'}))">
+                                    <a class="move" href="#" th:attr="data-postNo=${dto.postNo}, data-secret=${dto.secret}, data-userId=${dto.userId}">
+                                        <div class="d-flex align-items-center">
+                                            <div class="replyAuth" th:if="${dto.replyAuth==true}">
+                                                <img class="replyAuthImg" src="/img/tag/vetScope.png" alt="수의사만 답변 가능">
                                             </div>
-                                            <div class="title sub">
-                                                <span th:text="${dto.nickname}">작성자</span>
-                                                <span>
-                                                    <img class="level" src="/img/level/red.png" alt="User Level Image"
-                                                         th:if="${dto.exp < 750}">
-                                                    <img class="level" src="/img/level/orange.png" alt="User Level Image"
-                                                         th:if="${dto.exp >= 750 and dto.exp < 1500}">
-                                                    <img class="level" src="/img/level/yellow.png" alt="User Level Image"
-                                                         th:if="${dto.exp >= 1500 and dto.exp < 2250}">
-                                                    <img class="level" src="/img/level/mint.png" alt="User Level Image"
-                                                         th:if="${dto.exp >= 2250 and dto.exp < 3000}">
-                                                    <img class="level" src="/img/level/purple.png" alt="User Level Image"
-                                                         th:if="${dto.exp >= 3000}">
-                                                </span>
-                                                <span class="mx-1"> <span th:text="${dto?.viewCount}">5</span></span>
-                                                <span class="mx-1" th:if="${dto?.modDate == null}"
-                                                      th:text="${#temporals.format(dto.regDate, 'yyyy-MM-dd HH:mm')}"></span>
-                                                <span class="mx-1" th:if="${dto?.modDate != null}"
-                                                      th:text="${#temporals.format(dto?.modDate, 'yyyy-MM-dd HH:mm')}"></span>
-                                            </div> <!--title sub-->
+                                            <div>
+                                                <div class="title">
+                                                    <span>
+                                                        <img class="tag" src="/img/tag/tag_dog.png"
+                                                             th:if="${dto.postTag eq '강아지'}"
+                                                             alt="강아지태그">
+                                                        <img class="tag" src="/img/tag/tag_cat.png"
+                                                             th:if="${dto.postTag eq '고양이'}"
+                                                             alt="고양이태그">
+                                                    </span>
+                                                    <span th:text="${dto.postTitle}">
+                                                        게시물 제목
+                                                    </span>
+                                                    <!--비밀글여부-->
+                                                    <span class="icon secret" th:if="${dto.secret == true}">
+                                                     <i class="bi bi-file-lock"></i>
+                                                    </span>
+                                                    <!--비밀글일경우 첨부파일이 존재해도 표시안하고 비밀글처리 ~> 첨부파잂 표시하려면 비밀글값이 0이어야함(디폴트값)-->
+                                                    <span class="icon file"
+                                                          th:if="${dto.imgBoards != null && dto.imgBoards.size() > 0 && dto.secret == false}">
+                                                         <i class="bi bi-file-earmark-image"></i>
+                                                    </span>
+                                                </div>
+                                                <div class="title sub">
+                                                    <span th:text="${dto.nickname}">작성자</span>
+                                                    <span>
+                                                        <img class="level" src="/img/level/red.png" alt="User Level Image"
+                                                             th:if="${dto.exp < 750}">
+                                                        <img class="level" src="/img/level/orange.png" alt="User Level Image"
+                                                             th:if="${dto.exp >= 750 and dto.exp < 1500}">
+                                                        <img class="level" src="/img/level/yellow.png" alt="User Level Image"
+                                                             th:if="${dto.exp >= 1500 and dto.exp < 2250}">
+                                                        <img class="level" src="/img/level/mint.png" alt="User Level Image"
+                                                             th:if="${dto.exp >= 2250 and dto.exp < 3000}">
+                                                        <img class="level" src="/img/level/purple.png" alt="User Level Image"
+                                                             th:if="${dto.exp >= 3000}">
+                                                    </span>
+                                                    <span class="mx-1"> <span th:text="${dto?.viewCount}">5</span></span>
+                                                    <span class="mx-1" th:if="${dto?.modDate == null}"
+                                                          th:text="${#temporals.format(dto.regDate, 'yyyy-MM-dd HH:mm')}"></span>
+                                                    <span class="mx-1" th:if="${dto?.modDate != null}"
+                                                          th:text="${#temporals.format(dto?.modDate, 'yyyy-MM-dd HH:mm')}"></span>
+                                                </div> <!--title sub-->
+                                            </div>
                                         </div>
-                                    </div>
-                                </a>
-                            </td>
-                            <td class="text-end align-middle reply" th:if="${dto.secret==false} or (${dto.secret == true} and (${username} == ${dto.userId})) or ((${dto.secret == true} and (${username} != ${dto.userId}))and(${role ne 'ROLE_USER'}))">
-                                <button class="btn replyCountBtn"
-                                        th:attr="data-postNo=${dto.postNo}">댓글수
-                                    <span th:text="${dto?.replyCount}"></span>
-                                </button>
-                            </td>
+                                    </a>
+                                </td>
+                                <td class="text-end align-middle reply" th:if="${dto.secret==false} or (${dto.secret == true} and (${username} == ${dto.userId})) or ((${dto.secret == true} and (${username} != ${dto.userId}))and(${role ne 'ROLE_USER'}))">
+                                    <button class="btn replyCountBtn"
+                                            th:attr="data-postNo=${dto.postNo}">댓글수
+                                        <span th:text="${dto?.replyCount}"></span>
+                                    </button>
+                                </td>
 
-                            <!--비밀글일때-->
-                            <td class="align-middle listOne" colspan="2" th:if="((${dto.secret==true} and (${username} != ${dto.userId}))and(${role eq 'ROLE_USER'}))">
-                                <!--비밀글여부-->
-                                <a class="d-flex align-items-center move" href="#" th:attr="data-postNo=${dto.postNo}, data-secret=${dto.secret}, data-userId=${dto.userId}">
-                                <span class="icon secret">
-                                     <i class="bi bi-file-lock d-flex flex-fill"></i>
-                                </span>
-                                    <p class="ms-2 secretPost d-flex flex-column justify-content-center">
-                                        비밀글입니다.
-                                    </p>
-                                </a>
-                            </td>
-
-                        </tr>
+                                <!--비밀글일때-->
+                                <td class="align-middle listOne" colspan="2" th:if="((${dto.secret==true} and (${username} != ${dto.userId}))and(${role eq 'ROLE_USER'}))">
+                                    <!--비밀글여부-->
+                                    <a class="d-flex align-items-center move" href="#" th:attr="data-postNo=${dto.postNo}, data-secret=${dto.secret}, data-userId=${dto.userId}">
+                                    <span class="icon secret">
+                                         <i class="bi bi-file-lock d-flex flex-fill"></i>
+                                    </span>
+                                        <p class="ms-2 secretPost d-flex flex-column justify-content-center">
+                                            비밀글입니다.
+                                        </p>
+                                    </a>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div> <!--글목록-->

@@ -20,24 +20,6 @@ body {
     margin-bottom: 0;
 }
 
-.generalTitle {
-    color: #67cafe;
-    font-size: 35px;
-    margin-bottom: 0;
-}
-
-.tipTitle {
-    color: #fee567;
-    font-size: 35px;
-    margin-bottom: 0;
-}
-
-.qnaTitle {
-    color: #dd67fe;
-    font-size: 35px;
-    margin-bottom: 0;
-}
-
 .writeBtn {
     color: #000;
     background-color: #E8FFFF;
@@ -50,11 +32,7 @@ body {
     --bs-btn-active-bg: #67cafe;
 }
 
-.read {
-    margin-bottom: 0;
-}
-
-#list {
+#list, #showOffList {
     width: 1000px;
     height: 700px; /* 카드 크기 고정 */
     box-shadow: 1px 1px 3px #dee2e6;
@@ -64,16 +42,9 @@ body {
     height: 70px;
 }
 
-#showOffList {
-    width: 1000px;
-    height: 700px; /* 카드 크기 고정 */
-    box-shadow: 1px 1px 3px #dee2e6;
-}
-
 .showOffList td {
     height: 140px;
 }
-
 
 td > a {
     text-decoration: none;

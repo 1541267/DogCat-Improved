@@ -22,7 +22,22 @@ a:hover {
     color: #fff; /* 활성화된 버튼 텍스트 색상 */
 }
 
+.adminTitle {
+    margin-bottom: 4rem;
+}
 
+.adminMenu {
+    width: 65%;
+}
+
+.searchForm {
+    width: 30%;
+}
+
+.replyAuthImg {
+    width: 25px;
+    height: 25px;
+}
 
 .user-list {
     background-color: #E8FFFF;

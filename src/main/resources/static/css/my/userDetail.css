@@ -52,9 +52,28 @@
 }
 
 .container {
+    height: 960px;
     max-width: 800px;
     margin: 0 auto; /* 중앙 정렬 */
     display: flex;
+}
+
+.myDetail {
+    height: 960px;
+}
+
+.detailTitle {
+    height: 100px;
+    width: 800px;
+}
+
+h1 {
+    color: #67cafe;
+}
+
+.detailContent {
+    height: 650px;
+    width: 800px;
 }
 
 .sidebar {

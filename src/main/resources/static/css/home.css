@@ -181,6 +181,15 @@ td {
     color: gray;
 }
 
+.showoffEmpty {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 230px;
+    text-align: center;
+    color: gray;
+}
+
 .boardEmpty p {
     font-size: 18px;
 }
