@@ -37,13 +37,11 @@ public class UserActivityController extends BaseController {
 
 	@GetMapping("/userActivity/{userId}/posts")
 	public String listWithPosts(@PathVariable String userId, UserPageRequestDTO pageRequestDTO, Model model) {
-		// 모델에서 사용자 정보를 가져옴
-		model.addAttribute("username", userId);
-		log.info("-----------------------userId" + userId);
+		log.warn("-----------------------userId" + userId);
 
 		UserPageResponseDTO<UserPostsActivityDTO> responseDTO = userActivityService.listWithPosts(pageRequestDTO);
-		log.info("Page Request DTO: {}", pageRequestDTO);
-		log.info("Response DTO: {}", responseDTO);
+		log.warn("Page Request DTO: {}", pageRequestDTO);
+		log.warn("Response DTO: {}", responseDTO);
 
 		model.addAttribute("pageRequestDTO", pageRequestDTO);
 		model.addAttribute("responseDTO", responseDTO);
@@ -53,7 +51,7 @@ public class UserActivityController extends BaseController {
 
 	@GetMapping("/userActivity/{userId}/replies")
 	public String listWithReplies(@PathVariable String userId, UserPageRequestDTO pageRequestDTO, Model model) {
-		model.addAttribute("userId", userId);
+		log.warn("-----------------------userId" + userId);
 
 		UserPageResponseDTO<UserRepliesActivityDTO> responseDTO = userActivityService.listWithReplies(pageRequestDTO);
 		log.info("Page Request DTO: {}", pageRequestDTO);
@@ -67,7 +65,7 @@ public class UserActivityController extends BaseController {
 
 	@GetMapping("/userActivity/{userId}/scraps")
 	public String listWithScraps(@PathVariable String userId, UserPageRequestDTO pageRequestDTO, Model model) {
-		model.addAttribute("userId", userId);
+		log.warn("-----------------------userId" + userId);
 
 		UserPageResponseDTO<UserScrapsActivityDTO> responseDTO = userActivityService.listWithScraps(pageRequestDTO);
 		log.info("Page Request DTO: {}", pageRequestDTO);

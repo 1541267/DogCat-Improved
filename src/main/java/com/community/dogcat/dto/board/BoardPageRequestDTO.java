@@ -71,16 +71,16 @@ public class BoardPageRequestDTO {
 
 			StringBuilder builder = new StringBuilder();
 
-			builder.append("&page=" + this.page);
+			builder.append("?page=" + this.page);
 
 			if (type != null && type.length() > 0) {
-				builder.append("&type=" + type);
+				builder.append("?type=" + type);
 			}
 
 			if (keyword != null) {
 
 				try {
-					builder.append("&keyword=" + URLEncoder.encode(keyword, "UTF-8"));
+					builder.append("?keyword=" + URLEncoder.encode(keyword, "UTF-8"));
 				} catch (UnsupportedEncodingException e) {
 					//예외 처리
 				}

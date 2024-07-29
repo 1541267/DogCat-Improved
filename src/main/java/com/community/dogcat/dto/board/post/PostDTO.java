@@ -51,6 +51,8 @@ public class PostDTO {
 
 	private boolean replyAuth;
 
+	private boolean completeQna;
+
 	// Entity -> DTO
 	public PostDTO(Post post) {
 		this.postNo = post.getPostNo();
@@ -69,5 +71,6 @@ public class PostDTO {
 		this.dislikeCount = post.getDislikeCount();
 		this.viewCount = post.getViewCount();
 		this.replyAuth = post.isReplyAuth();
+		this.completeQna = post.isCompleteQna();
 	}
 }

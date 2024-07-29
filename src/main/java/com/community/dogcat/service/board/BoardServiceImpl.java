@@ -8,12 +8,15 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.community.dogcat.domain.ImgBoard;
 import com.community.dogcat.domain.Post;
 import com.community.dogcat.domain.PostLike;
+import com.community.dogcat.domain.Reply;
 import com.community.dogcat.domain.Scrap;
 import com.community.dogcat.domain.User;
 import com.community.dogcat.domain.UsersAuth;
@@ -22,12 +25,14 @@ import com.community.dogcat.dto.board.BoardPageRequestDTO;
 import com.community.dogcat.dto.board.BoardPageResponseDTO;
 import com.community.dogcat.dto.board.PostReadDTO;
 import com.community.dogcat.dto.board.post.PostDTO;
+import com.community.dogcat.dto.report.UserReportDetailDTO;
 import com.community.dogcat.dto.uploadImage.UploadPostImageResultDTO;
 import com.community.dogcat.mapper.UploadResultMappingImgBoard;
 import com.community.dogcat.repository.board.BoardRepository;
 import com.community.dogcat.repository.board.postLike.PostLikeRepository;
 import com.community.dogcat.repository.board.reply.ReplyRepository;
 import com.community.dogcat.repository.board.scrap.ScrapRepository;
+import com.community.dogcat.repository.report.ReportLogRepository;
 import com.community.dogcat.repository.upload.UploadRepository;
 import com.community.dogcat.repository.user.UserRepository;
 import com.community.dogcat.repository.user.UsersAuthRepository;
@@ -57,6 +62,8 @@ public class BoardServiceImpl implements BoardService {
 	private final PostLikeRepository postLikeRepository;
 
 	private final UploadRepository uploadRepository;
+
+	private final ReportLogRepository reportLogRepository;
 
 	// 업로드된 이미지 정보 얻기 - ys
 	private final UploadResultMappingImgBoard uploadResultMappingImgBoard;
@@ -136,6 +143,15 @@ public class BoardServiceImpl implements BoardService {
 
 				s3Uploader.removeS3File(fileName, thumbFileName);
 			}
+			// 댓글 존재 확인
+			List<Reply> replies = replyRepository.findByPostNo(postNo);
+			for (Reply reply : replies) {
+				// 해당 댓글 신고 삭제
+				List<Long> reportLogIds = reportLogRepository.findByReplyNo(reply.getReplyNo());
+				for (Long reportLogId : reportLogIds) {
+					reportLogRepository.deleteReportLog(reportLogId);
+				}
+			}
 			boardRepository.deleteById(postNo);
 		}
 	}
@@ -189,6 +205,7 @@ public class BoardServiceImpl implements BoardService {
 			.dislikeCount(post.getDislikeCount())
 			.viewCount(post.getViewCount())
 			.replyAuth(post.isReplyAuth())
+			.completeQna(post.isCompleteQna())
 			.replyCount(replyRepository.countRepliesByPostNo(post))
 			.scrapNo(scrap.map(Scrap::getScrapNo).orElseGet(() -> null))
 			.likeNo(postLike.map(PostLike::getLikeNo).orElseGet(() -> null))
@@ -261,6 +278,27 @@ public class BoardServiceImpl implements BoardService {
 				postDTO.isReplyAuth());
 
 			boardRepository.save(post);
+		}
+		return post.getPostNo();
+	}
+
+	@Override
+	public Long completeQna(PostDTO postDTO, String userId) {
+		// 게시물 번호 조회
+		Post post = boardRepository.findById(postDTO.getPostNo()).orElseThrow();
+		log.warn("completeQna / completeQna: {}", post.isCompleteQna());
+		// post 에서 작성자 정보 가져옴
+		postDTO.setUserId(post.getUserId().getUserId());
+
+		log.warn("userId : {}",userId);
+		log.warn("postDTO : ID {}",postDTO.getUserId());
+
+		// 게시물 작성자 확인
+		if (postDTO.getUserId().equals(userId)) {
+			postDTO.setCompleteQna(true);
+			// 게시물 수정
+			post.completeQna(
+				postDTO.isCompleteQna());
 		}
 		return post.getPostNo();
 	}

@@ -52,6 +52,8 @@ public class AllSearchDTO {
 
 	private boolean replyAuth;
 
+	private boolean completeQna;
+
 	// 게시물의 첨부파일 정보
 	private List<ImgBoard> imgBoards;
 

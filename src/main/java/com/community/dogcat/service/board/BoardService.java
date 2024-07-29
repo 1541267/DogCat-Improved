@@ -26,6 +26,8 @@ public interface BoardService {
 
 	Long modify(PostDTO postDTO, String userId);
 
+	Long completeQna(PostDTO postDTO,String userId);
+
 	// readDetail 하단 list
 	BoardPageResponseDTO<BoardListDTO> readList(BoardPageRequestDTO pageRequestDTO);
 

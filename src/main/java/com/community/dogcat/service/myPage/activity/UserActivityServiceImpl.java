@@ -63,6 +63,7 @@ public class UserActivityServiceImpl implements UserActivityService {
 			.postCount(postCount != null ? postCount : 0L)
 			.replyCount(replyCount != null ? replyCount : 0L)
 			.scrapCount(scrapCount != null ? scrapCount : 0L)
+			.userId(userId)
 			.total((int)result.getTotalElements())
 			.build();
 	}
@@ -93,6 +94,7 @@ public class UserActivityServiceImpl implements UserActivityService {
 			.postCount(postCount != null ? postCount : 0L)
 			.replyCount(replyCount != null ? replyCount : 0L)
 			.scrapCount(scrapCount != null ? scrapCount : 0L)
+			.userId(userId)
 			.total((int)result.getTotalElements())
 			.build();
 	}
@@ -131,6 +133,7 @@ public class UserActivityServiceImpl implements UserActivityService {
 			.postCount(postCount != null ? postCount : 0L)
 			.replyCount(replyCount != null ? replyCount : 0L)
 			.scrapCount(scrapCount != null ? scrapCount : 0L)
+			.userId(userId)
 			.total((int)result.getTotalElements())
 			.build();
 	}

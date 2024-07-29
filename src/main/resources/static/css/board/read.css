@@ -39,6 +39,18 @@ body {
     height: 20px;
 }
 
+.completeBtn {
+    color: #67cafe;
+    background-color: #fff;
+    border: 1px solid #67cafe;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-border-color: #67cafe;
+    --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
+}
+
 .postContent {
     min-height: 250px   ;
     max-width: 100%;

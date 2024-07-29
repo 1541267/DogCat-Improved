@@ -112,15 +112,13 @@ public class ReplyServiceImpl implements ReplyService {
 				reportLogRepository.deleteReportLog(reportLogId);
 			}
 
-
 		}
 	}
 
 	@Override
 	public List<ReplyDTO> getListOfReply(Long postNo) {
 		Post post = boardRepository.findById(postNo).orElseThrow();
-		// Post post = Post.builder().postNo(postNo).build();
-		List<Reply> replies = replyRepository.findByPostNo(post);
+		List<Reply> replies = replyRepository.findByPostNo(post.getPostNo());
 
 		return replies.stream()
 			.map(reply -> new ReplyDTO(reply)).collect(Collectors.toList());
