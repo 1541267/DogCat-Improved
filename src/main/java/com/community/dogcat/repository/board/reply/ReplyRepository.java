@@ -21,8 +21,8 @@ public interface ReplyRepository extends JpaRepository<Reply, Long>, ReplySearch
     Page<Reply> listOfBoard(@Param("postNo") Post postNo, Pageable pageable);
 
     //게시물 하나에 달린 댓글 목록
-    @Query("select r from Reply r where r.postNo = :postNo")
-    List<Reply> findByPostNo(@Param("postNo") Post postNo);
+    @Query("select r from Reply r where r.postNo.postNo = :postNo")
+    List<Reply> findByPostNo(@Param("postNo") Long postNo);
 
     //게시물 하나에 달린 댓글 갯수 카운트
     @Query("select count(r) from Reply r where r.postNo = :postNo")
@@ -50,5 +50,4 @@ public interface ReplyRepository extends JpaRepository<Reply, Long>, ReplySearch
     void deleteAllByUserId(User user);
 
     List<Reply> findAllByUserId(User user);
-
 }

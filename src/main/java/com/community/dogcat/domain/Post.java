@@ -138,4 +138,10 @@ public class Post {
 		this.likeCount = likeCount;
 		this.dislikeCount = disLikeCount;
 	}
+
+	// QnA 답변 여부 변화
+	public void completeQna(boolean completeQna) {
+		this.completeQna = completeQna;
+	}
+
 }

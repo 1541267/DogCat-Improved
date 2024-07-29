@@ -94,6 +94,7 @@ public class ScrapSearchImpl extends QuerydslRepositorySupport implements ScrapS
 				.dislikeCount(scrap1.getPostNo().getDislikeCount())
 				.viewCount(scrap1.getPostNo().getViewCount())
 				.replyAuth(scrap1.getPostNo().isReplyAuth())
+				.completeQna(scrap1.getPostNo().isCompleteQna())
 				.build();
 
 			List<ImgBoard> imgBoards = scrap1.getPostNo().getImages().stream()

@@ -113,6 +113,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
 				.replyAuth(post1.isReplyAuth())
+				.completeQna(post1.isCompleteQna())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
@@ -190,6 +191,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
 				.replyAuth(post1.isReplyAuth())
+				.completeQna(post1.isCompleteQna())
 				.replyCount(replyCount)
 				.build();
 
@@ -317,6 +319,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
 				.replyAuth(post1.isReplyAuth())
+				.completeQna(post1.isCompleteQna())
 				.replyCount(replyCount)
 				.build();
 
@@ -405,6 +408,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
 				.replyAuth(post1.isReplyAuth())
+				.completeQna(post1.isCompleteQna())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
@@ -460,6 +464,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
 				.replyAuth(post1.isReplyAuth())
+				.completeQna(post1.isCompleteQna())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
@@ -665,6 +670,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
 				.replyAuth(post1.isReplyAuth())
+				.completeQna(post1.isCompleteQna())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()

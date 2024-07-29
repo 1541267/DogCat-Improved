@@ -6,8 +6,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,8 +17,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.community.dogcat.controller.BaseController;
 import com.community.dogcat.domain.Post;
@@ -25,6 +29,7 @@ import com.community.dogcat.dto.board.BoardPageRequestDTO;
 import com.community.dogcat.dto.board.BoardPageResponseDTO;
 import com.community.dogcat.dto.board.PostReadDTO;
 import com.community.dogcat.dto.board.post.PostDTO;
+import com.community.dogcat.dto.board.postLike.PostLikeDTO;
 import com.community.dogcat.jwt.JWTUtil;
 import com.community.dogcat.service.board.BoardService;
 import com.community.dogcat.service.user.UserService;
@@ -196,6 +201,18 @@ public class BoardController extends BaseController {
 
 		Map<String, Long> response = new HashMap<>();
 		response.put("modifyPostNo", id);
+
+		return ResponseEntity.ok(response);
+	}
+
+	@PostMapping("/completeQna")
+	public ResponseEntity<Map<String, Long>> completeQna (@RequestBody PostDTO postDTO, Model model) {
+		// 모델에서 사용자 정보를 가져옴
+		String userId = (String)model.getAttribute("username");
+
+		Long postNo = boardService.completeQna(postDTO, userId);
+		Map<String, Long> response = new HashMap<>();
+		response.put("postNo", postNo);
 
 		return ResponseEntity.ok(response);
 	}

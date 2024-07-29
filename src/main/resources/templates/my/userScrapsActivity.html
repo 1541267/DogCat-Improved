@@ -23,8 +23,16 @@
     <!--본문 영역-->
     <div class="content">
 
-        <h6 class="myPage">마이페이지</h6>
-        <h2 class="myTitle">내 활동</h2>
+        <div th:with="userId=${responseDTO.getUserId()}">
+            <span th:if="(${userId}!=${username})">
+                <h6 class="myPage">관리자페이지</h6>
+                <h2 class="myTitle">회원 활동</h2>
+            </span>
+            <span th:if="(${userId}==${username})">
+                <h6 class="myPage">마이페이지</h6>
+                <h2 class="myTitle">내 활동</h2>
+            </span>
+        </div>
 
         <div class="d-flex justify-content-center align-items-center nav">
             <button class="col-4 text-center align-content-center myPostScr" th:onclick="|location.href='@{/my/userActivity/{userId}/posts(userId=${userId})}'|">
@@ -59,7 +67,8 @@
                             <a th:href="@{'/board/read/'+${dto.postNo}}">
                                 <div class="d-flex align-items-center">
                                     <div class="replyAuth" th:if="${dto.replyAuth==true}">
-                                        <img class="replyAuthImg" src="/img/tag/vetScope.png" alt="수의사만 답변 가능">
+                                        <img class="replyAuthImg" th:src="${dto.completeQna ? '/img/tag/completeQna.png' : '/img/tag/vetScope.png'}"
+                                             th:alt="${dto.completeQna ? '답변 완료' : '수의사만 답변 가능'}">
                                     </div>
                                     <div>
                                         <div>

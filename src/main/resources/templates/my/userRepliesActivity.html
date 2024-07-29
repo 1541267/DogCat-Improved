@@ -24,8 +24,16 @@
     <!--본문 영역-->
     <div class="content">
 
-        <h6 class="myPage">마이페이지</h6>
-        <h2 class="myTitle">내 활동</h2>
+        <div th:with="userId=${responseDTO.getUserId()}">
+            <span th:if="(${userId}!=${username})">
+                <h6 class="myPage">관리자페이지</h6>
+                <h2 class="myTitle">회원 활동</h2>
+            </span>
+            <span th:if="(${userId}==${username})">
+                <h6 class="myPage">마이페이지</h6>
+                <h2 class="myTitle">내 활동</h2>
+            </span>
+        </div>
 
         <div class="d-flex justify-content-center align-items-center nav">
             <button class="col-4 text-center align-content-center myPostRpl" th:onclick="|location.href='@{/my/userActivity/{userId}/posts(userId=${userId})}'|">

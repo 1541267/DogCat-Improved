@@ -47,7 +47,8 @@
                     <tr class="justify-content-center">
                         <td class="read-one">
                                 <span class="align-middle" th:if="${postDTO.replyAuth==true}">
-                                    <img class="replyAuthImg" src="/img/tag/vetScope.png" alt="수의사만 답변 가능">
+                                        <img class="replyAuthImg" th:src="${postDTO.completeQna ? '/img/tag/completeQna.png' : '/img/tag/vetScope.png'}"
+                                             th:alt="${postDTO.completeQna ? '답변 완료' : '수의사만 답변 가능'}">
                                 </span>
                                 <span>
                                     <img class="tag" src="/img/tag/tag_dog.png" th:if="${postDTO.postTag eq '강아지'}"
@@ -82,12 +83,17 @@
                             </div>
                         </td>
                         <td class="align-middle text-end count">
-                            <span>조회수</span>
-                            <span th:text="${postDTO?.viewCount}"></span>
-                            <span>추천수</span>
-                            <span th:text="${postDTO?.likeCount}"></span>
-                            <span>댓글수</span>
-                            <span th:text="${postDTO?.replyCount}"></span>
+                            <div th:if="${postDTO.replyAuth==true} and ${postDTO.completeQna==false} and (${username}==${postDTO.userId})">
+                                <button class="btn completeBtn">답변 완료</button>
+                            </div>
+                            <div>
+                                <span>조회수</span>
+                                <span th:text="${postDTO?.viewCount}"></span>
+                                <span>추천수</span>
+                                <span th:text="${postDTO?.likeCount}"></span>
+                                <span>댓글수</span>
+                                <span th:text="${postDTO?.replyCount}"></span>
+                            </div>
                         </td>
                     </tr>
                     </tbody>
@@ -173,8 +179,8 @@
             </div>
             <!--목록/수정/삭제 버튼-->
             <div class="row justify-content-between mt-3">
-                <div class="listBtnSection">
-                    <button class="btn listBtn">목록</button>
+                <div class="listBtnSection" th:with="page = ${pageRequestDTO.getPage()}">
+                    <button class="btn listBtn" th:attr="data-page=${page}">목록</button>
                 </div>
                 <div class="d-flex text-end btnSection">
                     <!--수정 버튼 권한에 따라 버튼 나타내기 / 글작성자,관리자-->
@@ -259,14 +265,15 @@
                     <div>
                         <table class="table read mb-0">
                             <!--게시물 정보 받아오기-->
-                            <tbody>
+                            <tbody th:with="page = ${pageRequestDTO.getPage()}">
                             <tr class="postList" th:each="dto:${responseDTO.dtoList}">
                                 <!-- 게시글이 비밀글이 아닐 때 -->
                                 <td class="align-middle listOne" th:if="${dto.secret==false} or (${dto.secret == true} and (${username} == ${dto.userId})) or ((${dto.secret == true} and (${username} != ${dto.userId}))and(${role ne 'ROLE_USER'}))">
-                                    <a class="move" href="#" th:attr="data-postNo=${dto.postNo}, data-secret=${dto.secret}, data-userId=${dto.userId}">
+                                    <a class="move" href="#" th:attr="data-postNo=${dto.postNo}, data-secret=${dto.secret}, data-userId=${dto.userId}, data-page=${page}">
                                         <!--                                        <a class="readDetail" th:attr="data-postNo=${dto.postNo}">-->
                                         <span class="align-middle" th:if="${dto.replyAuth==true}">
-                                            <img class="replyAuthImg" src="/img/tag/vetScope.png" alt="수의사만 답변 가능">
+                                            <img class="replyAuthImg" th:src="${dto.completeQna ? '/img/tag/completeQna.png' : '/img/tag/vetScope.png'}"
+                                                 th:alt="${dto.completeQna ? '답변 완료' : '수의사만 답변 가능'}">
                                         </span>
                                         <span>
                                             <img class="listTag" src="/img/tag/tag_dog.png"
@@ -322,7 +329,7 @@
                                 <!--비밀글일때-->
                                 <td class="align-middle listOne" colspan="2" th:if="((${dto.secret==true} and (${username} != ${dto.userId}))and(${role eq 'ROLE_USER'}))">
                                     <!--비밀글여부-->
-                                    <a class="d-flex align-items-center move" href="#" th:attr="data-postNo=${dto.postNo}, data-secret=${dto.secret}, data-userId=${dto.userId}">
+                                    <a class="d-flex align-items-center move" href="#" th:attr="data-postNo=${dto.postNo}, data-secret=${dto.secret}, data-userId=${dto.userId}, data-page=${page}">
                                 <span class="icon listSecret">
                                      <i class="bi bi-file-lock d-flex flex-fill"></i>
                                 </span>
@@ -386,7 +393,17 @@
     document.querySelector(".listBtn").addEventListener("click", function (e) {
         e.preventDefault();
         let boardCode = '[[${postDTO.boardCode}]]'
-        location.href = '/board/' + boardCode;
+        let username = '[[${username}]]';
+        let page = this.getAttribute("data-page");
+        let url = document.referrer;
+        let boardUrl = '/board/' + boardCode;
+        let myPageUrl = '/my/userActivity/';
+
+        if(url.includes(myPageUrl)) {
+            location.href = myPageUrl + username +'/posts';
+        } else {
+            location.href = boardUrl + '?page=' + page;
+        }
     }, false)
 
     //deletePostBtn 버튼 클릭 이벤트
@@ -434,6 +451,31 @@
     });
 
     $(document).ready(function () {
+
+        // 답변 완료 버튼 클릭 이벤트
+        $('.completeBtn').on('click', function (e) {
+            e.preventDefault();
+            if (confirm('답변 완료 처리하시겠습니까?')) {
+                let formData = {
+                    userId: '[[${username}]]',   // 로그인한 회원 정보
+                    postNo: [[${postDTO.postNo}]]  // 게시물 정보
+                };
+                $.ajax({
+                    type: 'POST',
+                    url: '/board/completeQna',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function (data) {
+                        console.log('Success:', data);
+                        location.reload();
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+        });
+
         //좋아요, 싫어요 상태에 따른 변화
         let likeState = $('#formLike').data('likeState');
         let dislikeState = $('#formdislike').data('dislikeState');
@@ -897,7 +939,7 @@
         }
     });
 
-    // 비밀글 접근 권한 설정
+    // 비밀글 접근 권한 설정 + page 번호 유지
     document.addEventListener("DOMContentLoaded", function () {
         const moves = document.querySelectorAll(".move");
 
@@ -906,64 +948,26 @@
                 e.preventDefault();
 
                 let role = '[[${role}]]';
-                console.log(role)
                 let username = '[[${username}]]';
-                console.log(username)
                 let userId = this.getAttribute("data-userId");
-                console.log(userId)
                 let postNo = this.getAttribute("data-postNo");
-                console.log(postNo)
                 let secret = this.getAttribute("data-secret");
-                console.log(secret)
+                let page = this.getAttribute("data-page");
 
                 if (secret === 'true') {
                     if (role === 'ROLE_ADMIN' || role === 'ROLE_VET' || username === userId) {
-                        location.href = '/board/read/' + postNo;
+                        location.href = '/board/read/' + postNo + '?page=' + page;
+
                     } else {
                         alert('접근 권한이 없습니다.');
                     }
                 } else {
                     // 비밀글이 아닌 경우
-                    location.href = '/board/read/' + postNo;
+                    location.href = '/board/read/' + postNo + '?page=' + page;
                 }
             });
         });
     });
-
-    // document.querySelector(".readDetail").addEventListener("click", function (e) {
-    //     e.preventDefault()
-    //     e.stopPropagation()
-    //
-    //     //실제 클릭된 요소를 가져와서 target 변수에 할당
-    //     let target = e.target
-    //     //요소가 <a>인지 체크
-    //     if (target.tagName !== 'A') {
-    //         return
-    //     }
-    //
-    //     let postNo = target.getAttribute("data-postNo")
-    //
-    //     // 현재 URL 가져오기
-    //     let currentUrl = new URL(window.location.href);
-    //
-    //     // pathname에서 postNo 추출
-    //     let pathParts = currentUrl.pathname.split('/');
-    //     let boardIndex = pathParts.indexOf('board');
-    //
-    //     // postNo가 위치한 인덱스를 확인하고, 새로운 postNo로 변경
-    //     if (boardIndex !== -1 && boardIndex + 1 < pathParts.length) {
-    //         pathParts[boardIndex + 1] = postNo; // 새로운 postNo로 변경
-    //         currentUrl.pathname = pathParts.join('/'); // 수정된 pathname으로 설정
-    //     }
-    //
-    //     // 글목록 영역으로 이동하는 해시 제거
-    //     currentUrl.hash = '';
-    //
-    //     // 수정된 URL로 이동
-    //     window.location.href = currentUrl.href;
-    //
-    // }, false)
-
 
 </script>
 </html>
