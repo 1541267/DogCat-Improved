@@ -17,24 +17,22 @@
 
 </div>
 
-<div class="container" style="height: 960px">
-    <div class="d-flex justify-content-center align-items-center" style="height: 960px">
-        <div style="height: 700px; width: 700px;">
-            <div class="d-flex justify-content-center align-items-center"
-                 style="height: 100px; width: 700px;">
-                <h1 style="color: #67cafe"><b>FIND ID</b></h1>
+<div class="container">
+    <div class="d-flex justify-content-center align-items-center">
+        <div>
+            <div class="d-flex justify-content-center align-items-center findIdTitle">
+                <h1>아이디 찾기</h1>
             </div>
-            <div class="d-flex justify-content-center align-items-center" style="height: 500px;">
+            <div class="d-flex justify-content-center align-items-center findIdContent">
                 <form id="findIdForm" class="d-flex flex-column justify-content-between">
                     <div>
                         <label>이름</label>
                         <input type="text" name="name" id="name" class="form-control">
                     </div>
-                    <div>
+                    <div class="blank">
                         <label>연락처</label>
                         <div class="d-flex">
-                            <select name="telPrefix" id="telPrefix" class="form-control form-width me-2"
-                                    style="width: 116px;">
+                            <select name="telPrefix" id="telPrefix" class="form-control form-width me-2">
                                 <option value="010">010</option>
                                 <option value="011">011</option>
                                 <option value="016">016</option>
@@ -44,24 +42,17 @@
                             </select>
                             <span class="align-self-center mx-1">-</span>
                             <input type="text" id="telMiddle" class="form-control form-width mx-1" maxlength="4"
-                                   oninput="formatTelInput()" style="width: 116px;">
+                                   oninput="formatTelInput()">
                             <span class="align-self-center mx-1">-</span>
                             <input type="text" id="telSuffix" class="form-control form-width ms-2" maxlength="4"
-                                   oninput="formatTelInput()" style="width: 116px;">
+                                   oninput="formatTelInput()">
                         </div>
                     </div>
                     <input type="hidden" name="tel" id="tel">
-
-                    <div class="blank"></div>
-
-                    <div id="userIdDisplay" class="d-flex justify-content-evenly align-items-center"></div>
-
-                    <div class="blank"></div>
-
-                    <button id="findIdButton" type="button" class="find-button" onclick="findId()">
+                    <div id="userIdDisplay" class="d-flex justify-content-evenly align-items-center blank"></div>
+                    <button id="findIdButton" type="button" class="find-button blank" onclick="findId()">
                         <span>아이디 찾기</span>
                     </button>
-                    <div class="blank"></div>
                     <button type="button" class="login-button" th:onclick="|location.href='@{/user/login}'|">
                         로그인페이지로 이동
                     </button>

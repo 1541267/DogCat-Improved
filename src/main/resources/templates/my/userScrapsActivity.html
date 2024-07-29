@@ -27,21 +27,15 @@
         <h2 class="myTitle">내 활동</h2>
 
         <div class="d-flex justify-content-center align-items-center nav">
-            <div class="col-4 text-center align-content-center myPostScr">
-                <a th:href="@{/my/userActivity/{userId}/posts(userId=${userId})}">
-                    작성글 <span th:text="${responseDTO?.postCount}"></span>
-                </a>
-            </div>
-            <div class="col-4 text-center align-content-center myReplyScr">
-                <a th:href="@{/my/userActivity/{userId}/replies(userId=${userId})}">
-                    댓글 <span th:text="${responseDTO?.replyCount}"></span>
-                </a>
-            </div>
-            <div class="col-4 text-center align-content-center myScrapScr">
-                <a th:href="@{/my/userActivity/{userId}/scraps(userId=${userId})}">
-                    보관함 <span th:text="${responseDTO?.scrapCount}"></span>
-                </a>
-            </div>
+            <button class="col-4 text-center align-content-center myPostScr" th:onclick="|location.href='@{/my/userActivity/{userId}/posts(userId=${userId})}'|">
+                작성글 <span th:text="${responseDTO?.postCount}"></span>
+            </button>
+            <button class="col-4 text-center align-content-center myReplyScr" th:onclick="|location.href='@{/my/userActivity/{userId}/replies(userId=${userId})}'|">
+                댓글 <span th:text="${responseDTO?.replyCount}"></span>
+            </button>
+            <button class="col-4 text-center align-content-center myScrapScr" th:onclick="|location.href='@{/my/userActivity/{userId}/scraps(userId=${userId})}'|">
+                보관함 <span th:text="${responseDTO?.scrapCount}"></span>
+            </button>
         </div> <!--상단-->
 
         <!--본문-->
@@ -52,7 +46,7 @@
                 <table class="table read">
                     <!--게시물 정보 받아오기-->
                     <tbody>
-                    <tr th:each="dto:${responseDTO.dtoList}" style="height: 69.67px;">
+                    <tr th:each="dto:${responseDTO.dtoList}">
                         <td class="align-middle text-center boardCode">
                                 <span class="boardTag">
                                     <span th:if="${dto.boardCode eq 'showoff'}" th:text="자랑"></span>

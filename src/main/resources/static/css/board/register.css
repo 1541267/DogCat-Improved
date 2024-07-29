@@ -13,8 +13,13 @@ body {
     padding: 30px;
 }
 
-.boardCode {
+.boardCode,
+.boardCodeM {
     width: 150px;
+}
+
+.boardCodeM {
+    margin-right: 5px;
 }
 
 .postTag {
@@ -65,7 +70,8 @@ body {
     --bs-btn-active-bg: #67cafe;
 }
 
-.registerTitle {
+.registerTitle,
+.modifyTitle {
     color: #67cafe;
     margin-bottom: 1rem;
 }

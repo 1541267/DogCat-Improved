@@ -26,7 +26,7 @@
             <!-- 가운데 content 영역 -->
             <div class="row">
                 <div class="col-md-12">
-                    <div class="mt-5" style="margin-bottom: 4rem">
+                    <div class="mt-5 adminTitle">
                         <h2><b>관리자 페이지</b></h2>
                     </div>
                     <div class="row g-0 overflow-hidden flex-md-row mb-4 position-relative">
@@ -34,7 +34,7 @@
                             <div class="d-flex justify-content-between">
 
                                 <!--전체회원, 신고목록, 차단회원 이동메뉴-->
-                                <div class="d-flex flex-row justify-content-around" style="width: 65%">
+                                <div class="d-flex flex-row justify-content-around adminMenu">
                                     <a href="user-list"
                                        class="btn btn-outline-secondary align-items-center user-list"
                                        type="button">
@@ -55,7 +55,7 @@
                                 </div>
 
                                 <!--검색기능-->
-                                <form class="d-flex input-group justify-content-end" style="width: 30%;" method="get"
+                                <form class="d-flex input-group justify-content-end searchForm" method="get"
                                       action="/admin/block-list">
                                     <input type="text" class="form-control" name="keyword" placeholder="검색어 입력"
                                            th:value="${searchKeyword}">
@@ -83,7 +83,7 @@
                                                 <!--수의사면 표시-->
                                                 <span th:if="${user.userVet}">
                                                     <img class="replyAuthImg" src="/img/tag/vetScope.png"
-                                                         alt="수의사만 답변 가능" width="25" height="25">
+                                                         alt="수의사만 답변 가능">
                                                 </span>
 
                                                 <!--유저아이디, 등록일-->

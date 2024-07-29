@@ -16,7 +16,7 @@
 
     <div class="header">
     <div class="header-top">
-        <div class="log"><a href="/"><img class="bi me-2" th:src="@{/img/logo/logo.png}"
+        <div class="logo"><a href="/"><img class="bi me-2" th:src="@{/img/logo/logo.png}"
                                                                           width="120" height="120"
                                                                           alt="로고"></a></div>
         <div class="title"><a href="/"><img class="bi me-2" th:src="@{/img/logo/title.png}" width="400"
@@ -39,14 +39,12 @@
             </span>
                 <a href="/notice">공지사항</a>
             </div>
-            <div class="d-flex justify-content-end"><img th:src="@{/img/logo/footprint.png}" width="50" alt="헤더이미지"
-                                                         style="transform: rotate(20deg);" class="mx-3"></div>
+            <div class="d-flex justify-content-end"><img th:src="@{/img/logo/footprint.png}" alt="헤더이미지" class="mx-3 headerImg"></div>
         </div>
     </div>
     <div class="search-container">
-        <form class="input-group" style="width: 33%;" th:action="@{/allSearch}" method="get">
-            <select class="form-select" name="type"
-                    style="border: 3px solid #67cafe; border-radius: 0; border-right:0;">
+        <form class="input-group" th:action="@{/allSearch}" method="get">
+            <select class="form-select header-fs" name="type">
                 <option value="tcu" th:selected="${SearchPageRequestDTO?.type == 'tcu'}">---</option>
                 <option value="t"
                         th:selected="${SearchPageRequestDTO?.type == 't'}">제목
@@ -61,106 +59,56 @@
                         th:selected="${SearchPageRequestDTO?.type == 'tc'}">제목+내용
                 </option>
             </select>
-            <input type="text" class="form-control" placeholder="통합검색" name="keyword"
-                   th:value="${SearchPageRequestDTO?.keyword}"
-                   style="border: 3px solid #67cafe; border-left: white; border-radius: 0">
-            <button class="btn searchBtn" type="submit"
-                    style="border: 3px solid #67cafe; border-radius: 0; background-color: #67cafe"><i
-                    class="bi bi-search" style="color: #fff;"></i>
+            <input type="text" class="form-control header-fc" placeholder="통합검색" name="keyword"
+                   th:value="${SearchPageRequestDTO?.keyword}">
+            <button class="btn searchBtn header-sb" type="submit"><i
+                    class="bi bi-search"></i>
             </button>
         </form>
     </div>
     </div>
 
     <!-- Thymeleaf 조건식으로 현재 보고 있는 게시판을 nav 태그에 표시 -->
-    <!-- 공통 nav -->
-    <div style="background-color: #67cafe;">
-        <nav th:unless="${boardCode == 'general' or boardCode == 'showoff' or boardCode == 'tip' or boardCode == 'qna'}"
-             style="height: 66px; margin-bottom: 20px;" class="d-flex justify-content-center">
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a th:href="@{/}"
-                                                                         style="color: white;">홈</a></span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a
-                    th:href="@{/board/{boardCode}(boardCode=showoff)}" style="color: white;">자랑 게시판</a></span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a
-                    th:href="@{/board/{boardCode}(boardCode=general)}"
-                    style="color: white; margin-top: 20px; margin-bottom: 20px;">자유 게시판</a></span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a th:href="@{/board/{boardCode}(boardCode=tip)}"
-                                                                         style="color: white;">정보 게시판</a></span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a th:href="@{/board/{boardCode}(boardCode=qna)}"
-                                                                         style="color: white;">QnA</a></span>
+    <div class="navBar">
+        <!-- 공통 nav -->
+        <nav th:unless="${boardCode == 'general' or boardCode == 'showoff' or boardCode == 'tip' or boardCode == 'qna'}" class="d-flex justify-content-center">
+            <span class="mx-5"><a th:href="@{/}">홈</a></span>
+            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=showoff)}">자랑 게시판</a></span>
+            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=general)}">자유 게시판</a></span>
+            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=tip)}">정보 게시판</a></span>
+            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=qna)}">QnA</a></span>
         </nav>
         <!-- 자랑 게시판 -->
-        <nav th:if="${boardCode == 'showoff'}" style="margin-bottom: 20px; height: 66px;"
-             class="d-flex justify-content-center">
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a th:href="@{/}"
-                                                                         style="color: white;">홈</a></span>
-            <span class="mx-5" style="border-bottom: 2px solid white; margin-top: 20px; height: 30px"><a
-                    th:href="@{/board/{boardCode}(boardCode=showoff)}"
-                    style="color: white; font-weight: bold; margin-top: 20px; margin-bottom: 20px;">자랑 게시판</a></span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a
-                    th:href="@{/board/{boardCode}(boardCode=general)}"
-                    style="color: white;">자유 게시판</a></span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a th:href="@{/board/{boardCode}(boardCode=tip)}"
-                                                                         style="color: white;">정보 게시판</a></span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a th:href="@{/board/{boardCode}(boardCode=qna)}"
-                                                                         style="color: white;">QnA</a></span>
+        <nav th:if="${boardCode == 'showoff'}" class="d-flex justify-content-center">
+            <span class="mx-5"><a th:href="@{/}">홈</a></span>
+            <span class="mx-5 nowNav"><a th:href="@{/board/{boardCode}(boardCode=showoff)}">자랑 게시판</a></span>
+            <span class="mx-5" ><a th:href="@{/board/{boardCode}(boardCode=general)}">자유 게시판</a></span>
+            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=tip)}">정보 게시판</a></span>
+            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=qna)}">QnA</a></span>
         </nav>
         <!-- 자유 게시판 -->
-        <nav th:if="${boardCode == 'general'}" style="margin-bottom: 20px; height: 66px;"
-             class="d-flex justify-content-center">
-            <span class="mx-5" style="margin-top: 20px; height: 30px">
-                <a th:href="@{/}" style="color: white;">
-                    홈
-                </a>
-            </span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a
-                    th:href="@{/board/{boardCode}(boardCode=showoff)}" style="color: white;">자랑 게시판</a>
-            </span>
-            <span class="mx-5" style="border-bottom: 2px solid white; margin-top: 20px; height: 30px">
-                <a th:href="@{/board/{boardCode}(boardCode=general)}"
-                   style="color: white; font-weight: bold; margin-top: 20px; margin-bottom: 20px;">
-                    자유 게시판
-                </a>
-            </span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a th:href="@{/board/{boardCode}(boardCode=tip)}"
-                                                                         style="color: white;">정보 게시판</a></span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a th:href="@{/board/{boardCode}(boardCode=qna)}"
-                                                                         style="color: white;">QnA</a></span>
+        <nav th:if="${boardCode == 'general'}" class="d-flex justify-content-center">
+            <span class="mx-5"><a th:href="@{/}">홈</a></span>
+            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=showoff)}">자랑 게시판</a></span>
+            <span class="mx-5 nowNav"><a th:href="@{/board/{boardCode}(boardCode=general)}">자유 게시판</a></span>
+            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=tip)}">정보 게시판</a></span>
+            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=qna)}">QnA</a></span>
         </nav>
-        <!-- 정보공유 게시판 -->
-        <nav th:if="${boardCode == 'tip'}" style="margin-bottom: 20px; height: 66px;"
-             class="d-flex justify-content-center">
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a th:href="@{/}"
-                                                                         style="color: white;">홈</a></span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a
-                    th:href="@{/board/{boardCode}(boardCode=showoff)}" style="color: white;">자랑 게시판</a></span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a
-                    th:href="@{/board/{boardCode}(boardCode=general)}"
-                    style="color: white; margin-top: 20px; margin-bottom: 20px;">자유 게시판</a></span>
-            <span class="mx-5" style="border-bottom: 2px solid white; margin-top: 20px; height: 30px">
-                <a th:href="@{/board/{boardCode}(boardCode=tip)}"
-                   style="color: white; font-weight: bold; margin-top: 20px; margin-bottom: 20px;">
-                    정보 게시판
-                </a>
-            </span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a th:href="@{/board/{boardCode}(boardCode=qna)}"
-                                                                         style="color: white;">QnA</a></span>
+        <!-- 정보 게시판 -->
+        <nav th:if="${boardCode == 'tip'}" class="d-flex justify-content-center">
+            <span class="mx-5"><a th:href="@{/}">홈</a></span>
+            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=showoff)}">자랑 게시판</a></span>
+            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=general)}">자유 게시판</a></span>
+            <span class="mx-5 nowNav"><a th:href="@{/board/{boardCode}(boardCode=tip)}">정보 게시판</a></span>
+            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=qna)}">QnA</a></span>
         </nav>
         <!-- QnA 게시판 -->
-        <nav th:if="${boardCode == 'qna'}" style="margin-bottom: 20px; height: 66px;"
-             class="d-flex justify-content-center">
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a th:href="@{/}"
-                                                                         style="color: white;">홈</a></span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a
-                    th:href="@{/board/{boardCode}(boardCode=showoff)}" style="color: white;">자랑 게시판</a></span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a
-                    th:href="@{/board/{boardCode}(boardCode=general)}"
-                    style="color: white; margin-top: 20px; margin-bottom: 20px;">자유 게시판</a></span>
-            <span class="mx-5" style="margin-top: 20px; height: 30px"><a th:href="@{/board/{boardCode}(boardCode=tip)}"
-                                                                         style="color: white;">정보 게시판</a></span>
-            <span class="mx-5" style="border-bottom: 2px solid white; margin-top: 20px; height: 30px"><a
-                    th:href="@{/board/{boardCode}(boardCode=qna)}"
-                    style="color: white; font-weight: bold; margin-top: 20px; margin-bottom: 20px;">QnA</a></span>
+        <nav th:if="${boardCode == 'qna'}" class="d-flex justify-content-center">
+            <span class="mx-5"><a th:href="@{/}">홈</a></span>
+            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=showoff)}">자랑 게시판</a></span>
+            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=general)}">자유 게시판</a></span>
+            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=tip)}">정보 게시판</a></span>
+            <span class="mx-5 nowNav"><a th:href="@{/board/{boardCode}(boardCode=qna)}">QnA</a></span>
         </nav>
     </div>
     <script>

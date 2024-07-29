@@ -29,6 +29,8 @@
 
     <div class="content">
 
+        <h2 class="modifyTitle mb-4">글 수정</h2>
+
         <form th:action="@{/board/modify}" method="post">
             <!--숨겨서 전송할 정보들-->
             <div class="d-flex justify-content-start">
@@ -58,13 +60,7 @@
             </div>
             <!--제목/게시판/태그 선택-->
             <div class="d-flex justify-content-start mb-3">
-                <div class="me-3 postTitle">
-                    <div class="form-group">
-                        <input type="text" name="postTitle" class="form-control" th:value="${postDTO.postTitle}"
-                               aria-label="게시글제목">
-                    </div>
-                </div> <!--제목입력-->
-                <div class="me-3 boardCode">
+                <div class="boardCodeM">
                     <div class="form-group">
                         <!--게시판코드에 따라 선택되어있음-->
                         <select class="form-select" name="boardCode" aria-label="게시판선택">
@@ -85,6 +81,12 @@
                         </select>
                     </div>
                 </div> <!--태그 선택-->
+                <div class="postTitle">
+                    <div class="form-group">
+                        <input type="text" name="postTitle" class="form-control" th:value="${postDTO.postTitle}"
+                               aria-label="게시글제목">
+                    </div>
+                </div> <!--제목입력-->
             </div> <!--제목/게시판/태그 선택-->
 
             <!--글내용 입력-->

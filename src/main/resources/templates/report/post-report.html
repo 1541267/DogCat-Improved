@@ -14,62 +14,58 @@
     <title>말랑발자국 - 글 신고</title>
 </head>
 <body>
+    <div class="report-detail">
+        <div class="header-top">
+            <span style="justify-content: center;"><h1>게시글 신고</h1></span>
+            <button class="btn btn-danger square-button" onclick="closeWindow()">X</button>
+        </div>
+        <form onsubmit="createPostReportLog(); return false;">
+            <!--신고 관련정보-->
+            <div class="details">
+                <div>
+                    <span class="badge bg-secondary text-white m-1">신&nbsp; 고&nbsp; 자</span>
+                    <span id="nickname" th:text="${nickname}"></span>
+                    /
+                    <span id="userName" th:text="${username}"></span>
+                </div>
 
-<div class="report-detail">
-    <div class="header-top">
-        <span style="justify-content: center;"><h1>게시글 신고</h1></span>
-        <button class="btn btn-danger square-button" onclick="closeWindow()">X</button>
+                <div>
+                    <span class="badge bg-secondary text-white m-1">신고 시간</span>
+                    <th:block th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">[신고시간]</th:block>
+                </div>
+                <div>
+                    <span class="badge bg-secondary text-white m-1">글&nbsp; 제&nbsp; 목</span>
+                    <th:block th:text="${postReport.postTitle}">[신고시간]</th:block>
+                </div>
+
+            </div>
+
+            <!--신고버튼-->
+            <div class="report-button-container">
+                <button id="submitBtn" class="btn ml-2 btn-sm"
+                        style="background-color: #67cafe; color:white">전송
+                </button>
+            </div>
+
+
+            <!--신고 제목, 내용-->
+            <div class="report-title">
+                <label for="reportTitle" class="form-label">신고 제목</label>
+                <input name="reportTitle" type="text" id="reportTitle" class="form-control">
+            </div>
+
+            <div class="report-content">
+                <label for="reportContent" class="form-label">신고 내용</label>
+                <textarea name="reportContent" id="reportContent" class="form-control" rows="6" style="resize: none"></textarea>
+            </div>
+
+            <!-- 숨겨진 필드 -->
+            <input type="hidden" id="postOwner" th:value="${postReport.userId.userId}">
+            <input type="hidden" id="reportUser" th:value="${username}">
+
+
+        </form>
     </div>
-
-
-    <form onsubmit="createPostReportLog(); return false;">
-
-        <!--신고 관련정보-->
-        <div class="details">
-            <div>
-                <span class="badge bg-secondary text-white m-1">신&nbsp; 고&nbsp; 자</span>
-                <span id="nickname" th:text="${nickname}"></span>
-                /
-                <span id="userName" th:text="${username}"></span>
-            </div>
-
-            <div>
-                <span class="badge bg-secondary text-white m-1">신고 시간</span>
-                <th:block th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">[신고시간]</th:block>
-            </div>
-            <div>
-                <span class="badge bg-secondary text-white m-1">글&nbsp; 제&nbsp; 목</span>
-                <th:block th:text="${postReport.postTitle}">[신고시간]</th:block>
-            </div>
-
-        </div>
-
-        <!--신고버튼-->
-        <div class="report-button-container">
-            <button id="submitBtn" class="btn ml-2 btn-sm"
-                    style="background-color: #67cafe; color:white">전송
-            </button>
-        </div>
-
-
-        <!--신고 제목, 내용-->
-        <div class="report-title">
-            <label for="reportTitle" class="form-label">신고 제목</label>
-            <input name="reportTitle" type="text" id="reportTitle" class="form-control">
-        </div>
-
-        <div class="report-content">
-            <label for="reportContent" class="form-label">신고 내용</label>
-            <textarea name="reportContent" id="reportContent" class="form-control" rows="6" style="resize: none"></textarea>
-        </div>
-
-        <!-- 숨겨진 필드 -->
-        <input type="hidden" id="postOwner" th:value="${postReport.userId.userId}">
-        <input type="hidden" id="reportUser" th:value="${username}">
-
-
-    </form>
-</div>
 
 <script>
 

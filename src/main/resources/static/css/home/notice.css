@@ -1,3 +1,6 @@
+body {
+    min-width: 1200px; /* 고정 최소 너비 설정 */
+}
 
 .container {
     max-width: 800px;
@@ -18,6 +21,7 @@
 }
 
 .noticeTitle > h1 {
+    font-size: 40px;
     color: #67cafe;
 }
 
