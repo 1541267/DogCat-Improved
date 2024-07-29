@@ -76,9 +76,9 @@
 
                                                 <!--내 활동으로 연결, 이름 표시-->
                                                 <a th:href="@{/my/userActivity/{userId}/posts(userId=${user.userId})}"
-                                                      onclick="openMyActivityPopup(this.href); return false;"
-                                                      class="my-2" th:text="${user.nickname}"
-                                                      style="font-size: x-large; text-decoration: none; color: #131314">
+                                                   onclick="openMyActivityPopup(this.href); return false;"
+                                                   class="my-2" th:text="${user.nickname}"
+                                                   style="font-size: x-large; text-decoration: none; color: #131314">
                                                 </a>
 
                                                 <!-- 관리자인 경우 "(관리자)" 표시 -->
@@ -134,6 +134,17 @@
                             </div>
                         </div>
                     </div>
+
+                    <!--(관리자/유저) 우선보기 버튼-->
+                    <form id="viewStyleForm">
+                        <div class="mb-2">
+                            <select id="viewStyle" class="form-select">
+                                <option id="nonAdminFirst" value="nonAdminFirst">유저 우선보기</option>
+                                <option id="adminFirst" value="adminFirst">관리자 우선보기</option>
+                            </select>
+                            <button class="btn btn-primary" id="applyButton">적용</button>
+                        </div>
+                    </form>
 
                     <!-- 페이지네이션 -->
                     <div class="d-flex justify-content-center">
@@ -217,6 +228,24 @@
     function openMyActivityPopup(url) {
         window.open(url, '_blank');
     }
+
+    document.getElementById('applyButton').addEventListener('click', function() {
+        const viewStyle = document.getElementById('viewStyle').value; // 선택된 값 가져오기
+
+        // axios를 사용하여 서버에 비동기 요청을 보냅니다.
+        axios.get('/admin/user-list', {
+            params: {
+                viewStyle: viewStyle
+            }
+        })
+            .then(response => {
+                console.log('응답 데이터:', response.data);
+                location.reload(); // 페이지 새로고침
+            })
+            .catch(error => {
+                console.error('오류 발생:', error);
+            });
+    });
 
 
 </script>
