@@ -125,7 +125,7 @@ loggingPath: C:/testupload/log/
 baseUrl: http://localhost:10000
 oldUrl: http://localhost:10000/temp/
 newUrl: https://dogcat-s3-teamproject.s3.ap-northeast-2.amazonaws.com/
-
+s3UploadedUrl: https://dogcat-s3-teamproject.s3.ap-northeast-2.amazonaws.com/
 
 logging:
   level:

@@ -157,4 +157,13 @@ public class S3Uploader {
 		amazonS3.deleteObject(imageFile);
 		amazonS3.deleteObject(thumbFile);
 	}
+
+	// 업로드 됐던 이미지 수정으로 삭제시
+	public void deleteS3BucketFile(String fileName) {
+		String thumbnails = "t_" + fileName;
+
+			amazonS3.deleteObject(bucket, fileName);
+			amazonS3.deleteObject(bucket, thumbnails);
+
+	}
 }

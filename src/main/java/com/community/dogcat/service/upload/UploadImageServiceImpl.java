@@ -15,9 +15,12 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.community.dogcat.domain.Post;
+import com.community.dogcat.repository.upload.UploadRepository;
 import com.community.dogcat.util.uploader.DeleteTempFiles;
 import com.community.dogcat.util.uploader.S3Uploader;
 import com.google.gson.JsonArray;
@@ -31,7 +34,8 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class UploadImageServiceImpl implements UploadImageService {
 
-
+	private final AmazonS3 amazonS3;
+	private final UploadRepository uploadRepository;
 	@Value("${baseUrl}")
 	private String baseUrl;
 
@@ -199,4 +203,13 @@ public class UploadImageServiceImpl implements UploadImageService {
 		return ResponseEntity.ok(uploadResult);
 	}
 
+	@Override
+	@Transactional
+	public void deleteUploadedS3Image(List<String> deletedImageUrls) {
+		// 버킷의 업로드된 파일 제거
+		for(String imageUrl : deletedImageUrls) {
+			s3Uploader.deleteS3BucketFile(imageUrl);
+			uploadRepository.deleteByUploadPath(imageUrl);
+		}
+	}
 }
