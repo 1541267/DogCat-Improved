@@ -29,7 +29,8 @@ public class AdminService {
     private final AdminRepository adminRepository;
     private final UsersAuthRepository usersAuthRepository;
 
-    public List<AdminUserDetailDTO> findAllUsers(BoardPageRequestDTO pageRequestDTO) {
+    public List<AdminUserDetailDTO> findAllUsers(BoardPageRequestDTO pageRequestDTO, String viewStyle) {
+
         Pageable pageable = pageRequestDTO.getPageable("userId");
         Page<User> userPage;
 
@@ -52,23 +53,30 @@ public class AdminService {
                             .regDate(user.getRegDate())
                             .nickname(user.getNickname())
                             .userVet(user.isUserVet())
-                            .authorities(userAuth != null ? userAuth.getAuthorities() : null) // 유저 권한 가져옴
+                            .authorities(userAuth.getAuthorities()) // 유저 권한 가져옴
                             .build();
                 })
                 .collect(Collectors.toList());
 
         // 권한이 "ROLE_ADMIN"인 사용자와 그렇지 않은 사용자로 분리
         List<AdminUserDetailDTO> adminUsers = users.stream()
-                .filter(user -> user.getAuthorities() != null && user.getAuthorities().contains("ROLE_ADMIN"))
+                .filter(user -> user.getAuthorities().contains("ROLE_ADMIN"))
                 .collect(Collectors.toList());
         List<AdminUserDetailDTO> nonAdminUsers = users.stream()
-                .filter(user -> user.getAuthorities() == null || !user.getAuthorities().contains("ROLE_ADMIN"))
+                .filter(user -> !user.getAuthorities().contains("ROLE_ADMIN"))
                 .collect(Collectors.toList());
 
-        // 두 리스트를 결합하여 반환 (adminUsers가 뒤로 감)
-        nonAdminUsers.addAll(adminUsers);
-        return nonAdminUsers;
+        // viewStyle 관리자 우선보기일 경우
+        if ("adminFirst".equalsIgnoreCase(viewStyle)) {
+            adminUsers.addAll(nonAdminUsers);
+            return adminUsers;
+        } else {
+            // 관리자 우선보기 아닐 경우 유저 우선보기
+            nonAdminUsers.addAll(adminUsers);
+            return nonAdminUsers;
+        }
     }
+
 
     public int countAllUsers(BoardPageRequestDTO pageRequestDTO) {
         // 차단당하지 않은 유저 인원수
