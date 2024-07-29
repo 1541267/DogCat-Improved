@@ -12,6 +12,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -27,9 +28,8 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class FileCheckTask {
 
-	//TODO 배포시 리눅스 경로로 변경
-	@Value("tempUploadPath")
-	private String tempUploadPath;
+	@Value("${uploadPath}")
+	private String uploadPath;
 
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucketName;
@@ -39,9 +39,9 @@ public class FileCheckTask {
 	private final UploadRepository uploadRepository;
 
 	//TODO 꼭 배포 전에 활성화 시키기
-
 	// 매월 1일 자정에 요일무시 파일 정리 실행
 	// @Scheduled(cron = "0 0 0 1 * ?")
+
 	@Transactional
 	public void checkFiles() throws Exception {
 		log.info("===========================================");
@@ -49,12 +49,13 @@ public class FileCheckTask {
 		log.info("File Check Task run.................");
 		log.info("오늘은 {} ", LocalDateTime.now().format(formatter) + " 입니다.");
 		log.info("-------------------------------------------");
-		// summernote temp 폴더는 항상 삭제
-		if (Paths.get(tempUploadPath).toFile().exists()) {
-			deleteDirectory(Paths.get(tempUploadPath));
-			log.info("SummerNote Temp: 삭제 완료.");
+
+		// 남아있는 모든 임시 데이터 모두 삭제
+		if (Paths.get(uploadPath).toFile().exists()) {
+			deleteDirectory(Paths.get(uploadPath));
+			log.info("Upload Directory: 삭제 완료.");
 		} else {
-			log.info("SummerNote Temp: 남아있는 파일이 없습니다.");
+			log.info("Upload Directory: 남아있는 파일이 없습니다.");
 		}
 		log.info("-------------------------------------------");
 		// S3 버킷과 DB의 이미지 테이블과 비교해 S3에 없는 파일 제거
