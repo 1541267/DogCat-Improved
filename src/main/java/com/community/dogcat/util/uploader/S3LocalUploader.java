@@ -68,7 +68,7 @@ public class S3LocalUploader {
 			}
 
 		} catch (Exception e) {
-			log.error("ERROR: {}", e.getMessage());
+			log.error("S3 UploadLocal: {}", e.getMessage());
 			e.printStackTrace();
 		}
 		return null;

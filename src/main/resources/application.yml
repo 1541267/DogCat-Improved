@@ -106,6 +106,7 @@ spring:
       max-request-size: 50MB
 
 # 저장 디렉토리
+uploadPath: C:/testupload/
 s3UploadPath: C:/testupload/s3/
 tempUploadPath: C:/testupload/temp/
 

@@ -101,6 +101,7 @@ public class UploadImageServiceImpl implements UploadImageService {
 
 			} catch (IOException e) {
 				// 파일 저장 중 오류가 발생한 경우 해당 파일 삭제 및 에러 응답 코드 추가
+				log.warn("Summernote Image Upload failed", e);
 				FileUtils.deleteQuietly(targetFile);
 				JsonObject errorJsonObject = new JsonObject();
 				jsonObject.addProperty("responseCode", "error");
@@ -127,7 +128,7 @@ public class UploadImageServiceImpl implements UploadImageService {
 			imagesLength.add(bufferedImage.getHeight());
 
 		} catch (IOException e) {
-			log.error("CalcImageLength Error!");
+			log.error("이미지 가로세로 추출 에러!");
 			throw e;
 		}
 		return imagesLength;
