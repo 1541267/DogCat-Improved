@@ -106,7 +106,7 @@ public class ReplyServiceImpl implements ReplyService {
 		if (reply.isPresent()|| auth.equals("ROLE_ADMIN")) {
 			replyRepository.deleteById(replyNo);
 
-			// 해당 댓글 신고 삭제
+			// 해당 댓글에 들어온 신고 삭제
 			List<Long> reportLogIds = reportLogRepository.findByReplyNo(replyNo);
 			for (Long reportLogId : reportLogIds) {
 				reportLogRepository.deleteReportLog(reportLogId);

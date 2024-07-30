@@ -71,7 +71,7 @@ public class AdminService {
             adminUsers.addAll(nonAdminUsers);
             return adminUsers;
         } else {
-            // 관리자 우선보기 아닐 경우 유저 우선보기
+            // 아닐 경우 유저 우선보기
             nonAdminUsers.addAll(adminUsers);
             return nonAdminUsers;
         }

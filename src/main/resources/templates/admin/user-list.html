@@ -11,7 +11,7 @@
     <!-- 부트스트랩 아이콘 사용 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <link rel="stylesheet" th:href="@{/css/admin/adminlist.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/adminList.css}">
     <title>말랑발자국 - 회원 목록</title>
 </head>
 <body>
@@ -136,13 +136,13 @@
                     </div>
 
                     <!--(관리자/유저) 우선보기 버튼-->
-                    <form id="viewStyleForm">
+                    <form id="viewStyleForm" action="/admin/user-list" method="get">
                         <div class="mb-2">
-                            <select id="viewStyle" class="form-select">
+                            <select id="viewStyle" name="viewStyle" class="form-select">
                                 <option id="nonAdminFirst" value="nonAdminFirst">유저 우선보기</option>
                                 <option id="adminFirst" value="adminFirst">관리자 우선보기</option>
                             </select>
-                            <button class="btn btn-primary" id="applyButton">적용</button>
+                            <button class="btn btn-primary" id="applyButton" type="submit">적용</button>
                         </div>
                     </form>
 
@@ -190,6 +190,7 @@
     </div>
 </div>
 <script>
+    /*신고 상세 팝업창 열기*/
     function openReportPopup(userId, nickname) {
         const url = `../admin/user-report?userId=${userId}&nickname=${nickname}`;
         const windowName = "Report";
@@ -197,7 +198,7 @@
         window.open(url, windowName, windowFeatures);
     }
 
-
+    /*유저 차단*/
     function blockUser(userId) {
         if (confirm("해당 사용자를 차단하시겠습니까?")) {
             axios.post(`/admin/blockUser/${userId}`)
@@ -211,6 +212,7 @@
         }
     }
 
+    /*관리자 지정*/
     function administrator(userId) {
         if (confirm("해당 사용자를 관리자로 지정하시겠습니까?")) {
             axios.post(`/admin/administrator/${userId}`)
@@ -229,24 +231,17 @@
         window.open(url, '_blank');
     }
 
-    document.getElementById('applyButton').addEventListener('click', function() {
-        const viewStyle = document.getElementById('viewStyle').value; // 선택된 값 가져오기
+    /*URL에서 viewStyle(관리자우선보기/유저우선보기) 가져오고 옵션에서 표시 */
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewStyle = urlParams.get('viewStyle');
 
-        // axios를 사용하여 서버에 비동기 요청을 보냅니다.
-        axios.get('/admin/user-list', {
-            params: {
-                viewStyle: viewStyle
-            }
-        })
-            .then(response => {
-                console.log('응답 데이터:', response.data);
-                location.reload(); // 페이지 새로고침
-            })
-            .catch(error => {
-                console.error('오류 발생:', error);
-            });
+        if (viewStyle === 'adminFirst') {
+            document.getElementById('adminFirst').selected = true;
+        } else {
+            document.getElementById('nonAdminFirst').selected = true;
+        }
     });
-
 
 </script>
 </body>
