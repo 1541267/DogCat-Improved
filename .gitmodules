@@ -1,0 +1,3 @@
+[submodule "Secret-DogCat"]
+	path = Secret-DogCat
+	url = https://github.com/1541267/Secret-DogCat.git

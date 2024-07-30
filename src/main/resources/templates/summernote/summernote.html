@@ -16,7 +16,7 @@
         let imageUUIDs = [];
         let extensions = [];
         let originalFileName = [];
-        let previousContents = '';
+        let previousContents = "";
         const s3UploadedUrl = /*[[${s3UploadedUrl}]]*/ 'default-url';
         // 섬머노트 초기화
         $('#summernote').summernote({
@@ -97,13 +97,6 @@
                                             extensions.push(fileExtension);
                                             originalFileName.push(fileName)
 
-                                            console.log("추가된 fileUuid: " + fileUuid);
-                                            console.log("추가된 fileExtension: " + fileExtension);
-                                            console.log("추가된 fileName: " + fileName);
-                                            console.log("추가된 imageUUIDs: " + imageUUIDs);
-                                            console.log("추가된 extensions: " + extensions);
-                                            console.log("추가된 originalFileName: " + originalFileName);
-
                                             // 이미지 크기
                                             let width = file.width;
                                             let height = file.height;
@@ -125,7 +118,7 @@
                             }
                         }
                     } else {
-                        console.log("summernote 업로드 에러")
+                        // console.log("summernote 업로드 에러")
                     }
 
                 },
@@ -133,9 +126,10 @@
 
                 // 에디터 본문의 변경사항이 있을시 불러와지는 callback 함수
                 onChange: function (contents) {
-
+                       console.log("1. 진입할때 contents: " + contents);
                     // 내용 변화가 있을 때만
                     if (contents !== previousContents) {
+                        console.log("2. 콘텐츠와 비교할때 previousContents" + previousContents)
 
                         // 파일 업로드시 넣어둔 url, originalFileName, fileUuid, extension 을 지우기 위해 추출
                         const previousUrls = [];
@@ -162,15 +156,15 @@
                         }
 
                         previousContents = contents;
-
+                        console.log("3. 이미지 삭제 전 previousContents = contents: " + previousContents);
                         // 각 배열들에 있는 내용을 현재 내용과 비교해 없는 것들을 deleted 에 저장
                         const deletedImagesUrls = previousUrls.filter(urls => !currentUrls.includes(urls));
 
-                        const deletedS3ImagesUrls =
+                        // 업로드된 S3이미지를 지울때 필터
+                        const deletedS3ImageUrls =
                                 previousUrls.filter(urls => !currentUrls.includes(urls))
                                     .filter(urls => urls.includes(s3UploadedUrl));
 
-                        console.log("deletedS3ImagesUrls: " + deletedS3ImagesUrls);
                         // 각 배열에 담긴 정보 순서는 모두 한 파일씩 일정하니 하나로 기준을 잡음
                         const deletedImagesUuids = previousUuids.filter(uuids => !currentUuids.includes(uuids));
 
@@ -178,11 +172,12 @@
                         if (deletedImagesUrls.length > 0) {
 
                             deleteUploadImages(deletedImagesUrls, deletedImagesUuids)
-
+                            previousContents = contents;
+                            console.log("4. 이미지 삭제 후 deleteUploadImages previousContents: " + previousContents);
                         }
 
-                        if (deletedS3ImagesUrls.length > 0) {
-                            deleteS3File(deletedS3ImagesUrls);
+                        if (deletedS3ImageUrls.length > 0) {
+                            deleteS3File(deletedS3ImageUrls);
                         }
 
                     }
@@ -210,7 +205,7 @@
                 cache: false,
                 success: function (response) {
 
-                    console.log("이미지 삭제 성공:", response);
+                    // console.log("이미지 삭제 성공:", response);
 
                     deletedImagesUuids.forEach(uuid => {
                         const index = imageUUIDs.indexOf(uuid);
@@ -378,9 +373,6 @@
                     type: 'POST',
                     contentType: false,
                     processData: false,
-                    success: function(response) {
-                        console.log("업로드된 S3 파일 삭제 성공" + response);
-                    },
                     error: function (error) {
                         console.error('업로드된 S3 파일 삭제 실패: ', error);
                     },

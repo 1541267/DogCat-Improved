@@ -141,17 +141,17 @@ public class S3Uploader {
 			Files.deleteIfExists(filePath);
 			Files.deleteIfExists(thumbfilePath);
 
-			if (!Files.exists(filePath) && !Files.exists(thumbfilePath)) {
-				log.info("업로드 원본 파일 삭제 성공 파일 이름: {}", fileName);
-			} else {
-				log.error("업로드 원본 파일 삭제 실패, 파일 이름: {}", fileName);
+			if (Files.exists(filePath) || Files.exists(thumbfilePath)) {
+				log.error("업로드 원본 or 썸네일 파일 삭제 실패, 파일 이름: {}", fileName);
 			}
+
 		} catch (IOException e) {
+
 			throw new RuntimeException(e);
 		}
 	}
 
-	public void removeS3File(String fileName, String thumbFileName) {
+	public void deleteUploadedS3File(String fileName, String thumbFileName) {
 		final DeleteObjectRequest imageFile = new DeleteObjectRequest(bucket, fileName);
 		final DeleteObjectRequest thumbFile = new DeleteObjectRequest(bucket, thumbFileName);
 		amazonS3.deleteObject(imageFile);
