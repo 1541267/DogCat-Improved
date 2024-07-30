@@ -71,7 +71,7 @@ Github Flow
 
 - 팀장: 김윤섭 (<a href="https://github.com/1541267">@a1541267</a>)
   <br>
-- 게시판 담당: 김주희(<a href="https://github.com/ongdanul">@ongdanul</a>) | 김현석(<a href="https://github.com/hyunseok-goo">@hyunseok-goo</a>)
+- 게시판 담당: 김주희(<a href="https://github.com/ongdanul">@ongdanul</a>) | 구현석(<a href="https://github.com/hyunseok-goo">@hyunseok-goo</a>)
 - 시큐리티, 신고 담당: 김슬기(<a href="https://github.com/seulbaong">@seulbaong</a>) | 박민우(<a href="https://github.com/parkminwoo0802">@parkminwoo0802</a>)<br><br>
   <h2>4. 페이지별 기능</h2>
 
