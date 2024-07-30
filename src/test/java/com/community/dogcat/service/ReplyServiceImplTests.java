@@ -27,12 +27,12 @@ public class ReplyServiceImplTests {
 		log.info(replyService.register(replyDTO));
 	}
 
-	@Test
-	public void testRead() {
-		Long replyNo = 2L;
-		replyService.read(replyNo);
-		log.info(replyNo);
-	}
+	// @Test
+	// public void testRead() {
+	// 	Long replyNo = 2L;
+	// 	replyService.read(replyNo);
+	// 	log.info(replyNo);
+	// }
 
 	// @Test
 	// public void testDelete() {

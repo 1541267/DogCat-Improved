@@ -15,7 +15,6 @@ public class UserRepliesActivityDTO {
 
 	private Long replyNo;
 
-	// 댓글을 다는 회원 정보
 	private String userId;
 
 	private String nickname;

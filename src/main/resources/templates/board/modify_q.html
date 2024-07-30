@@ -59,9 +59,9 @@
                     <div class="postTag">
                         <div class="form-group">
                             <select class="form-select" name="postTag" aria-label="태그선택">
-                                <option value="null" selected>전체</option>
-                                <option value="0">강아지</option>
-                                <option value="1">고양이</option>
+                                <option value="null" th:selected="${postDTO.postTag == null}">전체</option>
+                                <option value="강아지" th:selected="${postDTO.postTag == '강아지'}">강아지</option>
+                                <option value="고양이" th:selected="${postDTO.postTag == '고양이'}">고양이</option>
                             </select>
                         </div>
                     </div> <!--태그 선택-->
@@ -69,9 +69,9 @@
                     <div class="replyAuth">
                         <div class="form-group">
                             <select class="form-select" name="replyAuth" aria-label="질문답변자선택">
-                                <option selected>답변자선택</option>
-                                <option value="0">전체회원</option>
-                                <option value="1">수의사</option>
+                                <option>답변자선택</option>
+                                <option value="false" th:selected="${postDTO.replyAuth == false}">전체회원</option>
+                                <option value="true" th:selected="${postDTO.replyAuth == true}">수의사</option>
                             </select>
                         </div>
                     </div> <!--질문 답변자 선택-->
@@ -79,8 +79,8 @@
                     <div class="secret">
                         <div class="form-group">
                             <select class="form-select" name="secret" aria-label="비밀글선택">
-                                <option value="0" selected>전체공개</option>
-                                <option value="1">비밀글</option>
+                                <option value="false" th:selected="${postDTO.secret == false}">전체공개</option>
+                                <option value="true" th:selected="${postDTO.secret == true}">비밀글</option>
                             </select>
                         </div>
                     </div> <!--비밀글 선택-->
@@ -131,6 +131,5 @@
         }
         return true;
     }
-
 </script>
 </html>
