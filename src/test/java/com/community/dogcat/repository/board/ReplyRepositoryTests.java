@@ -52,22 +52,22 @@ public class ReplyRepositoryTests {
 		});
 	}
 
-	@Test
-	public void testRead() {
-		Post postNo = boardRepository.findById(17L).orElse(null);
-		if (postNo != null) {
-			Pageable pageable = PageRequest.of(0, 10, Sort.by("replyNo").descending());
-			Page<Reply> result = replyRepository.listOfBoard(postNo, pageable);
-			result.getContent().forEach(reply -> {
-				log.info("ReplyNo: {}", reply.getReplyNo());
-				log.info("ReplyContent: {}", reply.getReplyContent());
-				log.info("ReplyRegDate: {}", reply.getRegDate());
-				log.info("ReplyRegDate GetClass: {}", reply.getRegDate().getClass());
-				// log.info(reply.getUserId());
-				// log.info(reply.getPostNo());
-			});
-		}
-	}
+	// @Test
+	// public void testRead() {
+	// 	Post postNo = boardRepository.findById(17L).orElse(null);
+	// 	if (postNo != null) {
+	// 		Pageable pageable = PageRequest.of(0, 10, Sort.by("replyNo").descending());
+	// 		Page<Reply> result = replyRepository.listOfBoard(postNo, pageable);
+	// 		result.getContent().forEach(reply -> {
+	// 			log.info("ReplyNo: {}", reply.getReplyNo());
+	// 			log.info("ReplyContent: {}", reply.getReplyContent());
+	// 			log.info("ReplyRegDate: {}", reply.getRegDate());
+	// 			log.info("ReplyRegDate GetClass: {}", reply.getRegDate().getClass());
+	// 			// log.info(reply.getUserId());
+	// 			// log.info(reply.getPostNo());
+	// 		});
+	// 	}
+	// }
 
 	@Test
 	@Transactional
@@ -92,6 +92,6 @@ public class ReplyRepositoryTests {
 	public void testCountRepliesByPostNo() {
 		Long postNo = 15L;
 		Post post = boardRepository.findById(postNo).orElseThrow();
-		log.info(replyRepository.countRepliesByPostNo(post));
+		log.info(replyRepository.countRepliesByPost(post.getPostNo()));
 	}
 }

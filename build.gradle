@@ -111,11 +111,19 @@ test {
     useJUnitPlatform()
 }
 
-//TODO 배포시 활성화
+processResources.dependsOn('copyYml')
+
+tasks.register('copyYml', Copy) {
+    from './Secret-DogCat/Dev/yml'
+    include "*.yml"  // 복사할 파일들
+    into 'src/main/resources'  // 복사 위치
+}
+
+//  TODO 배포시 활성화
 //processResources.dependsOn('copySecret')
 //
 //tasks.register('copySecret', Copy) {
-//    from './Secret-DogCat/yml'
-//    include "application*.yml"  // 복사할 파일들
+//    from './Secret-DogCat/EC2/yml'
+//    include "application.yml"  // 복사할 파일들
 //    into 'src/main/resources'  // 복사 위치
 //}

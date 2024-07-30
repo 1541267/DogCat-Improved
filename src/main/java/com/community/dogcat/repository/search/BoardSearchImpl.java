@@ -109,11 +109,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
-				.replyAuth(post1.isReplyAuth())
-				.completeQna(post1.isCompleteQna())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
@@ -187,8 +183,6 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
 				.replyAuth(post1.isReplyAuth())
 				.completeQna(post1.isCompleteQna())
@@ -315,8 +309,6 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
 				.replyAuth(post1.isReplyAuth())
 				.completeQna(post1.isCompleteQna())
@@ -404,8 +396,6 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
 				.replyAuth(post1.isReplyAuth())
 				.completeQna(post1.isCompleteQna())
@@ -460,11 +450,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
-				.replyAuth(post1.isReplyAuth())
-				.completeQna(post1.isCompleteQna())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
@@ -512,10 +498,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
-				.replyAuth(post1.isReplyAuth())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
@@ -564,10 +547,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
-				.replyAuth(post1.isReplyAuth())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
@@ -615,10 +595,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
-				.replyAuth(post1.isReplyAuth())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
@@ -666,8 +643,6 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
 				.replyAuth(post1.isReplyAuth())
 				.completeQna(post1.isCompleteQna())

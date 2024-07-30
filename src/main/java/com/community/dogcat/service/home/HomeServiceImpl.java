@@ -37,12 +37,12 @@ public class HomeServiceImpl implements HomeService {
 	// 통합 검색 : 첨부파일 유/무 + 비밀글 제외
 	@Override
 	public HomeResponseDTO<AllSearchDTO> searchAll(HomePageRequestDTO pageRequestDTO) {
+
 		String[] types = pageRequestDTO.getTypes();
 		String keyword = pageRequestDTO.getKeyword();
-		Pageable pageable = pageRequestDTO.getPageable("postNo");
+		Pageable pageable = pageRequestDTO.getPageable();
 
 		Page<AllSearchDTO> result = boardRepository.searchAll(types, keyword, pageable);
-		log.info("-----Page----------" + result.getContent());
 
 		// 추가할 정보 설정
 		List<AllSearchDTO> dtoList = result.getContent().stream()
@@ -52,11 +52,10 @@ public class HomeServiceImpl implements HomeService {
 				dto.setReplyCount(replyCount != null ? replyCount : 0L);
 			})
 			.collect(Collectors.toList());
-		log.info("-----------dtoList----" + dtoList);
 
 		return HomeResponseDTO.<AllSearchDTO>withAll()
 			.pageRequestDTO(pageRequestDTO)
-			.dtoList(result.getContent())
+			.dtoList(dtoList)
 			.total((int)result.getTotalElements())
 			.keyword(pageRequestDTO.getKeyword())
 			.build();
@@ -64,6 +63,7 @@ public class HomeServiceImpl implements HomeService {
 
 	// 실시간 인기 게시글 리스트
 	public List<HomeTodayListDTO> getPostsForToday() {
+
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 		Instant startOfDay = today.atStartOfDay(ZoneId.of("Asia/Seoul")).toInstant();
 		Instant endOfDay = today.atTime(23, 59, 59).atZone(ZoneId.of("Asia/Seoul")).toInstant();

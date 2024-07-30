@@ -15,7 +15,7 @@ import com.community.dogcat.domain.User;
 public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
 
 	//postNo와 userId로 해당하는 postLike가 있는지 확인
-	@Query("select pl from PostLike pl where pl.postNo = :postNo and pl.userId = :userId")
+	@Query("SELECT pl FROM PostLike pl WHERE pl.postNo = :postNo AND pl.userId = :userId")
 	Optional<PostLike> findByPostAndUser(@Param("postNo") Post postNo, @Param("userId") User userId);
 
 	@Transactional

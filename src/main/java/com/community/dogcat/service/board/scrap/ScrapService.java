@@ -8,7 +8,4 @@ public interface ScrapService {
 
 	void delete(Long scrapNo, String userId);
 
-	// ScrapDTO readOne(Long scrapNo);
-	//
-	// List<ScrapDTO> list(Long scrapNo);
 }

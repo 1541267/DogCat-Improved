@@ -29,14 +29,4 @@ public class PostLikeDTO {
 
 	private boolean dislikeState;
 
-	// Entity -> DTO
-	public PostLikeDTO(PostLike postLike) {
-		this.postNo = postLike.getPostNo().getPostNo();
-		this.userId = postLike.getUserId().getUserId();
-		this.likeCount = postLike.getPostNo().getLikeCount();
-		this.dislikeCount = postLike.getPostNo().getDislikeCount();
-		this.likeNo = postLike.getLikeNo();
-		this.likeState = postLike.isLikeState();
-		this.dislikeState = postLike.isDislikeState();
-	}
 }
