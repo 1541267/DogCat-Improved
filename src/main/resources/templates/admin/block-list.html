@@ -9,111 +9,93 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" th:href="@{/css/admin/adminList.css}">
     <title>말랑발자국 - 차단 목록</title>
-    <
 </head>
 <body>
 <div th:include="include/header :: header"></div>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-3">
-            <!-- 좌측 aside -->
-            <aside>
-                <!-- 좌측 공간 -->
-            </aside>
-        </div>
-        <div class="col-md-7">
-            <!-- 가운데 content 영역 -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="mt-5 adminTitle">
-                        <h2><b>관리자 페이지</b></h2>
-                    </div>
-                    <div class="row g-0 overflow-hidden flex-md-row mb-4 position-relative">
-                        <div class="col p-4 d-flex flex-column position-relative">
-                            <div class="d-flex justify-content-between">
-
-                                <!--전체회원, 신고목록, 차단회원 이동메뉴-->
-                                <div class="d-flex flex-row justify-content-around adminMenu">
-                                    <a href="user-list"
-                                       class="btn btn-outline-secondary align-items-center user-list"
-                                       type="button">
-                                        전체 회원
-                                    </a>
-
-                                    <a href="report-list"
-                                       class="btn btn-outline-secondary align-items-center report-list"
-                                       type="button" >
-                                        신고 목록
-                                    </a>
-
-                                    <a href="block-list"
-                                       class="btn btn-outline-secondary align-items-center block-list-active"
-                                       type="button">
-                                        차단 회원
-                                    </a>
-                                </div>
-
-                                <!--검색기능-->
-                                <form class="d-flex input-group justify-content-end searchForm" method="get"
-                                      action="/admin/block-list">
-                                    <input type="text" class="form-control" name="keyword" placeholder="검색어 입력"
-                                           th:value="${searchKeyword}">
-                                    <button class="btn btn-outline-secondary searchBtn"  type="submit">
-                                        <i class="bi bi-search"></i>
-                                    </button>
-                                </form>
-
+    <div class="container d-flex flex-row justify-content-center">
+        <div>
+            <div class="d-flex flex-column">
+                <div class="my-4">
+                    <h6 class="adminPage">관리자페이지</h6>
+                    <h2 class="adminUserTitle">차단 회원</h2>
+                </div>
+                <div class="overflow-hidden flex-md-row mb-4 position-relative">
+                    <div class="d-flex flex-column position-relative">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row justify-content-around userMenu">
+                                <a th:href="@{/admin/user-list}"
+                                   class="text-center user-list"
+                                   type="button">
+                                    전체 회원
+                                </a>
+                                <a th:href="@{/admin/report-list}"
+                                   class="text-center report-list"
+                                   type="button">
+                                    신고 목록
+                                </a>
+                                <a th:href="@{/admin/block-list}"
+                                   class="text-center block-list-active"
+                                   type="button">
+                                    차단 회원
+                                </a>
                             </div>
-                            <div class="d-flex flex-column py-md-2">
-                                <div class="list-group">
-                                    <div th:each="user : ${blockList}" class="list-group-item d-inline gap-3 py-3"
-                                         aria-current="true">
-                                        <div class="d-flex gap-2 w-100 justify-content-between">
+                        </div>
+                        <!--차단 목록-->
+                        <div class="d-flex flex-column py-md-2">
+                            <div class="list-group">
+                                <div th:each="user : ${blockList}" class="list-group-item d-inline py-3"
+                                     aria-current="true">
+                                    <div class="d-flex gap-2 w-100 justify-content-between">
 
-                                            <!--회원 정보-->
-                                            <div class="justify-content-center align-content-center">
-                                                <!--내 활동으로 연결, 닉네임 표시-->
-                                                <a th:href="@{/my/userActivity/{userId}/posts(userId=${user.userId})}"
-                                                      onclick="openMyActivityPopup(this.href); return false;"
-                                                      class="my-2" th:text="${user.nickname}"
-                                                      style="font-size: x-large; text-decoration: none; color: #131314">
-                                                </a>
+                                        <!--회원 정보-->
+                                        <div class="justify-content-center align-content-center">
+                                            <!--내 활동으로 연결, 이름 표시-->
+                                            <a th:href="@{/my/userActivity/{userId}/posts(userId=${user.userId})}"
+                                                  onclick="openMyActivityPopup(this.href); return false;"
+                                                  class="my-2" th:text="${user.nickname}"
+                                                  style="font-size: x-large; text-decoration: none; color: #131314">
+                                            </a>
 
-                                                <!--수의사면 표시-->
-                                                <span th:if="${user.userVet}">
-                                                    <img class="replyAuthImg" src="/img/tag/vetScope.png"
-                                                         alt="수의사만 답변 가능">
-                                                </span>
+                                            <!--수의사면 표시-->
+                                            <span th:if="${user.userVet}">
+                                                <img class="replyAuthImg" src="/img/tag/vetScope.png"
+                                                     alt="수의사만 답변 가능">
+                                            </span>
 
-                                                <!--유저아이디, 등록일-->
-                                                <div class="d-flex justify-content-around h11">
-                                                    <p class="m-1 pr-2 opacity-75" th:text="${user.userId}"></p>
-                                                    <p class="m-1 pr-2 opacity-75"
-                                                       th:text="${user.userName}"></p>
-                                                    <p class="m-1 px-2 opacity-75"
-                                                       th:text="${#dates.format(user.regDate, 'yyyy-MM-dd')}"></p>
-                                                </div>
+                                            <!--유저아이디, 등록일-->
+                                            <div class="d-flex justify-content-around h11">
+                                                <p class="m-1 pr-2 opacity-75" th:text="${user.userId}"></p>
+                                                <p class="m-1 pr-2 opacity-75"
+                                                   th:text="${user.userName}"></p>
+                                                <p class="m-1 px-2 opacity-75"
+                                                   th:text="${#dates.format(user.regDate, 'yyyy-MM-dd')}"></p>
+
                                             </div>
-
-                                            <!--차단해제-->
-                                            <div class="justify-content-between align-content-center">
-                                                <button class="btn btn-warning fw-bold"
-                                                        th:onclick="restoreUser([[${user.userId}]])">차단 해제
-                                                </button>
-                                            </div>
-
-
                                         </div>
+
+                                        <!--차단해제-->
+                                        <div class="justify-content-between align-content-center">
+                                            <button class="unblockUserBtn"
+                                                    th:onclick="restoreUser([[${user.userId}]])">차단 해제
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="noSearch" th:if="${blockList == null} or ${blockList.isEmpty()}">
+                                <div class="noSearchContent">
+                                    <img class="mx-auto d-block" src="/img/board/no_search.png" alt="해당 게시판에 게시물이 존재하지 않습니다">
+                                    <div class="text-center mt-3 mb-3">
+                                        차단된 회원이 없습니다.
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <!-- 페이지네이션 -->
                     <div class="d-flex justify-content-center">
-                        <nav aria-label="Page navigation">
+                        <nav aria-label="Page navigation" class="mb-0">
                             <ul class="pagination justify-content-center">
 
                                 <!-- 이전 -->
@@ -124,7 +106,6 @@
                                         <i class="bi bi-caret-left-fill" aria-hidden="true"></i>
                                     </a>
                                 </li>
-
                                 <!-- 페이지 번호 -->
                                 <th:block class="page-item"
                                           th:each="pageNumber : ${#numbers.sequence(pageResponse.start, pageResponse.end)}">
@@ -136,7 +117,6 @@
                                         </a>
                                     </li>
                                 </th:block>
-
                                 <!-- 다음 -->
                                 <li class="page-item" th:if="${pageResponse.next}">
                                     <a class="page-link"
@@ -148,20 +128,20 @@
                             </ul>
                         </nav>
                     </div><!--페이지네이션-->
-
-
+                    <!--검색기능-->
+                    <div class="d-flex flex-row justify-content-center">
+                        <form class="d-flex input-group searchUser" method="get" action="/admin/report-list">
+                            <input type="text" class="form-control searchUserInput" name="keyword"
+                                   th:value="${searchKeyword}">
+                            <button class="searchBtn"  type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-2">
-        <!-- 우측 aside -->
-        <aside>
-            <!-- 우측 공간 -->
-        </aside>
-    </div>
-</div>
-
 <div th:include="include/footer :: footer"></div>
 
 <script>

@@ -73,22 +73,22 @@ nav {
     margin-bottom: 20px;
 }
 
-nav span {
-    margin-top: 20px;
-    height: 30px;
+nav button {
+    /*margin-top: 20px;*/
+    /*height: 30px;*/
+    height: 65px;
+    width: 130px;
+    margin: 0 20px;
+    border: none;
+    background-color: #67cafe;
 }
 
 .nowNav {
     border-bottom: 2px solid white;
 }
 
-.nowNav a {
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-nav a,
-nav a:hover{
+nav button,
+nav button:hover{
     margin: 0 10px;
     text-decoration: none;
     color: #fff;

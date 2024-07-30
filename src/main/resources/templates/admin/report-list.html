@@ -14,175 +14,151 @@
 <body>
 <div th:include="include/header :: header"></div>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-3">
-            <!-- 좌측 aside -->
-            <aside>
-                <!-- 좌측 공간 -->
-            </aside>
-        </div>
-        <div class="col-md-7">
-            <!-- 가운데 content 영역 -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="mt-5" style="margin-bottom: 4rem">
-                        <h2><b>관리자 페이지</b></h2>
-                    </div>
-                    <div class="row g-0 overflow-hidden flex-md-row mb-4 position-relative">
-                        <div class="col p-4 d-flex flex-column position-relative">
-                            <div class="d-flex justify-content-between">
-
-                                <!--전체회원, 신고목록, 차단회원 이동메뉴-->
-                                <div class="d-flex flex-row justify-content-around" style="width: 65%">
-                                    <a href="user-list"
-                                       class="btn btn-outline-secondary align-items-center user-list"
-                                       type="button" style="width: 40%">
-                                        전체 회원
-                                    </a>
-
-                                    <a href="report-list"
-                                       class="btn btn-outline-secondary align-items-center report-list-active"
-                                       type="button">
-                                        신고 목록
-                                    </a>
-
-                                    <a href="block-list"
-                                       class="btn btn-outline-secondary align-items-center block-list"
-                                       type="button">
-                                        차단 회원
-                                    </a>
-                                </div>
-
-
-                                <!--검색기능-->
-                                <form class="d-flex input-group justify-content-end" style="width: 30%;" method="get"
-                                      action="/admin/report-list">
-                                    <input type="text" class="form-control" name="keyword" placeholder="검색어 입력"
-                                           th:value="${searchKeyword}">
-                                    <button class="btn btn-outline-secondary searchBtn"  type="submit">
-                                        <i class="bi bi-search"></i>
-                                    </button>
-                                </form>
+    <div class="container d-flex flex-row justify-content-center">
+        <div>
+            <div class="d-flex flex-column">
+                <div class="my-4">
+                    <h6 class="adminPage">관리자페이지</h6>
+                    <h2 class="adminUserTitle">신고 목록</h2>
+                </div>
+                <div class="overflow-hidden flex-md-row mb-4 position-relative">
+                    <div class="d-flex flex-column position-relative">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row justify-content-around userMenu">
+                                <a th:href="@{/admin/user-list}"
+                                   class="text-center user-list"
+                                   type="button">
+                                    전체 회원
+                                </a>
+                                <a th:href="@{/admin/report-list}"
+                                   class="text-center report-list-active"
+                                   type="button">
+                                    신고 목록
+                                </a>
+                                <a th:href="@{/admin/block-list}"
+                                   class="text-center block-list"
+                                   type="button">
+                                    차단 회원
+                                </a>
                             </div>
-
-                            <div class="d-flex flex-column py-md-2">
-                                <div class="list-group">
-                                    <div th:each="user : ${reportList}" class="list-group-item d-inline gap-3 py-3"
-                                         aria-current="true">
-                                        <div class="d-flex gap-2 w-100 justify-content-between">
-
-                                            <div class="justify-content-center align-content-center">
-                                                <!--신고제목-->
-                                                <a style="cursor: pointer; color: inherit; text-decoration: none; font-size: large"
-                                                   class="my-2"
-                                                   th:onclick="|openReportDetailPopup('${user.reportNo}')|">
-                                                    <b>
-                                                        <!-- 게시글/댓글 신고 표시 -->
-                                                        <span th:if="${user.post != null}">
-                                                            <span style="background-color:#67cafe; color: white; padding: 2px 6px; border-radius: 3px;">게시글신고</span>
-                                                            <span th:text="${user.reportTitle}"></span>
-                                                        </span>
-                                                        <span th:if="${user.reply != null}">
-                                                            <span style="background-color:#67cafe; color: white; padding: 2px 6px; border-radius: 3px;">댓글신고</span>
-                                                            <span th:text="${user.reportTitle}"></span>
-                                                        </span>
-                                                    </b>
-                                                </a>
-
-
-                                                <!--신고자정보-->
-                                                <div class="d-flex justify-content-around h11" style="margin-top: 15px;">
-                                                    <span class="m-1 pr-2 opacity-75 badge bg-secondary text-white border">신고자</span>
-                                                    <span class="m-1 pr-2 opacity-75"
-                                                          th:text="${user.user.userId}"></span>
-                                                    <span class="m-1 pr-2 opacity-75"
-                                                          th:text="${user.user.nickname}"></span>
-                                                    <span class="m-1 px-2 opacity-75"
-                                                          th:text="${#dates.format(user.regDate, 'yyyy-MM-dd')}"></span>
-                                                </div>
-
-
+                        </div>
+                        <!--회원 목록-->
+                        <div class="d-flex flex-column py-md-2">
+                            <div class="list-group">
+                                <div th:each="user : ${reportList}"
+                                     class="list-group-item py-3" aria-current="true">
+                                    <div class="d-flex justify-content-between">
+                                        <!--신고 개요-->
+                                        <div class="justify-content-center align-content-center reportList">
+                                            <!--신고제목-->
+                                            <a class="my-2" th:onclick="|openReportDetailPopup('${user.reportNo}')|">
+                                                <!-- 게시글/댓글 신고 표시 -->
+                                                <span th:if="${user.post != null}">
+                                                    <span class="reportType">게시글신고</span>
+                                                    <span th:text="${user.reportTitle}"></span>
+                                                </span>
+                                                <span th:if="${user.reply != null}">
+                                                    <span class="reportType">댓글신고</span>
+                                                    <span th:text="${user.reportTitle}"></span>
+                                                </span>
+                                            </a>
+                                            <!--신고자정보-->
+                                            <div class="d-flex justify-content-around reporter">
+                                                <span class="m-1 pr-2 opacity-75 badge bg-secondary text-white border">신고자</span>
+                                                <span class="m-1 pr-2 opacity-75"
+                                                      th:text="${user.user.userId}"></span>
+                                                <span class="m-1 pr-2 opacity-75"
+                                                      th:text="${user.user.nickname}"></span>
+                                                <span class="m-1 px-2 opacity-75"
+                                                      th:text="${#dates.format(user.regDate, 'yyyy-MM-dd')}"></span>
                                             </div>
-
-                                            <div class="d-flex flex-column justify-content-between gap-3">
-                                                <!--차단버튼-->
-                                                <button class="btn btn-outline-danger fw-bold"
-                                                        th:onclick="blockUser([[${user.reportedUser.userId}]])">유저 차단
-                                                </button>
-
-                                                <!--삭제버튼-->
-                                                <button class="btn btn-outline-danger fw-bold"
-                                                        th:onclick="|deleteReportLog(${user.reportNo})|">신고 삭제
-                                                </button>
-                                            </div>
-
-
-
                                         </div>
+                                        <div class="d-flex flex-column justify-content-evenly">
+                                            <!--차단버튼-->
+                                            <button class="blockUserBtn"
+                                                    th:onclick="blockUser([[${user.reportedUser.userId}]])">회원 차단
+                                            </button>
+
+                                            <!--삭제버튼-->
+                                            <button class="reportDetailBtn"
+                                                    th:onclick="|deleteReportLog(${user.reportNo})|">내역 삭제
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="noSearch" th:if="${reportList == null} or ${reportList.isEmpty()}">
+                                <div class="noSearchContent">
+                                    <img class="mx-auto d-block" src="/img/board/no_search.png" alt="해당 게시판에 게시물이 존재하지 않습니다">
+                                    <div class="text-center mt-3 mb-3">
+                                        신고 접수 내역이 없습니다.
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
-                    <!-- 페이지네이션 -->
-                    <div class="d-flex justify-content-center">
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination justify-content-center">
-
-                                <!-- 이전 -->
-                                <li class="page-item" th:if="${pageResponse.prev}">
+                </div>
+                <!-- 페이지네이션 -->
+                <div class="d-flex justify-content-center">
+                    <nav aria-label="Page navigation" class="mb-0">
+                        <ul class="pagination justify-content-center">
+                            <!-- 이전 -->
+                            <li class="page-item" th:if="${pageResponse.prev}">
+                                <a class="page-link"
+                                   th:href="@{/report/user-list(page=${pageResponse.page - 1}, size=${pageResponse.size}, keyword=${searchKeyword})}"
+                                   aria-label="Previous">
+                                    <i class="bi bi-caret-left-fill" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                            <!-- 페이지 번호 -->
+                            <th:block class="page-item"
+                                      th:each="pageNumber : ${#numbers.sequence(pageResponse.start, pageResponse.end)}">
+                                <li th:class="${pageResponse.page == pageNumber} ? 'page-item active' : 'page-item'">
                                     <a class="page-link"
-                                       th:href="@{/report/user-list(page=${pageResponse.page - 1}, size=${pageResponse.size}, keyword=${searchKeyword})}"
-                                       aria-label="Previous">
-                                        <i class="bi bi-caret-left-fill" aria-hidden="true"></i>
+                                       th:data-num="${pageNumber}"
+                                       th:href="@{/admin/report-list(page=${pageNumber}, size=${pageResponse.size}, keyword=${searchKeyword})}">
+                                        [[${pageNumber}]]
                                     </a>
                                 </li>
 
-                                <!-- 페이지 번호 -->
-                                <th:block class="page-item"
-                                          th:each="pageNumber : ${#numbers.sequence(pageResponse.start, pageResponse.end)}">
-                                    <li th:class="${pageResponse.page == pageNumber} ? 'page-item active' : 'page-item'">
-                                        <a class="page-link"
-                                           th:data-num="${pageNumber}"
-                                           th:href="@{/admin/report-list(page=${pageNumber}, size=${pageResponse.size}, keyword=${searchKeyword})}">
-                                            [[${pageNumber}]]
-                                        </a>
-                                    </li>
-                                </th:block>
-
-                                <!-- 다음 -->
-                                <li class="page-item" th:if="${pageResponse.next}">
-                                    <a class="page-link"
-                                       th:href="@{/admin/report-list(page=${pageResponse.page + 1}, size=${pageResponse.size}, keyword=${searchKeyword})}"
-                                       aria-label="Next">
-                                        <i class="bi bi-caret-right-fill" aria-hidden="true"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div><!--페이지네이션-->
+                            </th:block>
+                            <!-- 다음 -->
+                            <li class="page-item" th:if="${pageResponse.next}">
+                                <a class="page-link"
+                                   th:href="@{/admin/report-list(page=${pageResponse.page + 1}, size=${pageResponse.size}, keyword=${searchKeyword})}"
+                                   aria-label="Next">
+                                    <i class="bi bi-caret-right-fill" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div><!--페이지네이션-->
+                <!--검색기능-->
+                <div class="d-flex flex-row justify-content-center">
+                    <form class="d-flex input-group searchUser" method="get" action="/admin/report-list">
+                        <input type="text" class="form-control searchUserInput" name="keyword"
+                               th:value="${searchKeyword}">
+                        <button class="searchBtn"  type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
 
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-2">
-        <!-- 우측 aside -->
-        <aside>
-            <!-- 우측 공간 -->
-        </aside>
-    </div>
-</div>
-
 
 <div th:include="include/footer :: footer"></div>
 
 <script>
 
-    /*신고 상세 팝업 열기*/
+    function openReportPopup(userId) {
+        const url = "../admin/user-report?userId=" + userId;
+        const windowName = "Report";
+        const windowFeatures = "width=700,height=400,scrollbars=yes";
+        window.open(url, windowName, windowFeatures);
+    }
+
     function openReportDetailPopup(reportNo) {
         const url = "/admin/report-detail?reportNo=" + reportNo;
         const windowName = "ReportDetail";

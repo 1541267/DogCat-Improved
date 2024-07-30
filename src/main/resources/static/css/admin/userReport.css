@@ -1,15 +1,17 @@
 body {
+    width: 550px;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
-    /*overflow-y: hidden;*/
     display: flex;
     align-items: flex-start;
 }
-a{
+
+a {
     text-decoration: none;
     color: #1a1e21;
 }
+
 .border-thick {
     border-width: 3px; /* 원하는 두께로 설정 */
 }
@@ -25,19 +27,19 @@ header {
 
 .popup {
     padding: 20px;
-    margin-top: 0px;
+    margin-top: 0;
     box-sizing: border-box; /* 패딩 포함 너비 계산 */
 }
 
 .header-top {
+    width: 500px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.header-top .log img {
-    width: 65px;
-    height: 52px;
+.reportTitle {
+    color: #67cafe;
 }
 
 .border {
@@ -65,7 +67,7 @@ header {
     align-items: center;
     justify-content: center;
     text-align: center;
-
+    min-height: 300px;
     min-width: 200px; /* 최소 너비 200px 설정 */
 }
 
@@ -81,3 +83,25 @@ header {
     color: #6c757d;
 }
 
+.postBadge {
+    background-color: #e5ffee;
+    color: black;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.replyBadge {
+    background-color: gray;
+    color: white;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.reportDetail {
+    max-width: 220px;
+    cursor: pointer;
+}
+
+.regDate {
+    font-size: x-small;
+}

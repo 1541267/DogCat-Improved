@@ -15,8 +15,8 @@
 <body>
 
 <div class="report-detail" th:each="reportDetail : ${reportDetail}">
-    <div class="header-top">
-        <h2>신고 상세</h2>
+    <div class="header-top d-flex flex-row justify-content-between">
+        <h1>신고 상세</h1>
         <button class="btn btn-danger square-button" onclick="closeWindow()">X</button>
     </div>
 
@@ -60,13 +60,6 @@
             </div>
         </div>
 
-        <!--삭제버튼-->
-        <div class="delete-button-container">
-            <button class="btn btn-danger ml-2"
-                    th:onclick="|deleteReportLog(${reportDetail.reportNo})|">삭제
-            </button>
-        </div>
-
         <!--신고제목-->
         <div class="report-title">
             <label for="reportTitle" class="form-label">신고 제목</label>
@@ -79,6 +72,13 @@
             <label for="reportContent" class="form-label">신고 내용</label>
             <textarea id="reportContent" class="form-control" rows="6" readonly
                       th:text="${reportDetail.reportContent}"></textarea>
+        </div>
+
+        <!--삭제버튼-->
+        <div class="delete-button-container">
+            <button class="btn btn-danger ml-2"
+                    th:onclick="|deleteReportLog(${reportDetail.reportNo})|">내역삭제
+            </button>
         </div>
 
         <div th:text="${reportDetail.reportNo}" style="display:none;"></div>
