@@ -1,4 +1,4 @@
-package com.community.dogcat.repository.user;
+package com.community.dogcat;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.community.dogcat.domain.UsersVet;
+import com.community.dogcat.repository.user.VetRepository;
 
 @SpringBootTest
 class VetRepositoryTest {
