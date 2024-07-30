@@ -1,5 +1,6 @@
-![header](https://capsule-render.vercel.app/api?type=waving&color=67cafe&height=250&fontColor=ffffff&fontSize=50&fontAlignY=30&animation=fadeIn&desc=반려동물%20커뮤니티%20프로젝트&descAlignY=55&descFontSize=60&descAlign=50&&text=Goott%20Arcademy&textAlign=50)
 <div align=center>
+![header](https://capsule-render.vercel.app/api?type=waving&color=67cafe&height=250&fontColor=ffffff&fontSize=50&fontAlignY=30&animation=fadeIn&desc=반려동물%20커뮤니티%20프로젝트&descAlignY=55&descFontSize=60&descAlign=50&&text=Goott%20Arcademy&textAlign=50)
+
 <b style= "font-size : 40px">🐈말랑 발자국🐕</b>
 <hr>
 	<p style= "font-size : 40px ">📚 Tech Stack 📚<p>
