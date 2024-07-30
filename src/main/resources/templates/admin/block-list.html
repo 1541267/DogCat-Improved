@@ -73,7 +73,7 @@
 
                                             <!--회원 정보-->
                                             <div class="justify-content-center align-content-center">
-                                                <!--내 활동으로 연결, 이름 표시-->
+                                                <!--내 활동으로 연결, 닉네임 표시-->
                                                 <a th:href="@{/my/userActivity/{userId}/posts(userId=${user.userId})}"
                                                       onclick="openMyActivityPopup(this.href); return false;"
                                                       class="my-2" th:text="${user.nickname}"
