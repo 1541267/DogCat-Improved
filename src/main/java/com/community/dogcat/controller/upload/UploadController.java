@@ -70,9 +70,16 @@ public class UploadController {
 	// summernote 본문의 이미지를 제거시 임시파일 삭제
 	@PostMapping("/delete-backspace")
 	public void deleteSummernoteTempFileWithBackspace(
-		@RequestParam("deletedImageUrl") List<String> deletedImageUrl) {
+		@RequestParam("deletedImageUrls") List<String> deletedImageUrls) {
 
-		uploadImageService.deleteSummernoteImageWithBackspace(deletedImageUrl);
+		uploadImageService.deleteSummernoteImageWithBackspace(deletedImageUrls);
+
+	}
+
+	@PostMapping("/delete-s3file")
+	public void deleteS3FileWithBucket(@RequestParam("deletedS3ImageUrls") List<String> deletedImageUrls) {
+
+		uploadImageService.deleteUploadedS3Image(deletedImageUrls);
 
 	}
 }

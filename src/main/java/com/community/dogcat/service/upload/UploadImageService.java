@@ -22,6 +22,7 @@ public interface UploadImageService {
 
 	void deleteSummernoteImage(List<String> uuids, List<String> extensions);
 
-	void deleteSummernoteImageWithBackspace(List<String> deletedImageUrl);
+	void deleteSummernoteImageWithBackspace(List<String> deletedImageUrls);
 
+	void deleteUploadedS3Image(List<String> deletedImageUrls);
 }

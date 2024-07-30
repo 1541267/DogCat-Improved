@@ -165,7 +165,6 @@
                         </nav>
                     </div><!--페이지네이션-->
 
-
                 </div>
             </div>
         </div>
@@ -183,14 +182,7 @@
 
 <script>
 
-
-    function openReportPopup(userId) {
-        const url = "../admin/user-report?userId=" + userId;
-        const windowName = "Report";
-        const windowFeatures = "width=700,height=400,scrollbars=yes";
-        window.open(url, windowName, windowFeatures);
-    }
-
+    /*신고 상세 팝업 열기*/
     function openReportDetailPopup(reportNo) {
         const url = "/admin/report-detail?reportNo=" + reportNo;
         const windowName = "ReportDetail";
@@ -198,6 +190,7 @@
         window.open(url, windowName, windowFeatures);
     }
 
+    /*유저 차단*/
     async function blockUser(userId) {
         const isConfirmed = confirm(`유저아이디 : ${userId}  차단하시겠습니까?`);
 

@@ -139,7 +139,7 @@ public class BoardServiceImpl implements BoardService {
 				String thumbFileName = "t_" + fileName;
 				log.info("S3 Delete FileName: {}", fileName);
 
-				s3Uploader.removeS3File(fileName, thumbFileName);
+				s3Uploader.deleteUploadedS3File(fileName, thumbFileName);
 			}
 
 			// 댓글 존재 확인
