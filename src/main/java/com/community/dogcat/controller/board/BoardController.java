@@ -61,6 +61,7 @@ public class BoardController extends BaseController {
 	@ResponseBody
 	@PostMapping({"/register", "/register_q"})
 	public ResponseEntity<Map<String, Long>> register(@ModelAttribute PostDTO postDTO, Model model) {
+
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 
@@ -82,6 +83,7 @@ public class BoardController extends BaseController {
 	@GetMapping("/read/{postNo}")
 	public String read(@PathVariable Long postNo, BoardPageRequestDTO pageRequestDTO,
 		Model model) {
+
 		// 게시글 유무 - ys
 		Post post = boardService.findPostByPostNo(postNo);
 
@@ -91,6 +93,7 @@ public class BoardController extends BaseController {
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 		String role = userService.getRole(userId);
+
 		// 로그인 사용자 확인
 		if (userId == null) {
 			return "redirect:/user/login"; // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
@@ -98,6 +101,7 @@ public class BoardController extends BaseController {
 
 		// 상세페이지 출력
 		PostReadDTO postDTO = boardService.readDetail(postNo, userId);
+
 		// 게시글 정보
 		model.addAttribute("postDTO", postDTO);
 		boolean secret = postDTO.isSecret();
@@ -105,7 +109,7 @@ public class BoardController extends BaseController {
 		// 게시글 작성자 확인
 		if (secret) {
 			if(!userId.equals(postDTO.getUserId()) && role.equals("ROLE_USER")) {
-				return "redirect:/error/403"; // 권한이 없는 경우 403 오류 페이지로 리다이렉트
+				return "redirect:/error"; // 권한이 없는 경우 403 오류
 			}
 		}
 
@@ -122,18 +126,20 @@ public class BoardController extends BaseController {
 		if (post != null) {
 			// 이미지 정보
 			List<String> uploadPaths = boardService.getImages(postNo);
+
 			model.addAttribute("uploadPaths", uploadPaths);
 			model.addAttribute("post", post);
 
 			return "board/read";
 
 		} else {
-			return "redirect:/error/404"; // 해당 게시글이 없을경우, 에러 페이지 만드는게 어떨지?
+			return "redirect:/error"; // 해당 게시글이 없을경우 404 오류
 		}
 	}
 
 	@GetMapping({"/modify/{postNo}", "/modify_q/{postNo}"})
 	public String modify(@PathVariable Long postNo, Model model, HttpServletRequest request) {
+
 		PostDTO postDTO = boardService.readOne(postNo);
 
 		// 모델에서 사용자 정보를 가져옴
@@ -146,12 +152,12 @@ public class BoardController extends BaseController {
 
 		// 게시글 조회
 		if (postDTO == null) {
-			return "redirect:/error/404"; // 게시글이 존재하지 않는 경우 404 오류 페이지로 리다이렉트
+			return "redirect:/error"; // 게시글이 존재하지 않는 경우 404 오류
 		}
 
 		// 게시글 작성자 확인
 		if (!userId.equals(postDTO.getUserId())) {
-			return "redirect:/error/403"; // 권한이 없는 경우 403 오류 페이지로 리다이렉트
+			return "redirect:/error"; // 권한이 없는 경우 403 오류
 		}
 
 		model.addAttribute("s3UploadedUrl", s3UploadedUrl);
@@ -166,22 +172,24 @@ public class BoardController extends BaseController {
 
 	@PostMapping("modify")
 	public ResponseEntity<Map<String, Long>> modify(@ModelAttribute PostDTO postDTO, Model model) {
+
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 
 		// 로그인 사용자 확인
 		if (userId == null) {
-			return ResponseEntity.status(401).build(); // 로그인되지 않은 경우 401 오류 페이지로 리다이렉트
+			return ResponseEntity.status(401).build(); // 로그인되지 않은 경우 401 오류
 		}
 
 		// 게시글 작성자 확인
 		if (!userId.equals(postDTO.getUserId())) {
-			return ResponseEntity.status(403).build(); // 권한이 없는 경우 403 오류 페이지로 리다이렉트
+			return ResponseEntity.status(403).build(); // 권한이 없는 경우 403 오류
 		}
 
 		Long id = boardService.modify(postDTO, userId);
 
 		Map<String, Long> response = new HashMap<>();
+
 		response.put("modifyPostNo", id);
 
 		return ResponseEntity.ok(response);
@@ -189,22 +197,24 @@ public class BoardController extends BaseController {
 
 	@PostMapping("modify_q")
 	public ResponseEntity<Map<String, Long>> modify_q(@ModelAttribute PostDTO postDTO, Model model) {
+
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 
 		// 로그인 사용자 확인
 		if (userId == null) {
-			return ResponseEntity.status(401).build(); // 로그인되지 않은 경우 401 오류 페이지로 리다이렉트
+			return ResponseEntity.status(401).build(); // 로그인되지 않은 경우 401 오류
 		}
 
 		// 게시글 작성자 확인
 		if (!userId.equals(postDTO.getUserId())) {
-			return ResponseEntity.status(403).build(); // 권한이 없는 경우 403 오류 페이지로 리다이렉트
+			return ResponseEntity.status(403).build(); // 권한이 없는 경우 403 오류
 		}
 
 		Long id = boardService.modify(postDTO, userId);
 
 		Map<String, Long> response = new HashMap<>();
+
 		response.put("modifyPostNo", id);
 
 		return ResponseEntity.ok(response);
@@ -212,11 +222,14 @@ public class BoardController extends BaseController {
 
 	@PostMapping("/completeQna")
 	public ResponseEntity<Map<String, Long>> completeQna (@RequestBody PostDTO postDTO, Model model) {
+
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 
 		Long postNo = boardService.completeQna(postDTO, userId);
+
 		Map<String, Long> response = new HashMap<>();
+
 		response.put("postNo", postNo);
 
 		return ResponseEntity.ok(response);
@@ -237,13 +250,14 @@ public class BoardController extends BaseController {
 		// 게시글 조회
 		PostDTO postDTO = boardService.readOne(postNo);
 		if (postDTO == null) {
-			return "redirect:/error/404"; // 게시글이 존재하지 않는 경우 404 오류 페이지로 리다이렉트
+			return "redirect:/error"; // 게시글이 존재하지 않는 경우 404 오류
 		}
 
 		// 게시글 작성자 확인
 		if (!userId.equals(postDTO.getUserId()) && !role.equals("ROLE_ADMIN")) {
-			return "redirect:/error/403"; // 권한이 없는 경우 403 오류 페이지로 리다이렉트
+			return "redirect:/error"; // 권한이 없는 경우 403 오류
 		}
+
 		// 삭제시 해당 게시판 목록으로 돌아가기 위해 boardCode 저장
 		String boardCode = postDTO.getBoardCode();
 

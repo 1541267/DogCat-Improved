@@ -46,22 +46,18 @@ public class ReplyController extends BaseController {
 	public Map<String, Long> register(@Valid @RequestBody ReplyDTO replyDTO, BindingResult bindingResult,
 		Model model) throws
 		BindException {
-
-		log.warn(replyDTO);
-
 		if (bindingResult.hasErrors()) {
 			throw new BindException(bindingResult);
 		}
 
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
-
 		replyDTO.setUserId(userId);
 
 		Map<String, Long> resultMap = new HashMap<>();
 		Long replyNo = replyService.register(replyDTO);
 
-		resultMap.put("replyNo", 1L);
+		resultMap.put("replyNo", replyNo);
 
 		return resultMap;
 	}
@@ -69,6 +65,7 @@ public class ReplyController extends BaseController {
 	@Operation(summary = "Replies of Post", description = "특정 게시물의 댓글 목록")
 	@GetMapping("/{postNo}")
 	public List<ReplyDTO> getList(@PathVariable("postNo") Long postNo, Model model) {
+
 		List<ReplyDTO> list = replyService.getListOfReply(postNo);
 
 		model.addAttribute("replies", list);
@@ -79,6 +76,7 @@ public class ReplyController extends BaseController {
 	@Operation(summary = "Delete Reply", description = "특정 댓글 삭제")
 	@DeleteMapping("/{replyNo}")
 	public Map<String, Long> delete(@PathVariable("replyNo") Long replyNo, Model model) {
+
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 

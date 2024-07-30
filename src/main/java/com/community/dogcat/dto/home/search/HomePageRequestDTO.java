@@ -37,8 +37,8 @@ public class HomePageRequestDTO {
 		return type.split("");
 	}
 
-	public Pageable getPageable(String... props) {
-		return PageRequest.of(this.page - 1, this.size, Sort.by(props).descending());
+	public Pageable getPageable() {
+		return PageRequest.of(this.page - 1, this.size);
 	}
 
 	// url 설정

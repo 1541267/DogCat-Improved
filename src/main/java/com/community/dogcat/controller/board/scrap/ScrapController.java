@@ -40,6 +40,7 @@ public class ScrapController extends BaseController {
 	@Operation(summary = "Scrap Register", description = "게시물 보관 등록")
 	@PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, Long> register(@Valid @RequestBody ScrapDTO scrapDTO, Model model) {
+
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 
@@ -47,6 +48,7 @@ public class ScrapController extends BaseController {
 
 		Map<String, Long> response = new HashMap<>();
 		Long scrapNo = scrapService.register(scrapDTO);
+
 		response.put("scrapNo", scrapNo);
 
 		return response;
@@ -55,13 +57,16 @@ public class ScrapController extends BaseController {
 	@Operation(summary = "Scrap Delete", description = "게시물 보관 삭제")
 	@DeleteMapping("/{scrapNo}")
 	public Map<String, Long> delete(@PathVariable("scrapNo") Long scrapNo, Model model) {
+
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 
 		scrapService.delete(scrapNo, userId);
 
 		Map<String, Long> response = new HashMap<>();
+
 		response.put("scrapNo", scrapNo);
+
 		return response;
 	}
 }

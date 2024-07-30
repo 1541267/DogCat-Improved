@@ -44,10 +44,6 @@ public class BoardListDTO {
 
 	private boolean secret;
 
-	private Long likeCount;
-
-	private Long dislikeCount;
-
 	private Long viewCount;
 
 	private boolean replyAuth;

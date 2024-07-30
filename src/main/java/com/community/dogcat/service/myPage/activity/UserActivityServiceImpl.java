@@ -32,13 +32,13 @@ public class UserActivityServiceImpl implements UserActivityService {
 	// userId에 해당하는 게시물들 목록
 	@Override
 	public UserPageResponseDTO<UserPostsActivityDTO> listWithPosts(UserPageRequestDTO pageRequestDTO) {
+
 		String[] types = pageRequestDTO.getTypes();
 		String keyword = pageRequestDTO.getKeyword();
 		Pageable pageable = pageRequestDTO.getPageable();
 		String userId = pageRequestDTO.getUserId();
 
 		Page<UserPostsActivityDTO> result = boardRepository.postListWithUser(types, keyword, pageable, userId);
-		log.info("-----Page----------" + result.getContent());
 
 		// 추가할 정보 설정
 		List<UserPostsActivityDTO> dtoList = result.getContent().stream()
@@ -48,7 +48,6 @@ public class UserActivityServiceImpl implements UserActivityService {
 				dto.setPostReplyCount(postReplyCount != null ? postReplyCount : 0L);
 			})
 			.collect(Collectors.toList());
-		log.info("-----------dtoList----" + dtoList);
 
 		// 회원이 작성한 게시글 수 찾기
 		Long postCount = boardRepository.countPostsByUser(userId);
@@ -71,23 +70,21 @@ public class UserActivityServiceImpl implements UserActivityService {
 	// userId에 해당하는 댓글들 목록
 	@Override
 	public UserPageResponseDTO<UserRepliesActivityDTO> listWithReplies(UserPageRequestDTO pageRequestDTO) {
+
 		String[] types = pageRequestDTO.getTypes();
 		String keyword = pageRequestDTO.getKeyword();
 		Pageable pageable = pageRequestDTO.getPageable();
 		String userId = pageRequestDTO.getUserId();
 
 		Page<UserRepliesActivityDTO> result = replyRepository.repliesListWithUser(types, keyword, pageable, userId);
-		log.info("-----Page----------" + result.getContent());
 
 		// 회원이 작성한 게시글 수 찾기
 		Long postCount = boardRepository.countPostsByUser(userId);
-		log.info(postCount);
 		// 회원이 작성한 댓글 수 찾기
 		Long replyCount = replyRepository.countRepliesByUser(userId);
-		log.info(replyCount);
 		// 회원이 보관한 보관물 수 찾기
 		Long scrapCount = scrapRepository.countScrapsByUser(userId);
-		log.info(scrapCount);
+
 		return UserPageResponseDTO.<UserRepliesActivityDTO>withAll()
 			.pageRequestDTO(pageRequestDTO)
 			.dtoList(result.getContent())
@@ -102,13 +99,13 @@ public class UserActivityServiceImpl implements UserActivityService {
 	// userId에 해당하는 보관한 게시글 목록
 	@Override
 	public UserPageResponseDTO<UserScrapsActivityDTO> listWithScraps(UserPageRequestDTO pageRequestDTO) {
+
 		String[] types = pageRequestDTO.getTypes();
 		String keyword = pageRequestDTO.getKeyword();
 		Pageable pageable = pageRequestDTO.getPageable();
 		String userId = pageRequestDTO.getUserId();
 
 		Page<UserScrapsActivityDTO> result = scrapRepository.scrapsListWithUser(types, keyword, pageable, userId);
-		log.info("-----Page----------" + result.getContent());
 
 		// 추가할 정보 설정
 		List<UserScrapsActivityDTO> dtoList = result.getContent().stream()
@@ -118,7 +115,6 @@ public class UserActivityServiceImpl implements UserActivityService {
 				dto.setPostReplyCount(postReplyCount != null ? postReplyCount : 0L);
 			})
 			.collect(Collectors.toList());
-		log.info("-----------dtoList----" + dtoList);
 
 		// 회원이 작성한 게시글 수 찾기
 		Long postCount = boardRepository.countPostsByUser(userId);

@@ -44,7 +44,6 @@
             <!--버튼-->
             <span>
                 <!--삭제 버튼 추가 / 권한에 따라 버튼 나타내기-->
-                <!--          <button class="btn ms-3 removeBtn" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">글 삭제</button>-->
                 <button class="btn deleteBtn" th:if="${role eq 'ROLE_ADMIN'}">글 삭제</button>
                 </span> <!--버튼-->
         </div> <!--상단-->
@@ -168,7 +167,6 @@
                         <button class="btn writeBtn register_qBtn" th:if="${boardCode eq 'qna'}"><i
                                 class="bi bi-pencil-fill"></i>글쓰기</button>
                 <!--삭제 버튼 권한에 따라 버튼 나타내기-->
-                <!--          <button class="btn ms-2 deleteBtn" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">삭제</button>-->
                          <button class="btn ms-2 deleteBtn" th:if="${role eq 'ROLE_ADMIN'}">글 삭제</button>
                     </span> <!--버튼-->
         </div> <!--하단-->
@@ -242,116 +240,118 @@
 </body>
 <div th:include="include/footer :: footer"></div>
 <script>
-    //replyCountBtn 버튼 클릭 이벤트
-    document.querySelectorAll(".replyCountBtn").forEach(function (button) {
-        button.addEventListener("click", function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            let postNo = this.getAttribute("data-postNo");
-            location.href = '/board/read/' + postNo + '#reply';
-        });
-    });
-
-    //registerBtn, register_qBtn 버튼 클릭 이벤트
-    const registerBtns = document.querySelectorAll(".registerBtn");
-    if (registerBtns.length > 0) {
-        registerBtns.forEach(function (registerBtn) {
-            registerBtn.addEventListener("click", function (e) {
-                e.preventDefault();
-                location.href = '/board/register/';
-            }, false);
-        });
-    }
-    const register_qBtns = document.querySelectorAll(".register_qBtn");
-    if (register_qBtns.length > 0) {
-        register_qBtns.forEach(function (register_qBtn) {
-            register_qBtn.addEventListener("click", function (e) {
-                e.preventDefault();
-                location.href = '/board/register_q/';
-            }, false);
-        });
-    }
-
-    //deleteBtn 버튼 클릭 이벤트
-    document.querySelectorAll(".deleteBtn").forEach(function (button) {
-        button.addEventListener("click", function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            // 선택된 체크박스들을 모두 찾음
-            let checkboxes = document.querySelectorAll('.form-check-input:checked');
-            let postNos = Array.from(checkboxes).map(checkbox => checkbox.getAttribute('data-postNo'));
-
-            console.log(postNos);
-            if (postNos.length > 0) {
-                let completedRequests = 0;
-
-                postNos.forEach(postNo => {
-                    $.ajax({
-                        url: '/board/delete/' + postNo,
-                        type: 'GET',
-                        success: function () {
-                            completedRequests++;
-                            if (completedRequests === postNos.length) {
-                                // 모든 요청이 끝난 후 페이지 새로고침
-                                window.location.reload();
-                            }
-                        },
-                        error: function () {
-                            completedRequests++;
-                            if (completedRequests === postNos.length) {
-                                // 모든 요청이 끝난 후 페이지 새로고침
-                                window.location.reload();
-                            }
-                        }
-                    });
-                });
-            } else {
-                alert('선택된 게시글이 없습니다.');
-            }
-        });
-    }, false)
-
-    //pagination 클릭 이벤트
-    document.querySelector(".pagination").addEventListener("click", function (e) {
-        e.preventDefault()
-        e.stopPropagation()
-
-        //실제 클릭된 요소를 가져와서 target 변수에 할당
-        let target = e.target.closest('a');
-
-        if (!target) {
-            return;
-        }
-
-        let num = target.getAttribute("data-num")
-        if (!num) {
-            num = 1; // 기본값 설정
-        }
-
-        // 현재 URL 가져오기
-        let currentUrl = new URL(window.location.href);
-
-        // 페이지 번호 업데이트
-        currentUrl.searchParams.set('page', num);
-
-        // 수정된 URL로 이동
-        window.location.href = currentUrl.href;
-
-    }, false)
-
-    // tr이 10번째인 것 만 아랫 밑줄 제거
     document.addEventListener("DOMContentLoaded", function () {
-        let rows = document.querySelectorAll(".table.read tbody tr");
-        if (rows.length >= 5) {
-            let targetRow = rows[4]; // 10번째 tr, 인덱스 9
+
+        // tr이 10번째인 것 만 아랫 밑줄 제거
+        const rows = document.querySelectorAll(".table.read tbody tr");
+        if (rows.length >= 10) {
+            const targetRow = rows[9]; // 10번째 tr, 인덱스 9
             targetRow.style.borderBottom = "none"; // 10번째 tr의 밑줄 제거
 
-            let cells = targetRow.querySelectorAll("td"); // 10번째 tr의 모든 td
+            const cells = targetRow.querySelectorAll("td"); // 10번째 tr의 모든 td
             cells.forEach(cell => {
                 cell.style.borderBottom = "none"; // 모든 td의 밑줄 제거
             });
         }
+
+        //replyCountBtn 버튼 클릭 이벤트
+        document.querySelectorAll(".replyCountBtn").forEach(button => {
+            button.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                let postNo = this.getAttribute("data-postNo");
+                location.href = '/board/read/' + postNo + '#reply';
+            });
+        });
+
+        //registerBtn, register_qBtn 버튼 클릭 이벤트
+        const registerBtns = document.querySelectorAll(".registerBtn");
+        if (registerBtns.length > 0) {
+            registerBtns.forEach(function (registerBtn) {
+                registerBtn.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    location.href = '/board/register/';
+                }, false);
+            });
+        }
+        const register_qBtns = document.querySelectorAll(".register_qBtn");
+        if (register_qBtns.length > 0) {
+            register_qBtns.forEach(function (register_qBtn) {
+                register_qBtn.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    location.href = '/board/register_q/';
+                }, false);
+            });
+        }
+
+        //deleteBtn 버튼 클릭 이벤트
+        document.querySelectorAll(".deleteBtn").forEach(button => {
+            button.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // 선택된 체크박스들을 모두 찾음
+                let checkboxes = document.querySelectorAll('.form-check-input:checked');
+                let postNos = Array.from(checkboxes).map(checkbox => checkbox.getAttribute('data-postNo'));
+
+                console.log(postNos);
+                if (postNos.length > 0) {
+                    let completedRequests = 0;
+
+                    postNos.forEach(postNo => {
+                        $.ajax({
+                            url: '/board/delete/' + postNo,
+                            type: 'GET',
+                            success: function () {
+                                completedRequests++;
+                                if (completedRequests === postNos.length) {
+                                    // 모든 요청이 끝난 후 페이지 새로고침
+                                    window.location.reload();
+                                }
+                            },
+                            error: function () {
+                                completedRequests++;
+                                if (completedRequests === postNos.length) {
+                                    // 모든 요청이 끝난 후 페이지 새로고침
+                                    window.location.reload();
+                                }
+                            }
+                        });
+                    });
+                } else {
+                    alert('선택된 게시글이 없습니다.');
+                }
+            });
+        });
+
+        //pagination 클릭 이벤트
+        document.querySelector(".pagination").addEventListener("click", function (e) {
+            e.preventDefault()
+            e.stopPropagation()
+
+            //실제 클릭된 요소를 가져와서 target 변수에 할당
+            let target = e.target.closest('a');
+
+            if (!target) {
+                return;
+            }
+
+            let num = target.getAttribute("data-num")
+            if (!num) {
+                num = 1; // 기본값 설정
+            }
+
+            // 현재 URL 가져오기
+            let currentUrl = new URL(window.location.href);
+
+            // 페이지 번호 업데이트
+            currentUrl.searchParams.set('page', num);
+
+            // 수정된 URL로 이동
+            window.location.href = currentUrl.href;
+
+        });
+
     });
 </script>
 </html>

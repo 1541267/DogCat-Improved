@@ -17,7 +17,7 @@ public interface BoardRepository extends JpaRepository<Post, Long>, BoardSearch 
 
     // 상세페이지 접속시 조회수 증가
     @Modifying
-    @Query("update Post p set p.viewCount = p.viewCount+1 where p.postNo = :postNo")
+    @Query("UPDATE Post p SET p.viewCount = p.viewCount+1 WHERE p.postNo = :postNo")
     void updateViewCount(@Param("postNo") Long postNo);
 
     // userId 와 postNo 가 일치하는 게시물 찾기
