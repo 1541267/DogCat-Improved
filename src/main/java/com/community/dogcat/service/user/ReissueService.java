@@ -61,7 +61,7 @@ public class ReissueService {
 
 		} catch (ExpiredJwtException e) {
 
-			log.info("Refresh token has expired");
+			log.warn("Refresh token has expired");
 
 			return false;
 
@@ -71,7 +71,7 @@ public class ReissueService {
 
 		if (!category.equals("refresh")) {
 
-			log.info("Invalid refresh token");
+			log.warn("Invalid refresh token");
 
 			return false;
 
@@ -81,7 +81,7 @@ public class ReissueService {
 
 		if (!isExist) {
 
-			log.info("Invalid refresh token");
+			log.warn("Invalid refresh token");
 
 			return false;
 

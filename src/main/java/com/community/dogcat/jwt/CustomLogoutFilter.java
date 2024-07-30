@@ -64,7 +64,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
 		if (refresh == null) {
 
-			log.info("No refresh token found, proceeding with logout");
+			log.warn("No refresh token found, proceeding with logout");
 			clearCookies(response);
 			redirectToHome(response, request);
 			return;
@@ -77,7 +77,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
 		} catch (ExpiredJwtException e) {
 
-			log.info("Expired refresh token: {}", refresh);
+			log.warn("Expired refresh token: {}", refresh);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 
@@ -87,7 +87,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
 		if (!category.equals("refresh")) {
 
-			log.info("Invalid token category: {}", refresh);
+			log.warn("Invalid token category: {}", refresh);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 
@@ -97,7 +97,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
 		if (!isExist) {
 
-			log.info("Refresh token not found in DB: {}", refresh);
+			log.warn("Refresh token not found in DB: {}", refresh);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 

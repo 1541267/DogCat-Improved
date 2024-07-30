@@ -49,7 +49,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
 		} catch (ExpiredJwtException e) {
 
-			log.info("Access token has expired");
+			log.warn("Access token has expired");
 
 			boolean reissued = reissueService.reissue(request, response);
 
