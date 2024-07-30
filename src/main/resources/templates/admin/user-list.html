@@ -136,13 +136,13 @@
                     </div>
 
                     <!--(관리자/유저) 우선보기 버튼-->
-                    <form id="viewStyleForm">
+                    <form id="viewStyleForm" action="/admin/user-list" method="get">
                         <div class="mb-2">
-                            <select id="viewStyle" class="form-select">
+                            <select id="viewStyle" name="viewStyle" class="form-select">
                                 <option id="nonAdminFirst" value="nonAdminFirst">유저 우선보기</option>
                                 <option id="adminFirst" value="adminFirst">관리자 우선보기</option>
                             </select>
-                            <button class="btn btn-primary" id="applyButton">적용</button>
+                            <button class="btn btn-primary" id="applyButton" type="submit">적용</button>
                         </div>
                     </form>
 
@@ -228,25 +228,6 @@
     function openMyActivityPopup(url) {
         window.open(url, '_blank');
     }
-
-    document.getElementById('applyButton').addEventListener('click', function() {
-        const viewStyle = document.getElementById('viewStyle').value; // 선택된 값 가져오기
-
-        // axios를 사용하여 서버에 비동기 요청을 보냅니다.
-        axios.get('/admin/user-list', {
-            params: {
-                viewStyle: viewStyle
-            }
-        })
-            .then(response => {
-                console.log('응답 데이터:', response.data);
-                location.reload(); // 페이지 새로고침
-            })
-            .catch(error => {
-                console.error('오류 발생:', error);
-            });
-    });
-
 
 </script>
 </body>
