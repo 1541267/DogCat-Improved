@@ -99,16 +99,31 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-log4j2'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+
 }
-//TODO 배포시 활성화
+
+test {
+    useJUnitPlatform()
+}
+
+processResources.dependsOn('copyYml')
+
+tasks.register('copyYml', Copy) {
+    from './Secret-DogCat/Dev/yml'
+    include "*.yml"  // 복사할 파일들
+    into 'src/main/resources'  // 복사 위치
+}
+
+//  TODO 배포시 활성화
 //processResources.dependsOn('copySecret')
 //
 //tasks.register('copySecret', Copy) {
-//    from './Secret-DogCat/yml'
-//    include "application*.yml"  // 복사할 파일들
+//    from './Secret-DogCat/EC2/yml'
+//    include "application.yml"  // 복사할 파일들
 //    into 'src/main/resources'  // 복사 위치
 //}

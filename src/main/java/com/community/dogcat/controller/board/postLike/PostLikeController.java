@@ -40,13 +40,14 @@ public class PostLikeController extends BaseController {
 	@Operation(summary = "like register", description = "게시물 좋아요/싫어요 등록")
 	@PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, Long> register(@Valid @RequestBody PostLikeDTO postLikeDTO, Model model) {
+
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
-
 		postLikeDTO.setUserId(userId);
 
 		Map<String, Long> response = new HashMap<>();
 		Long likeNo = postLikeService.register(postLikeDTO);
+
 		response.put("likeNo", likeNo);
 
 		return response;
@@ -55,12 +56,14 @@ public class PostLikeController extends BaseController {
 	@Operation(summary = "like Delete", description = "게시물 좋아요/싫어요 취소")
 	@DeleteMapping("/{likeNo}")
 	public Map<String, Long> delete(@PathVariable("likeNo") Long likeNo, Model model) {
+
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 
 		postLikeService.delete(likeNo, userId);
 
 		Map<String, Long> response = new HashMap<>();
+
 		response.put("likeNo", likeNo);
 
 		return response;

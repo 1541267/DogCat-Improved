@@ -3,6 +3,7 @@ package com.community.dogcat.service.board;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -78,18 +79,15 @@ public class BoardServiceImpl implements BoardService {
 	//게시물을 작성한 회원 정보 조회
 	@Override
 	public Long register(PostDTO postDTO) {
+
 		// 로그인한 회원정보를 받아 userId 조회
 		String userId = postDTO.getUserId();
-		User user = userRepository.findById(userId).orElseThrow();
-		log.info(user);
+		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
 
 		// 조회한 회원정보 DTO에 추가
 		postDTO.setNickname(user.getNickname());
 		postDTO.setExp(user.getExp());
 		postDTO.setUserVet(user.isUserVet());
-		log.info(postDTO.getNickname());
-		log.info(postDTO.getExp());
-		log.info(postDTO.isUserVet());
 
 		// 게시글 작성자 경험치 증가
 		user.incrementPostExp();
@@ -99,20 +97,17 @@ public class BoardServiceImpl implements BoardService {
 		if (postDTO.getPostContent().contains(oldUrl)) {
 			postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
 		}
+
 		// 게시물 작성
 		Post post = Post.builder()
 			.userId(user)
 			.boardCode(postDTO.getBoardCode())
-			.modDate(postDTO.getModDate())
-			.dislikeCount(postDTO.getDislikeCount())
-			.postContent(postDTO.getPostContent())
-			.postTag(postDTO.getPostTag())
 			.postTitle(postDTO.getPostTitle())
-			.likeCount(postDTO.getLikeCount())
+			.postContent(postDTO.getPostContent())
 			.regDate(postDTO.getRegDate())
-			.replyAuth(postDTO.isReplyAuth())
+			.postTag(postDTO.getPostTag())
 			.secret(postDTO.isSecret())
-			.viewCount(postDTO.getViewCount())
+			.replyAuth(postDTO.isReplyAuth())
 			.build();
 
 		boardRepository.save(post);
@@ -123,35 +118,43 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	@Transactional
 	public void delete(Long postNo, String userId) {
+
 		// 로그인한 회원 정보 확인
-		User user = userRepository.findById(userId).orElseThrow();
+		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
 
 		// 게시물 번호와 회원 아이디가 일치하는 게시물인지 확인
 		Optional<Post> post = boardRepository.findByPostNoAndUserId(postNo, user);
 
 		// 로그인한 회원이 관리자인지 확인
 		String auth = usersAuthRepository.findByUserId(userId).getAuthorities();
-		log.info(auth);
 
 		// 로그인한 회원이 작성한 게시글이 맞거나 로그인한 계정이 관리자면 삭제 가능
 		if (post.isPresent() || auth.equals("ROLE_ADMIN")) {
+
 			List<ImgBoard> images = uploadRepository.findByPostNo(postNo);
+
 			for (ImgBoard image : images) {
+
 				String fileName = image.getFileUuid() + image.getExtension();
 				String thumbFileName = "t_" + fileName;
 				log.info("S3 Delete FileName: {}", fileName);
 
-				s3Uploader.removeS3File(fileName, thumbFileName);
+				s3Uploader.deleteUploadedS3File(fileName, thumbFileName);
 			}
+
 			// 댓글 존재 확인
 			List<Reply> replies = replyRepository.findByPostNo(postNo);
+
 			for (Reply reply : replies) {
 				// 해당 댓글 신고 삭제
 				List<Long> reportLogIds = reportLogRepository.findByReplyNo(reply.getReplyNo());
+
 				for (Long reportLogId : reportLogIds) {
+
 					reportLogRepository.deleteReportLog(reportLogId);
 				}
 			}
+
 			boardRepository.deleteById(postNo);
 		}
 	}
@@ -161,12 +164,14 @@ public class BoardServiceImpl implements BoardService {
 	public PostDTO readOne(Long postNo) {
 		// 게시물 번호 조회
 		Post post = boardRepository.findById(postNo).orElseThrow();
+
 		return new PostDTO(post);
 	}
 
 	// 상세페이지 접속시 조회수 증가
 	@Override
 	public void updateViewCount(Long postNo) {
+
 		boardRepository.updateViewCount(postNo);
 	}
 
@@ -174,18 +179,21 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	@Transactional
 	public PostReadDTO readDetail(Long postNo, String userId) {
-		//TODO ElseThrow 예외처리 해 주기
+
 		// 게시물 번호 조회 (게시물 정보 확인용)
-		Post post = boardRepository.findById(postNo).orElseThrow();
+		Post post = boardRepository.findById(postNo).orElseThrow(() -> new NoSuchElementException("Post not found"));
 
 		// 로그인한 회원정보를 받아 userId 조회
-		User user = userRepository.findById(userId).orElseThrow();
+		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
 
 		// 로그인한 회원의 스크랩 여부 확인
 		Optional<Scrap> scrap = scrapRepository.findByPostNoAndUserId(post, user);
 
 		// 로그인한 회원의 좋아요/싫어요 여부 확인
 		Optional<PostLike> postLike = postLikeRepository.findByPostAndUser(post, user);
+
+		// 게시글 하나에 달린 댓글 수
+		Long replyCount = replyRepository.countRepliesByPost(post.getPostNo());
 
 		// 게시물 정보 설정
 		return PostReadDTO.builder()
@@ -206,7 +214,7 @@ public class BoardServiceImpl implements BoardService {
 			.viewCount(post.getViewCount())
 			.replyAuth(post.isReplyAuth())
 			.completeQna(post.isCompleteQna())
-			.replyCount(replyRepository.countRepliesByPostNo(post))
+			.replyCount(replyCount)
 			.scrapNo(scrap.map(Scrap::getScrapNo).orElseGet(() -> null))
 			.likeNo(postLike.map(PostLike::getLikeNo).orElseGet(() -> null))
 			.likeState(postLike.map(PostLike::isLikeState).orElseGet(() -> false))
@@ -215,7 +223,7 @@ public class BoardServiceImpl implements BoardService {
 			.build();
 	}
 
-	// 게시판 존재 유무위해 - ys
+	// 게시글 존재 유무위해 - ys
 	@Override
 	public Post findPostByPostNo(Long postNo) {
 
@@ -229,6 +237,7 @@ public class BoardServiceImpl implements BoardService {
 	public List<String> getImages(Long postNo) {
 
 		Optional<Post> optionalPost = boardRepository.findById(postNo);
+
 		if (optionalPost.isPresent()) {
 
 			//Optional로 보내면 view에서 th:each 사용 불가 - ys
@@ -253,9 +262,9 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public Long modify(PostDTO postDTO, String userId) {
+
 		// 게시물 번호 조회
-		Post post = boardRepository.findById(postDTO.getPostNo()).orElseThrow();
-		log.info("modify / postNo: {}, postContent: {}", post.getPostNo(), post.getPostContent());
+		Post post = boardRepository.findById(postDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("Post not found"));
 
 		// 게시물 작성자 확인
 		if (postDTO.getUserId().equals(userId)) {
@@ -279,34 +288,33 @@ public class BoardServiceImpl implements BoardService {
 
 			boardRepository.save(post);
 		}
+
 		return post.getPostNo();
 	}
 
 	@Override
 	public Long completeQna(PostDTO postDTO, String userId) {
-		// 게시물 번호 조회
-		Post post = boardRepository.findById(postDTO.getPostNo()).orElseThrow();
-		log.warn("completeQna / completeQna: {}", post.isCompleteQna());
-		// post 에서 작성자 정보 가져옴
-		postDTO.setUserId(post.getUserId().getUserId());
 
-		log.warn("userId : {}",userId);
-		log.warn("postDTO : ID {}",postDTO.getUserId());
+		// 게시물 번호 조회
+		Post post = boardRepository.findById(postDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("Post not found"));
 
 		// 게시물 작성자 확인
 		if (postDTO.getUserId().equals(userId)) {
+
 			postDTO.setCompleteQna(true);
 			// 게시물 수정
 			post.completeQna(
 				postDTO.isCompleteQna());
 		}
+
 		return post.getPostNo();
 	}
 
-	// regDate(최신순), boarCode에 따라 정렬, 첨부파일 정보 추가
+	// regDate(최신순), boardCode에 따라 정렬, 첨부파일 정보 추가
 	@Override
 	public BoardPageResponseDTO<BoardListDTO> readList(BoardPageRequestDTO pageRequestDTO) {
-		Pageable pageable = pageRequestDTO.getPageable("postNo");
+
+		Pageable pageable = pageRequestDTO.getPageable();
 		String boardCode = pageRequestDTO.getBoardCode();
 
 		Page<BoardListDTO> result = boardRepository.listWithBoard(pageable, boardCode);
@@ -321,12 +329,13 @@ public class BoardServiceImpl implements BoardService {
 	// regDate(최신순), boarCode에 따라 정렬, 첨부파일 정보 추가 + 정렬기준선택가능
 	@Override
 	public BoardPageResponseDTO<BoardListDTO> list(BoardPageRequestDTO pageRequestDTO) {
+
 		// boardCode에 따라 size설정 다르게
 		pageRequestDTO.setSizeByBoardCode(pageRequestDTO.getBoardCode());
 
 		String[] types = pageRequestDTO.getTypes();
 		String keyword = pageRequestDTO.getKeyword();
-		Pageable pageable = pageRequestDTO.getPageable("postNo");
+		Pageable pageable = pageRequestDTO.getPageable();
 		String boardCode = pageRequestDTO.getBoardCode();
 		String postTag = pageRequestDTO.getPostTag();
 		String order = pageRequestDTO.getOrder();

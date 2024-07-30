@@ -63,7 +63,9 @@ public class HomeController extends BaseController {
 	// 통합검색
 	@GetMapping("/allSearch")
 	public String allSearch(HomePageRequestDTO pageRequestDTO, Model model) {
+
 		HomeResponseDTO<AllSearchDTO> responseDTO = homeService.searchAll(pageRequestDTO);
+
 		model.addAttribute("searchPageRequestDTO", pageRequestDTO);
 		model.addAttribute("searchResponseDTO", responseDTO);
 

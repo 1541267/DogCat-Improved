@@ -169,6 +169,7 @@
     <div th:include="include/footer :: footer"></div>
 </body>
 <script>
+    /*신고 상세 팝업창 열기*/
     function openReportPopup(userId, nickname) {
         const url = `../admin/user-report?userId=${userId}&nickname=${nickname}`;
         const windowName = "Report";
@@ -176,7 +177,7 @@
         window.open(url, windowName, windowFeatures);
     }
 
-
+    /*유저 차단*/
     function blockUser(userId) {
         if (confirm("해당 사용자를 차단하시겠습니까?")) {
             axios.post(`/admin/blockUser/${userId}`)
@@ -190,6 +191,7 @@
         }
     }
 
+    /*관리자 지정*/
     function administrator(userId) {
         if (confirm("해당 사용자를 관리자로 지정하시겠습니까?")) {
             axios.post(`/admin/administrator/${userId}`)
@@ -207,7 +209,6 @@
     function openMyActivityPopup(url) {
         window.open(url, '_blank');
     }
-
 
 </script>
 </html>

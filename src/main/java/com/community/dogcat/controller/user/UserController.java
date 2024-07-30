@@ -46,6 +46,10 @@ public class UserController {
 		// Request parameter 가져오기
 		String vetLicenseStr = request.getParameter("vetLicense");
 
+		joinService.joinProcess(dto);
+
+		User isVet = userService.findUserId(dto.getUserId());
+
 		// Optional을 사용하여 vetLicenseStr을 Long으로 변환하고 빈값 또는 null 처리
 		Long vetLicense = Optional.ofNullable(vetLicenseStr)
 			.filter(s -> !s.isEmpty())
@@ -53,9 +57,7 @@ public class UserController {
 			.orElse(null); // 빈 문자열이거나 null 인 경우 null 로 설정
 		UsersVet vet = vetService.findByVetNameAndVetLicense(vetName, vetLicense);
 
-		joinService.joinProcess(dto);
-
-		if (vet != null && !vet.isVerificationStatus()) {
+		if (vet != null && !vet.isVerificationStatus() && isVet.isUserVet()) {
 
 			vet.setVerificationStatus(true);
 			vetService.save(vet);

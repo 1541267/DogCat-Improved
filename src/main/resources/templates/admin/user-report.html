@@ -70,6 +70,7 @@
         window.close();
     }
 
+    /*신고 상세페이지 열기*/
     function openReportDetailPopup(reportNo) {
         const url = `/admin/report-detail?reportNo=${reportNo}`;
         const windowName = "ReportDetail";
@@ -77,6 +78,7 @@
         window.open(url, windowName, windowFeatures);
     }
 
+    /*신고 삭제*/
     async function deleteReportLog(reportNo) {
         const isConfirmed = confirm(`정말로 신고 번호 ${reportNo}를 삭제하시겠습니까?`);
         if (!isConfirmed) return;

@@ -51,9 +51,10 @@
                 <th:block th:if="${reportDetail.replyNo != null}">
                     <span class="badge bg-secondary text-white m-1">댓 &nbsp;&nbsp;글</span>
                     <a th:text="${reportDetail.replyNo.replyContent}"
-                       th:href="@{/board/read/{postNo}(postNo=${reportDetail.replyNo.postNo.postNo})}"
+                       th:href="@{/board/read/{postNo}/#reply(postNo=${reportDetail.replyNo.postNo.postNo})}"<!--댓글로 이동-->
                        onclick="openPopup(this.href); return false;">
                     </a>
+
                 </th:block>
 
             </div>

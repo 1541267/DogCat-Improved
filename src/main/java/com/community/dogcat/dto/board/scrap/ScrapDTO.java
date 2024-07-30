@@ -20,10 +20,4 @@ public class ScrapDTO {
 	// 해당 게시글 번호
 	private Long postNo;
 
-	// Entity -> DTO
-	public ScrapDTO(Scrap scrap) {
-		this.scrapNo = scrap.getScrapNo();
-		this.userId = scrap.getUserId().getUserId();
-		this.postNo = scrap.getPostNo().getPostNo();
-	}
 }
