@@ -9,13 +9,14 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.ColumnDefault;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "users_vet", schema = "dogcat")
 public class UsersVet {
 

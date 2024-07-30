@@ -230,19 +230,6 @@
     function openMyActivityPopup(url) {
         window.open(url, '_blank');
     }
-
-    /*URL에서 viewStyle(관리자우선보기/유저우선보기) 가져오고 옵션에서 표시 */
-    document.addEventListener('DOMContentLoaded', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const viewStyle = urlParams.get('viewStyle');
-
-        if (viewStyle === 'adminFirst') {
-            document.getElementById('adminFirst').selected = true;
-        } else {
-            document.getElementById('nonAdminFirst').selected = true;
-        }
-    });
-
 </script>
 </body>
 </html>
