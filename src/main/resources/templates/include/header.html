@@ -72,43 +72,43 @@
     <div class="navBar">
         <!-- 공통 nav -->
         <nav th:unless="${boardCode == 'general' or boardCode == 'showoff' or boardCode == 'tip' or boardCode == 'qna'}" class="d-flex justify-content-center">
-            <span class="mx-5"><a th:href="@{/}">홈</a></span>
-            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=showoff)}">자랑 게시판</a></span>
-            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=general)}">자유 게시판</a></span>
-            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=tip)}">정보 게시판</a></span>
-            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=qna)}">QnA</a></span>
+            <button th:onclick="|location.href='@{/}'|">홈</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=showoff)}'|">자랑 게시판</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=general)}'|">자유 게시판</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=tip)}'|">정보 게시판</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=qna)}'|">QnA</button>
         </nav>
         <!-- 자랑 게시판 -->
         <nav th:if="${boardCode == 'showoff'}" class="d-flex justify-content-center">
-            <span class="mx-5"><a th:href="@{/}">홈</a></span>
-            <span class="mx-5 nowNav"><a th:href="@{/board/{boardCode}(boardCode=showoff)}">자랑 게시판</a></span>
-            <span class="mx-5" ><a th:href="@{/board/{boardCode}(boardCode=general)}">자유 게시판</a></span>
-            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=tip)}">정보 게시판</a></span>
-            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=qna)}">QnA</a></span>
+            <button th:onclick="|location.href='@{/}'|">홈</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=showoff)}'|"><span class="nowNav">자랑 게시판</span></button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=general)}'|">자유 게시판</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=tip)}'|">정보 게시판</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=qna)}'|">QnA</button>
         </nav>
         <!-- 자유 게시판 -->
         <nav th:if="${boardCode == 'general'}" class="d-flex justify-content-center">
-            <span class="mx-5"><a th:href="@{/}">홈</a></span>
-            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=showoff)}">자랑 게시판</a></span>
-            <span class="mx-5 nowNav"><a th:href="@{/board/{boardCode}(boardCode=general)}">자유 게시판</a></span>
-            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=tip)}">정보 게시판</a></span>
-            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=qna)}">QnA</a></span>
+            <button th:onclick="|location.href='@{/}'|">홈</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=showoff)}'|">자랑 게시판</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=general)}'|"><span class="nowNav">자유 게시판</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=tip)}'|">정보 게시판</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=qna)}'|">QnA</button>
         </nav>
         <!-- 정보 게시판 -->
         <nav th:if="${boardCode == 'tip'}" class="d-flex justify-content-center">
-            <span class="mx-5"><a th:href="@{/}">홈</a></span>
-            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=showoff)}">자랑 게시판</a></span>
-            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=general)}">자유 게시판</a></span>
-            <span class="mx-5 nowNav"><a th:href="@{/board/{boardCode}(boardCode=tip)}">정보 게시판</a></span>
-            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=qna)}">QnA</a></span>
+            <button th:onclick="|location.href='@{/}'|">홈</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=showoff)}'|">자랑 게시판</span></button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=general)}'|">자유 게시판</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=tip)}'|"><span class="nowNav">정보 게시판</span></button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=qna)}'|">QnA</button>
         </nav>
         <!-- QnA 게시판 -->
         <nav th:if="${boardCode == 'qna'}" class="d-flex justify-content-center">
-            <span class="mx-5"><a th:href="@{/}">홈</a></span>
-            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=showoff)}">자랑 게시판</a></span>
-            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=general)}">자유 게시판</a></span>
-            <span class="mx-5"><a th:href="@{/board/{boardCode}(boardCode=tip)}">정보 게시판</a></span>
-            <span class="mx-5 nowNav"><a th:href="@{/board/{boardCode}(boardCode=qna)}">QnA</a></span>
+            <button th:onclick="|location.href='@{/}'|">홈</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=showoff)}'|">자랑 게시판</span></button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=general)}'|">자유 게시판</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=tip)}'|">정보 게시판</button>
+            <button th:onclick="|location.href='@{/board/{boardCode}(boardCode=qna)}'|"><span class="nowNav">QnA</span></button>
         </nav>
     </div>
     <script>

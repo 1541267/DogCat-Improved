@@ -8,6 +8,11 @@ body {
 
 }
 
+h1 {
+    color: #67cafe;
+    margin-bottom: 0;
+}
+
 .report-detail {
     padding: 20px;
     width: 500px;
@@ -19,6 +24,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 20px;
 }
 
 .details, .content {

@@ -14,31 +14,23 @@
 <body>
 <div class="popup">
     <header>
-        <div class="header-top">
-            <div class="log">
-                <img class="bi me-2" th:src="@{/img/logo/logo.png}" alt="로고">
-            </div>
-            <div>
-                <span class="title" th:text="${reportNickname}"></span>
-                <h3>받은 신고</h3>
+        <div class="header-top d-flex flex-row justify-content-between">
+            <div class="d-flex flex-row">
+                '<span class="fs-1" th:text="${reportNickname}"></span>'
+                <span class="fs-3 mt-1 ms-2 reportTitle"> 님이 받은 신고</span>
             </div>
             <button class="btn btn-danger square-button" onclick="closeWindow()">X</button>
         </div>
     </header>
 
     <div class="content">
-
-        <!-- 게시물 신고와 댓글 신고가 둘 다 없는 경우에 이미지를 가운데에 배치하고 메시지 추가 -->
+        <!-- 신고 내역이 없을 때 -->
         <div class="no-data-container" th:if="${#lists.isEmpty(reportedDetails)}">
-            <div>
-                <img src="/img/board/no_search.png" alt="No data image"
-                     class="no-data-image"
-                     style="width: 200px">
-                <div class="no-data-message">클린유저다옹~</div>
+            <div class="d-flex flex-column justify-content-center">
+                <div class="no-data-message">해당 회원의 신고 내역이 존재하지 않습니다.</div>
             </div>
         </div>
-
-        <!-- 신고가 있는 경우에만 표시 -->
+        <!-- 신고가 있을 때 -->
         <div class="d-flex flex-row justify-content-center mb-1" th:if="${!#lists.isEmpty(reportedDetails)}">
             <div class="col-custom border border-3 p-2">
                 <h5>목록</h5>
@@ -46,32 +38,25 @@
                      class="d-flex justify-content-between align-items-center mb-2">
                     <div>
                         <!--게시판 구분-->
-                        <span th:switch="${detail.boardCode}"
-                              class="badge"
-                              style="background-color: #0056b3; color: white; padding: 5px; border-radius: 3px;"
-                              th:if="${detail.postNo != null}">
+                        <span th:switch="${detail.boardCode}" class="postBadge" th:if="${detail.postNo != null}">
                             <span th:case="'general'">자유</span>
                             <span th:case="'showoff'">자랑</span>
                             <span th:case="'tip'">정보</span>
                             <span th:case="'qna'">QnA</span>
                         </span>
-
-                        <span class="badge bg-dark text-white"
-                              style="background-color: #131314; color: white; padding: 5px; border-radius: 3px;"
-                              th:if="${detail.replyNo != null}">댓글</span>
-
+                        <span class="replyBadge" th:if="${detail.replyNo != null}">댓글</span>
                         <!--신고내역확인-->
-                        <a class="d-inline-block" style="max-width: 220px; cursor: pointer;"
+                        <a class="d-inline-block reportDetail"
                            th:text="${detail.postNo != null ? detail.postTitle : detail.replyContent}"
-                           th:onclick="|openReportDetailPopup('${detail.reportNo}')|"></a>
+                           th:onclick="|openReportDetailPopup('${detail.reportNo}')|">
+                        </a>
                     </div>
-
                     <!-- 작성 시간, 신고삭제 -->
                     <div class="text-right">
                         <span th:text="${detail.postNo != null ? #dates.format(detail.regDate, 'yyyy-MM-dd') : #dates.format(detail.ReplyregDate, 'yyyy-MM-dd')}"
-                              style="font-size: x-small"></span>
+                             class="regDate"></span>
                         <button class="btn btn-danger ml-2 btn-sm" th:onclick="|deleteReportLog(${detail.reportNo})|">
-                            신고삭제
+                            내역삭제
                         </button>
                     </div>
                 </div>

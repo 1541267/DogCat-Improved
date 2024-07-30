@@ -16,7 +16,7 @@
 <body>
     <div class="report-detail">
         <div class="header-top">
-            <span style="justify-content: center;"><h1>게시글 신고</h1></span>
+            <h1>게시물 신고</h1>
             <button class="btn btn-danger square-button" onclick="closeWindow()">X</button>
         </div>
         <form onsubmit="createPostReportLog(); return false;">
@@ -40,14 +40,6 @@
 
             </div>
 
-            <!--신고버튼-->
-            <div class="report-button-container">
-                <button id="submitBtn" class="btn ml-2 btn-sm"
-                        style="background-color: #67cafe; color:white">전송
-                </button>
-            </div>
-
-
             <!--신고 제목, 내용-->
             <div class="report-title">
                 <label for="reportTitle" class="form-label">신고 제목</label>
@@ -57,6 +49,13 @@
             <div class="report-content">
                 <label for="reportContent" class="form-label">신고 내용</label>
                 <textarea name="reportContent" id="reportContent" class="form-control" rows="6" style="resize: none"></textarea>
+            </div>
+
+            <!--신고버튼-->
+            <div class="report-button-container">
+                <button id="submitBtn" class="btn ml-2 btn-sm"
+                        style="background-color: #67cafe; color:white">전송
+                </button>
             </div>
 
             <!-- 숨겨진 필드 -->

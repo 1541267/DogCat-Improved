@@ -11,88 +11,81 @@
     <!-- 부트스트랩 아이콘 사용 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <link rel="stylesheet" th:href="@{/css/admin/adminlist.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/adminList.css}">
     <title>말랑발자국 - 회원 목록</title>
 </head>
 <body>
-<div th:include="include/header :: header"></div>
+    <div th:include="include/header :: header"></div>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-3">
-            <aside>
-            </aside>
-        </div>
-        <div class="col-md-7">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="mt-5" style="margin-bottom: 4rem">
-                        <h2><b>관리자 페이지</b></h2>
+    <div class="container d-flex flex-row justify-content-center">
+        <div>
+                <div class="d-flex flex-column">
+                    <div class="my-4">
+                        <h6 class="adminPage">관리자페이지</h6>
+                        <h2 class="adminUserTitle">전체 회원</h2>
                     </div>
-                    <div class="row g-0 overflow-hidden flex-md-row mb-4 position-relative">
-                        <div class="col p-4 d-flex flex-column position-relative">
+                    <div class="overflow-hidden mb-4 position-relative">
+                        <div class="d-flex flex-column position-relative">
                             <div class="d-flex justify-content-between">
-
                                 <!--전체회원, 신고목록, 차단회원 이동메뉴-->
-                                <div class="d-flex flex-row justify-content-around" style="width: 65%">
+                                <div class="d-flex flex-row justify-content-around userMenu">
                                     <a th:href="@{/admin/user-list}"
-                                       class="btn btn-outline-secondary align-items-center user-list-active"
+                                       class="text-center user-list-active"
                                        type="button">
                                         전체 회원
                                     </a>
-
                                     <a th:href="@{/admin/report-list}"
-                                       class="btn btn-outline-secondary align-items-center report-list"
-                                       type="button" style="width: 40%">
+                                       class="text-center report-list"
+                                       type="button">
                                         신고 목록
                                     </a>
-
                                     <a th:href="@{/admin/block-list}"
-                                       class="btn btn-outline-secondary align-items-center block-list"
-                                       type="button" style="width: 40%">
+                                       class="text-center block-list"
+                                       type="button">
                                         차단 회원
                                     </a>
                                 </div>
-
-                                <!--검색기능-->
-                                <form class="d-flex input-group justify-content-end" style="width: 30%;"
-                                      th:action="@{/admin/user-list}" method="get">
-                                    <input type="text" class="form-control" placeholder="검색어 입력" name="keyword"
-                                           th:value="${keyword}">
-                                    <button class="btn btn-outline-secondary searchBtn" type="submit">
-                                        <i class="bi bi-search"></i>
-                                    </button>
+                                <!--(관리자/유저) 우선보기 버튼-->
+                                <form id="viewStyleForm" action="/admin/user-list" method="get">
+                                    <div class="d-flex flex-row">
+                                        <select id="viewStyle" name="viewStyle" class="form-select">
+                                            <option id="nonAdminFirst" value="nonAdminFirst">회원 순</option>
+                                            <option id="adminFirst" value="adminFirst">관리자 순</option>
+                                        </select>
+                                        <button class="userArrayBtn" id="applyButton" type="submit">적용</button>
+                                    </div>
                                 </form>
                             </div>
-
+                            <!--회원 목록-->
                             <div class="d-flex flex-column py-md-2">
                                 <div class="list-group">
                                     <div th:each="user : ${adminUsers}"
-                                         class="list-group-item d-inline gap-3 py-3" aria-current="true">
-                                        <div class="d-flex gap-2 w-100 justify-content-between">
-
+                                         class="list-group-item py-3" aria-current="true">
+                                        <div class="d-flex justify-content-between">
                                             <!--회원 정보-->
                                             <div class="justify-content-center align-content-center">
-
                                                 <!--내 활동으로 연결, 이름 표시-->
                                                 <a th:href="@{/my/userActivity/{userId}/posts(userId=${user.userId})}"
                                                    onclick="openMyActivityPopup(this.href); return false;"
                                                    class="my-2" th:text="${user.nickname}"
                                                    style="font-size: x-large; text-decoration: none; color: #131314">
                                                 </a>
+                                                <!-- 관리자 지정 버튼 -->
+<!--                                                <button th:if="${user.authorities != 'ROLE_ADMIN'}"-->
+<!--                                                        class="btn administratorBtn ms-3"-->
+<!--                                                        th:data-userid="${user.userId}"-->
+<!--                                                        onclick="administrator(this.getAttribute('data-userid'))">관리자지정-->
+<!--                                                </button>-->
 
                                                 <!-- 관리자인 경우 "(관리자)" 표시 -->
-                                                <span th:if="${user.authorities} == 'ROLE_ADMIN'" class="Admin">
-                                                    (관리자)
+                                                <span th:if="${user.authorities} == 'ROLE_ADMIN'" class="adminCheck">
+                                                    관리자
                                                 </span>
-
-
                                                 <!--수의사면 이미지로 표시-->
                                                 <span th:if="${user.userVet}">
                                                     <img class="replyAuthImg" src="/img/tag/vetScope.png"
                                                          alt="수의사만 답변 가능" width="35" height="35">
                                                 </span>
-
                                                 <!--유저아이디, 등록일-->
                                                 <div class="d-flex justify-content-around h11">
                                                     <p class="m-1 pr-2 opacity-75" th:text="${user.userId}"></p>
@@ -102,55 +95,33 @@
                                                        th:text="${#dates.format(user.regDate, 'yyyy-MM-dd')}"></p>
                                                 </div>
                                             </div>
-
                                             <!--우측버튼메뉴-->
-                                            <div class="d-flex flex-column justify-content-between ">
-
-                                                <!-- 관리자 지정 버튼 -->
-                                                <button th:if="${user.authorities != 'ROLE_ADMIN'}"
-                                                        class="btn administratiorBtn fw-bold mb-1 "
-                                                        th:data-userid="${user.userId}"
-                                                        onclick="administrator(this.getAttribute('data-userid'))">관리자지정
-                                                </button>
-
+                                            <div class="d-flex flex-column justify-content-evenly">
                                                 <!--차단버튼-->
-                                                <button class="btn blockUserBtn fw-bold mb-1 "
+                                                <button th:if="${user.authorities != 'ROLE_ADMIN'}"
+                                                        class="blockUserBtn mb-1 "
                                                         th:data-userid="${user.userId}"
-                                                        onclick="blockUser(this.getAttribute('data-userid'))">차 &nbsp;단
+                                                        onclick="blockUser(this.getAttribute('data-userid'))">차 단
                                                 </button>
-
                                                 <!--받은 신고 버튼-->
-                                                <button class="btn reportDetailBtn mb-1 "
+                                                <button th:if="${user.authorities != 'ROLE_ADMIN'}"
+                                                        class="reportDetailBtn"
                                                         th:data-userid="${user.userId}"
                                                         th:data-nickname="${user.nickname}"
                                                         onclick="openReportPopup(this.getAttribute('data-userid'), this.getAttribute('data-nickname'))">
-                                                    받은 &nbsp;&nbsp;신고
+                                                    받은 신고
                                                 </button>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!--(관리자/유저) 우선보기 버튼-->
-                    <form id="viewStyleForm">
-                        <div class="mb-2">
-                            <select id="viewStyle" class="form-select">
-                                <option id="nonAdminFirst" value="nonAdminFirst">유저 우선보기</option>
-                                <option id="adminFirst" value="adminFirst">관리자 우선보기</option>
-                            </select>
-                            <button class="btn btn-primary" id="applyButton">적용</button>
-                        </div>
-                    </form>
-
                     <!-- 페이지네이션 -->
                     <div class="d-flex justify-content-center">
-                        <nav aria-label="Page navigation">
+                        <nav aria-label="Page navigation" class="mb-0">
                             <ul class="pagination justify-content-center">
-
                                 <!-- 이전 -->
                                 <li class="page-item" th:if="${pageResponse.prev}">
                                     <a class="page-link"
@@ -182,13 +153,21 @@
                             </ul>
                         </nav>
                     </div><!--페이지네이션-->
-
-
+                    <!--검색기능-->
+                    <div class="d-flex flex-row justify-content-center">
+                        <form class="d-flex input-group searchUser" th:action="@{/admin/user-list}" method="get">
+                            <input type="text" class="form-control searchUserInput" name="keyword"
+                                   th:value="${keyword}">
+                            <button class="searchBtn" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
-            </div>
         </div>
     </div>
-</div>
+    <div th:include="include/footer :: footer"></div>
+</body>
 <script>
     function openReportPopup(userId, nickname) {
         const url = `../admin/user-report?userId=${userId}&nickname=${nickname}`;
@@ -229,25 +208,6 @@
         window.open(url, '_blank');
     }
 
-    document.getElementById('applyButton').addEventListener('click', function() {
-        const viewStyle = document.getElementById('viewStyle').value; // 선택된 값 가져오기
-
-        // axios를 사용하여 서버에 비동기 요청을 보냅니다.
-        axios.get('/admin/user-list', {
-            params: {
-                viewStyle: viewStyle
-            }
-        })
-            .then(response => {
-                console.log('응답 데이터:', response.data);
-                location.reload(); // 페이지 새로고침
-            })
-            .catch(error => {
-                console.error('오류 발생:', error);
-            });
-    });
-
 
 </script>
-</body>
 </html>
