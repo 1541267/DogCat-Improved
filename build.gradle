@@ -114,7 +114,7 @@ test {
 processResources.dependsOn('copyYml')
 
 tasks.register('copyYml', Copy) {
-    from './Secret-DogCat/Dev/yml'
+    from './Secret-DogCat/Dev'
     include "*.yml"  // 복사할 파일들
     into 'src/main/resources'  // 복사 위치
 }
@@ -123,7 +123,7 @@ tasks.register('copyYml', Copy) {
 //processResources.dependsOn('copySecret')
 //
 //tasks.register('copySecret', Copy) {
-//    from './Secret-DogCat/EC2/yml'
+//    from './Secret-DogCat/EC2'
 //    include "application.yml"  // 복사할 파일들
 //    into 'src/main/resources'  // 복사 위치
 //}
