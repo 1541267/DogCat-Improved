@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -41,6 +42,9 @@ import lombok.extern.log4j.Log4j2;
 @Transactional
 @RequestMapping("/board")
 public class BoardController extends BaseController {
+
+	@Value("${s3UploadedUrl}")
+	private String s3UploadedUrl;
 
 	private final BoardService boardService;
 
@@ -150,6 +154,7 @@ public class BoardController extends BaseController {
 			return "redirect:/error/403"; // 권한이 없는 경우 403 오류 페이지로 리다이렉트
 		}
 
+		model.addAttribute("s3UploadedUrl", s3UploadedUrl);
 		model.addAttribute("postDTO", postDTO);
 
 		if (request.getRequestURI().contains("/modify_q")) {
