@@ -249,6 +249,7 @@ tr.replyBody > td.align-middle {
 #readList {
     width: 975.27px;
     height: 700px; /* 카드 크기 고정 */
+    box-shadow: 1px 1px 3px #dee2e6;
 }
 
 .read {
@@ -314,6 +315,29 @@ td > a {
     --bs-btn-active-color: #000;
     --bs-btn-active-border-color: #67cafe;
     --bs-btn-active-bg: #67cafe;
+}
+
+.showOffList td {
+    height: 140px;
+}
+
+.boardImg {
+    display: block;
+    width: 120px;
+    height: 120px;
+}
+
+.showOffTitle {
+    font-size: 22px;
+}
+
+.showOffTitle.sub {
+    font-size: 18px;
+    color: gray;
+}
+
+.listPost {
+    padding-left: 10px;
 }
 
 .page-item .page-link {

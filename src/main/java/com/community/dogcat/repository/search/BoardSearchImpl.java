@@ -192,6 +192,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 			List<ImgBoard> imgBoards = post1.getImages().stream()
 				.map(image -> ImgBoard.builder()
 					.fileUuid(image.getFileUuid())
+					.thumbnailPath(image.getThumbnailPath())
 					.build()
 				).collect(Collectors.toList());
 

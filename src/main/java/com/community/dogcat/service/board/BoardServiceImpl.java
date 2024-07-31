@@ -156,6 +156,9 @@ public class BoardServiceImpl implements BoardService {
 			}
 
 			boardRepository.deleteById(postNo);
+
+		} else {
+			log.error("board Service Delete Error : 403 Forbidden");
 		}
 	}
 
@@ -287,6 +290,9 @@ public class BoardServiceImpl implements BoardService {
 				postDTO.isReplyAuth());
 
 			boardRepository.save(post);
+
+		} else {
+			log.error("board Service Modify Error : 403 Forbidden");
 		}
 
 		return post.getPostNo();
@@ -305,6 +311,9 @@ public class BoardServiceImpl implements BoardService {
 			// 게시물 수정
 			post.completeQna(
 				postDTO.isCompleteQna());
+
+		} else {
+			log.error("board Service completeQna Error : 403 Forbidden");
 		}
 
 		return post.getPostNo();
@@ -313,6 +322,9 @@ public class BoardServiceImpl implements BoardService {
 	// regDate(최신순), boardCode에 따라 정렬, 첨부파일 정보 추가
 	@Override
 	public BoardPageResponseDTO<BoardListDTO> readList(BoardPageRequestDTO pageRequestDTO) {
+
+		// boardCode에 따라 size설정 다르게
+		pageRequestDTO.setSizeByBoardCode(pageRequestDTO.getBoardCode());
 
 		Pageable pageable = pageRequestDTO.getPageable();
 		String boardCode = pageRequestDTO.getBoardCode();

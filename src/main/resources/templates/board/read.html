@@ -272,7 +272,9 @@
                 <!--게시글이 있을 때-->
                 <!--글목록-->
                 <div th:if="${responseDTO?.dtoList != null}">
-                    <div>
+
+                    <!--자랑게시판글이 아닐때 글목록-->
+                    <div th:if="${postDTO.boardCode!='showoff'}">
                         <table class="table read mb-0">
                             <!--게시물 정보 받아오기-->
                             <tbody th:with="page = ${pageRequestDTO.getPage()}">
@@ -334,7 +336,6 @@
                                     </button>
                                 </td>
 
-
                                 <!--비밀글일때-->
                                 <td class="align-middle listOne" colspan="2" th:if="((${dto.secret==true} and (${username} != ${dto.userId}))and(${role eq 'ROLE_USER'}))">
                                     <!--비밀글여부-->
@@ -346,6 +347,72 @@
                                             비밀글입니다.
                                         </p>
                                     </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div> <!--글목록-->
+
+                    <!--자랑게시판글일때 글목록-->
+                    <div th:if="${postDTO.boardCode=='showoff'}">
+                        <table class="table read showoff">
+                            <!--게시물 정보 받아오기-->
+                            <tbody th:with="page = ${pageRequestDTO.getPage()}">
+                            <tr th:each="dto:${responseDTO.dtoList}" class="showOffList">
+                                <td class="align-middle listOne">
+                                    <a class="move" href="#" th:attr="data-postNo=${dto.postNo}, data-page=${page}">
+                                        <div class="d-flex align-items-center listPost">
+                                            <div class="me-4" th:if="${!dto.imgBoards.isEmpty()}">
+                                                <img th:src="${dto.imgBoards[0].thumbnailPath}" class="boardImg"
+                                                     alt="Image">
+                                            </div>
+                                            <div class="me-4" th:if="${dto.imgBoards.isEmpty()}">
+                                                <img src="/img/board/no_photo.png" class="boardImg"
+                                                     alt="Image">
+                                            </div>
+                                            <div>
+                                                <div class="showOffTitle">
+                                                <span>
+                                                    <img class="tag" src="/img/tag/tag_dog.png"
+                                                         th:if="${dto.postTag eq '강아지'}"
+                                                         alt="강아지태그">
+                                                    <img class="tag" src="/img/tag/tag_cat.png"
+                                                         th:if="${dto.postTag eq '고양이'}"
+                                                         alt="고양이태그">
+                                                </span>
+                                                    <span th:text="${dto.postTitle}">
+                                                    게시물 제목
+                                                </span>
+                                                </div>
+                                                <div class="showOffTitle sub">
+                                                    <span th:text="${dto.nickname}">작성자</span>
+                                                    <span>
+                                                    <img class="level" src="/img/level/red.png" alt="User Level Image"
+                                                         th:if="${dto.exp < 750}">
+                                                    <img class="level" src="/img/level/orange.png" alt="User Level Image"
+                                                         th:if="${dto.exp >= 750 and dto.exp < 1500}">
+                                                    <img class="level" src="/img/level/yellow.png" alt="User Level Image"
+                                                         th:if="${dto.exp >= 1500 and dto.exp < 2250}">
+                                                    <img class="level" src="/img/level/mint.png" alt="User Level Image"
+                                                         th:if="${dto.exp >= 2250 and dto.exp < 3000}">
+                                                    <img class="level" src="/img/level/purple.png" alt="User Level Image"
+                                                         th:if="${dto.exp >= 3000}">
+                                                </span>
+                                                    <span class="mx-1">조회수 <span th:text="${dto?.viewCount}">5</span></span>
+                                                    <span class="mx-1" th:if="${dto?.modDate == null}"
+                                                          th:text="${#temporals.format(dto.regDate, 'yyyy-MM-dd HH:mm')}"></span>
+                                                    <span class="mx-1" th:if="${dto?.modDate != null}"
+                                                          th:text="${#temporals.format(dto?.modDate, 'yyyy-MM-dd HH:mm')}"></span>
+                                                </div> <!--title sub-->
+                                            </div>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td class="text-end align-middle reply">
+                                    <button class="btn replyCountBtn"
+                                            th:attr="data-postNo=${dto.postNo}">댓글수
+                                        <span th:text="${dto?.replyCount}">5</span>
+                                    </button>
                                 </td>
                             </tr>
                             </tbody>
@@ -400,7 +467,12 @@
 <script>
     $(document).ready(function () {
 
-        if(document.referrer!==window.location.href) {
+        const currentUrl = window.location.href;
+        const referrerUrl = document.referrer;
+        const excludePattern = '/board/read/';
+
+        // read 페이지에 접속한 경로 저장
+        if(referrerUrl!==currentUrl && !referrerUrl.includes(excludePattern)) {
             sessionStorage.setItem('previousUrl', document.referrer);
         }
 
@@ -409,29 +481,22 @@
             e.preventDefault();
 
             let boardCode = '[[${postDTO.boardCode}]]';
-            let username = '[[${username}]]';
             let page = $(this).data("page");
             let previousUrl = sessionStorage.getItem('previousUrl');
 
             let boardUrl = '/board/' + boardCode;
-            let myPagePostsUrl = '/my/userActivity/' + username + '/posts';
-            let myPageRepliesUrl = '/my/userActivity/' + username + '/replies';
-            let myPageScrapsUrl = '/my/userActivity/' + username + '/scraps';
 
-            if (previousUrl.includes(myPagePostsUrl)) {
-                window.location.href = myPagePostsUrl;
-            } else if (previousUrl.includes(myPageRepliesUrl)) {
-                window.location.href = myPageRepliesUrl;
-            } else if (previousUrl.includes(myPageScrapsUrl)){
-                window.location.href = myPageScrapsUrl;
-            } else {
+            if (previousUrl.includes(boardUrl)) {
                 window.location.href = boardUrl + '?page=' + page;
+            } else {
+                window.location.href = previousUrl;
             }
         });
 
         // 답변 완료 버튼 클릭 이벤트
         $('.completeBtn').on('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
             if (confirm('답변 완료 처리하시겠습니까?')) {
                 let formData = {
                     userId: '[[${username}]]',   // 로그인한 회원 정보
@@ -442,12 +507,11 @@
                     url: '/board/completeQna',
                     contentType: 'application/json',
                     data: JSON.stringify(formData),
-                    success: function (data) {
-                        console.log('Success:', data);
+                    success: function () {
                         location.reload();
                     },
                     error: function (error) {
-                        console.error('Error:', error);
+                        console.error('Failed to completeQna Error:', error);
                     }
                 });
             }
@@ -474,6 +538,7 @@
         // 좋아요 버튼 클릭 이벤트
         $('.bi-hand-thumbs-up').on('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
             let formData = {
                 userId: '[[${username}]]',   // 로그인한 회원 정보
                 postNo: [[${postDTO.postNo}]],  // 게시물 정보
@@ -485,33 +550,32 @@
                 url: '/postLike/',
                 contentType: 'application/json',
                 data: JSON.stringify(formData),
-                success: function (data) {
-                    console.log('Success:', data);
+                success: function () {
                     $('#formLike').hide();
                     $('#formLikeDelete').show();
                     location.reload();
                 },
                 error: function (error) {
-                    console.error('Error:', error);
+                    console.error('Failed to like Error:', error);
                 }
             });
         });
         $('.bi-hand-thumbs-up-fill').on('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
             if (confirm("이 게시글의 '좋아요'를 취소하시겠습니까?")) {
                 let likeNo = [[${postDTO.likeNo}]]
                 $.ajax({
                     type: 'DELETE',
                     url: '/postLike/' + likeNo,
                     contentType: 'application/json',
-                    success: function (data) {
-                        console.log('Success:', data);
+                    success: function () {
                         $('#formLikeDelete').hide();
                         $('#formLike').show();
                         location.reload();
                     },
                     error: function (error) {
-                        console.error('Error:', error);
+                        console.error('Failed to like cancel Error:', error);
                     }
                 });
             }
@@ -520,6 +584,7 @@
         // 싫어요 버튼 클릭 이벤트
         $('.bi-hand-thumbs-down').on('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
             let formData = {
                 userId: '[[${username}]]',   // 로그인한 회원 정보
                 postNo: [[${postDTO.postNo}]],  // 게시물 정보
@@ -531,33 +596,32 @@
                 url: '/postLike/',
                 contentType: 'application/json',
                 data: JSON.stringify(formData),
-                success: function (data) {
-                    console.log('Success:', data);
+                success: function () {
                     $('#formdislike').hide();
                     $('#formdislikeDelete').show();
                     location.reload();
                 },
                 error: function (error) {
-                    console.error('Error:', error);
+                    console.error('Failed to disLike Error:', error);
                 }
             });
         });
         $('.bi-hand-thumbs-down-fill').on('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
             if (confirm("이 게시글의 '싫어요'를 취소하시겠습니까?")) {
                 let likeNo = [[${postDTO.likeNo}]]
                 $.ajax({
                     type: 'DELETE',
                     url: '/postLike/' + likeNo,
                     contentType: 'application/json',
-                    success: function (data) {
-                        console.log('Success:', data);
+                    success: function () {
                         $('#formdislikeDelete').hide();
                         $('#formdislike').show();
                         location.reload();
                     },
                     error: function (error) {
-                        console.error('Error:', error);
+                        console.error('Failed to disLike cancel Error:', error);
                     }
                 });
             }
@@ -575,6 +639,7 @@
         // 보관함 버튼 클릭 이벤트
         $('.bi-basket').on('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
             if (confirm('이 게시물을 보관하시겠습니까?')) {
                 let formData = {
                     userId: '[[${username}]]',   // 로그인한 회원 정보
@@ -585,34 +650,33 @@
                     url: '/scrap/',
                     contentType: 'application/json',
                     data: JSON.stringify(formData),
-                    success: function (data) {
-                        console.log('Success:', data);
+                    success: function () {
                         $('#formScrap').hide();
                         $('#formScrapDelete').show();
                         location.reload();
                     },
                     error: function (error) {
-                        console.error('Error:', error);
+                        console.error('Failed to scrap Error:', error);
                     }
                 });
             }
         });
         $('.bi-basket-fill').on('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
             if (confirm('이 게시물을 보관하지 않으시겠습니까?')) {
                 let scrapNo = [[${postDTO.scrapNo}]]
                 $.ajax({
                     type: 'DELETE',
                     url: '/scrap/' + scrapNo,
                     contentType: 'application/json',
-                    success: function (data) {
-                        console.log('Success:', data);
+                    success: function () {
                         $('#formScrapDelete').hide();
                         $('#formScrap').show();
                         location.reload();
                     },
                     error: function (error) {
-                        console.error('Error:', error);
+                        console.error('Failed to scrap cancel Error:', error);
                     }
                 });
             }
@@ -625,9 +689,9 @@
         });
 
         $('.bi-file-x').on('mouseup', function (e) {
-
             e.preventDefault();
-            console.log("--postNo 값: " + [[${postDTO.postNo}]]);
+            e.stopPropagation();
+
             openPostReportPopup([[${postDTO.postNo}]]);
 
             $(this).removeClass('bi-file-x-fill').addClass('bi-file-x');
@@ -644,15 +708,27 @@
 
     document.addEventListener("DOMContentLoaded", function () {
 
-        // tr이 10번째인 것 만 아랫 밑줄 제거
+        // 자랑게시판 외의 글목록의 경우 tr이 10번째인 것 만 아랫 밑줄 제거
         const rows = document.querySelectorAll(".table.read tbody tr");
         if (rows.length >= 10) {
-            const targetRow = rows[9]; // 10번째 tr, 인덱스 9
-            targetRow.style.borderBottom = "none"; // 10번째 tr의 밑줄 제거
+            const targetRow = rows[9];
+            targetRow.style.borderBottom = "none";
 
-            const cells = targetRow.querySelectorAll("td"); // 10번째 tr의 모든 td
+            const cells = targetRow.querySelectorAll("td");
             cells.forEach(cell => {
-                cell.style.borderBottom = "none"; // 모든 td의 밑줄 제거
+                cell.style.borderBottom = "none";
+            });
+        }
+
+        // 자랑게시판 글목록의 경우 tr이 5번째인 것 아랫 밑줄 제거
+        const showoffRows = document.querySelectorAll(".table.read.showoff tbody tr");
+        if (showoffRows.length >= 5) {
+            const targetRow = showoffRows[4];
+            targetRow.style.borderBottom = "none";
+
+            const cells = targetRow.querySelectorAll("td")
+            cells.forEach(cell => {
+                cell.style.borderBottom = "none";
             });
         }
 
@@ -672,12 +748,14 @@
         if (modifyBtn) {
             document.querySelector(".modifyBtn").addEventListener("click", function (e) {
                 e.preventDefault();
+                e.stopPropagation();
                 let postNo = [[${postDTO.postNo}]]
                 location.href = '/board/modify/' + postNo;
             }, false)
         } else if(modify_qBtn) {
             document.querySelector(".modify_qBtn").addEventListener("click", function (e) {
                 e.preventDefault();
+                e.stopPropagation();
                 let postNo = [[${postDTO.postNo}]]
                 location.href = '/board/modify_q/' + postNo;
             }, false)
@@ -826,6 +904,7 @@
 
             reportReplyBtn.addEventListener('click', function (e) {
                 e.preventDefault();
+                e.stopPropagation();
                 const replyNo = reply.replyNo;
 
 
@@ -836,9 +915,8 @@
                     if (response.ok) {
                         // 새 창 또는 탭에서 'report/reply-report' 열기
                         window.open(`/report/reply-report/${replyNo}`, '_blank', 'width=497,height=540');
-                        console.log('Successfully reported reply');
                     } else {
-                        console.error('Failed to report reply');
+                        console.error('Failed to report reply Error');
                     }
                 });
 
@@ -853,6 +931,7 @@
 
                 deleteButton.addEventListener('click', function (e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     let replyNo = reply.replyNo;
 
                     if (confirm('정말 댓글을 삭제하시겠습니까?')) {
@@ -863,7 +942,7 @@
                                 replyCard.remove();
                                 location.reload();
                             } else {
-                                console.error('Failed to delete reply');
+                                console.error('Failed to delete reply Error');
                             }
                         });
                     }
@@ -886,6 +965,7 @@
         // 댓글 등록
         document.getElementById('formReply').addEventListener('submit', function (e) {
             e.preventDefault();
+            e.stopPropagation();
 
             let replyContent = document.querySelector('input[name="replyContent"]').value.trim();
 
@@ -911,12 +991,11 @@
                 body: JSON.stringify(formData)
             })
                 .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data);
+                .then(() => {
                     location.reload();
                 })
                 .catch((error) => {
-                    console.error('Error:', error);
+                    console.error('Failed to register reply Error:', error);
                 });
         });
 
@@ -960,6 +1039,7 @@
         document.querySelectorAll(".move").forEach(move => {
             move.addEventListener("click", function (e) {
                 e.preventDefault();
+                e.stopPropagation();
 
                 let role = '[[${role}]]';
                 let username = '[[${username}]]';

@@ -210,5 +210,18 @@
         window.open(url, '_blank');
     }
 
+    document.addEventListener('DOMContentLoaded', function() {
+        // URL에서 viewStyle 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewStyle = urlParams.get('viewStyle');
+
+        // viewStyle 값에 따라 옵션 선택
+        if (viewStyle === 'adminFirst') {
+            document.getElementById('adminFirst').selected = true;
+        } else {
+            document.getElementById('nonAdminFirst').selected = true;
+        }
+    });
+
 </script>
 </html>

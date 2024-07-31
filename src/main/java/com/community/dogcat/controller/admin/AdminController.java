@@ -46,8 +46,6 @@ public class AdminController extends BaseController {
     @GetMapping("/user-list")
     public void adminUserDetail(BoardPageRequestDTO pageRequestDTO, Model model, @RequestParam(value = "viewStyle", defaultValue = "nonAdminFirst") String viewStyle) {
 
-        System.out.println("viewStyle : " + viewStyle);
-
         //userId로 유저 목록 불러옴
         List<AdminUserDetailDTO> adminUsers = adminService.findAllUsers(pageRequestDTO, viewStyle);
         int totalUsers = adminService.countAllUsers(pageRequestDTO);

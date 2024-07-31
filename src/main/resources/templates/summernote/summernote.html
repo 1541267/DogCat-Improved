@@ -7,7 +7,7 @@
     <title></title>
 </head>
 <body th:fragment="summernote">
-<textarea id="summernote" name="postContent" th:text="${postDTO?.postContent}"></textarea>
+<textarea id="summernote" name="postContent" th:text="${postDTO?.postContent}" th:wrap="on"></textarea>
 <script th:inline="javascript">
 
     //섬머노트 에디터 설정
@@ -118,7 +118,7 @@
                             }
                         }
                     } else {
-                        // console.log("summernote 업로드 에러")
+                        console.log("summernote 업로드 에러")
                     }
 
                 },
@@ -126,10 +126,9 @@
 
                 // 에디터 본문의 변경사항이 있을시 불러와지는 callback 함수
                 onChange: function (contents) {
-                       console.log("1. 진입할때 contents: " + contents);
+
                     // 내용 변화가 있을 때만
                     if (contents !== previousContents) {
-                        console.log("2. 콘텐츠와 비교할때 previousContents" + previousContents)
 
                         // 파일 업로드시 넣어둔 url, originalFileName, fileUuid, extension 을 지우기 위해 추출
                         const previousUrls = [];
@@ -156,7 +155,7 @@
                         }
 
                         previousContents = contents;
-                        console.log("3. 이미지 삭제 전 previousContents = contents: " + previousContents);
+
                         // 각 배열들에 있는 내용을 현재 내용과 비교해 없는 것들을 deleted 에 저장
                         const deletedImagesUrls = previousUrls.filter(urls => !currentUrls.includes(urls));
 
@@ -173,7 +172,7 @@
 
                             deleteUploadImages(deletedImagesUrls, deletedImagesUuids)
                             previousContents = contents;
-                            console.log("4. 이미지 삭제 후 deleteUploadImages previousContents: " + previousContents);
+
                         }
 
                         if (deletedS3ImageUrls.length > 0) {
@@ -400,18 +399,34 @@
             }
 
             // 저장 버튼 클릭 시 동작
+            let buttonState = 0;
             $('.submitBtn').on('click', function (e) {
-
                 e.preventDefault();
-                if (checkForm()) {
-                    savePostAndGetPostNo();
+                buttonState += 1;
+
+                if (buttonState === 1) {
+                    if (checkForm()) {
+                        savePostAndGetPostNo();
+                    } else {
+                        buttonState = 0;
+                    }
+                } else if (buttonState >= 2) {
+                    alert('처리가 진행 중입니다.');
                 }
             });
 
             $('.modifyBtn').on('click', function (e) {
                 e.preventDefault();
-                if (checkForm()) {
-                    modifyBoard();
+                buttonState += 1;
+
+                if (buttonState === 1) {
+                    if (checkForm()) {
+                        modifyBoard();
+                    } else {
+                        buttonState = 0;
+                    }
+                } else if (buttonState >= 2) {
+                    alert('처리가 진행 중입니다.');
                 }
             });
 
