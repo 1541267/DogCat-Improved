@@ -198,9 +198,7 @@ public class AdminService {
     //유저 차단
     public void blockUser(String userId) {
         int updatedCount = adminRepository.blockUserByUserId(userId);
-        if (updatedCount > 0) {
-            log.info("User " + userId + " blocked successfully.");
-        } else {
+        if (updatedCount < 1) {
             log.warn("User not found with userId '" + userId + "'.");
         }
     }
@@ -215,9 +213,7 @@ public class AdminService {
     //유저 차단 해제
     public void restoreUser(String userId) {
         int updateCount = adminRepository.restoreUserByUserId(userId);
-        if (updateCount < 1) {
-            log.info("User " + userId + " restored successfully. ");
-        } else {
+        if (updateCount > 0){
             log.warn("User not found with userId '" + userId + "'.");
         }
     }

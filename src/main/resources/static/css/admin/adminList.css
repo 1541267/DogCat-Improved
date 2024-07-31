@@ -218,12 +218,15 @@ h2 {
     color: #fff;
     background-color: #67cafe;
     border: 1px solid #67cafe;
-    --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: #6610f2;
-    font-size: 12px;
+    border-radius: 0.5rem;
+    font-size: 1rem;
     padding: 0.5rem;
     width: 100px;
-    height: 30px;
+    height: 40px;
+}
+.administratorBtn:hover {
+    background-color: #6610f2;
+    border-color: #0a53be;
 }
 
 .blockUserBtn {
