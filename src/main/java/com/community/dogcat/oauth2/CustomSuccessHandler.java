@@ -15,7 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.community.dogcat.domain.RefreshEntity;
+import com.community.dogcat.domain.RefreshToken;
 import com.community.dogcat.domain.User;
 import com.community.dogcat.domain.UsersAuth;
 import com.community.dogcat.dto.user.CustomOAuth2User;
@@ -76,10 +76,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		Date date = new Date(System.currentTimeMillis() + 604800000L);
 
-		RefreshEntity refreshEntity = RefreshEntity.builder()
+		RefreshToken refreshToken = RefreshToken.builder()
 			.username(username).refresh(refresh).expiration(date.toString()).build();
 
-		refreshRepository.save(refreshEntity);
+		refreshRepository.save(refreshToken);
 
 	}
 

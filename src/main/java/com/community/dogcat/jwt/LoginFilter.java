@@ -17,7 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.community.dogcat.domain.RefreshEntity;
+import com.community.dogcat.domain.RefreshToken;
 import com.community.dogcat.domain.User;
 import com.community.dogcat.domain.UsersAuth;
 import com.community.dogcat.repository.user.RefreshRepository;
@@ -150,13 +150,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 		Date date = new Date(System.currentTimeMillis() + 604800000L);
 
-		RefreshEntity refreshEntity = RefreshEntity.builder()
+		RefreshToken refreshToken = RefreshToken.builder()
 			.username(username)
 			.refresh(refresh)
 			.expiration(date.toString())
 			.build();
 
-		refreshRepository.save(refreshEntity);
+		refreshRepository.save(refreshToken);
 
 	}
 
@@ -174,9 +174,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	public String getAuthoritiesByUserId(String userId) {
 
 		UsersAuth usersAuth = usersAuthRepository.findByUserId(userId);
+
 		if (usersAuth != null) {
+
 			return usersAuth.getAuthorities();
+
 		}
+
 		return null;
 
 	}

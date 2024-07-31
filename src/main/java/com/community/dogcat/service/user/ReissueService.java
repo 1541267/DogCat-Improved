@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Service;
 
-import com.community.dogcat.domain.RefreshEntity;
+import com.community.dogcat.domain.RefreshToken;
 import com.community.dogcat.jwt.JWTUtil;
 import com.community.dogcat.repository.user.RefreshRepository;
 
@@ -71,7 +71,7 @@ public class ReissueService {
 
 		if (!category.equals("refresh")) {
 
-			log.warn("Invalid refresh token");
+			log.warn("Not a refresh token");
 
 			return false;
 
@@ -81,7 +81,7 @@ public class ReissueService {
 
 		if (!isExist) {
 
-			log.warn("Invalid refresh token");
+			log.warn("The refresh token is not stored in the database");
 
 			return false;
 
@@ -115,13 +115,13 @@ public class ReissueService {
 
 		Date date = new Date(System.currentTimeMillis() + 604800000L);
 
-		RefreshEntity refreshEntity = RefreshEntity.builder()
+		RefreshToken refreshToken = RefreshToken.builder()
 			.username(username)
 			.refresh(refresh)
 			.expiration(date.toString())
 			.build();
 
-		refreshRepository.save(refreshEntity);
+		refreshRepository.save(refreshToken);
 
 	}
 
