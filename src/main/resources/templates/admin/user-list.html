@@ -70,12 +70,7 @@
                                                    class="my-2" th:text="${user.nickname}"
                                                    style="font-size: x-large; text-decoration: none; color: #131314">
                                                 </a>
-                                                <!-- 관리자 지정 버튼 -->
-<!--                                                <button th:if="${user.authorities != 'ROLE_ADMIN'}"-->
-<!--                                                        class="btn administratorBtn ms-3"-->
-<!--                                                        th:data-userid="${user.userId}"-->
-<!--                                                        onclick="administrator(this.getAttribute('data-userid'))">관리자지정-->
-<!--                                                </button>-->
+
 
                                                 <!-- 관리자인 경우 "(관리자)" 표시 -->
                                                 <span th:if="${user.authorities} == 'ROLE_ADMIN'" class="adminCheck">
@@ -97,6 +92,12 @@
                                             </div>
                                             <!--우측버튼메뉴-->
                                             <div class="d-flex flex-column justify-content-evenly">
+<!--                                                &lt;!&ndash; 관리자 지정 버튼 &ndash;&gt;-->
+<!--                                                <button th:if="${user.authorities != 'ROLE_ADMIN'}"-->
+<!--                                                        class="administratorBtn mb-1"-->
+<!--                                                        th:data-userid="${user.userId}"-->
+<!--                                                        onclick="administrator(this.getAttribute('data-userid'))">관리자지정-->
+<!--                                                </button>-->
                                                 <!--차단버튼-->
                                                 <button th:if="${user.authorities != 'ROLE_ADMIN'}"
                                                         class="blockUserBtn mb-1 "
@@ -209,6 +210,19 @@
     function openMyActivityPopup(url) {
         window.open(url, '_blank');
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // URL에서 viewStyle 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewStyle = urlParams.get('viewStyle');
+
+        // viewStyle 값에 따라 옵션 선택
+        if (viewStyle === 'adminFirst') {
+            document.getElementById('adminFirst').selected = true;
+        } else {
+            document.getElementById('nonAdminFirst').selected = true;
+        }
+    });
 
 </script>
 </html>
