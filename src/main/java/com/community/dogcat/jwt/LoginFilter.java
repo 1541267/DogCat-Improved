@@ -17,7 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.community.dogcat.domain.RefreshEntity;
+import com.community.dogcat.domain.RefreshToken;
 import com.community.dogcat.domain.User;
 import com.community.dogcat.domain.UsersAuth;
 import com.community.dogcat.repository.user.RefreshRepository;
@@ -114,7 +114,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		String access = jwtUtil.createJwt("access", userId, role, 86400000L); //1day
 		String refresh = jwtUtil.createJwt("refresh", userId, role, 604800000L); //1week
 
-		addRefreshEntity(userId, refresh);
+		addRefreshToken(userId, refresh);
 
 		if (autoLogin) {
 			response.addCookie(createCookie("access", access));
@@ -146,17 +146,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	}
 
-	private void addRefreshEntity(String username, String refresh) {
+	private void addRefreshToken(String username, String refresh) {
 
 		Date date = new Date(System.currentTimeMillis() + 604800000L);
 
-		RefreshEntity refreshEntity = RefreshEntity.builder()
+		RefreshToken refreshToken = RefreshToken.builder()
 			.username(username)
 			.refresh(refresh)
 			.expiration(date.toString())
 			.build();
 
-		refreshRepository.save(refreshEntity);
+		refreshRepository.save(refreshToken);
 
 	}
 
@@ -174,9 +174,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	public String getAuthoritiesByUserId(String userId) {
 
 		UsersAuth usersAuth = usersAuthRepository.findByUserId(userId);
+
 		if (usersAuth != null) {
+
 			return usersAuth.getAuthorities();
+
 		}
+
 		return null;
 
 	}

@@ -15,7 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.community.dogcat.domain.RefreshEntity;
+import com.community.dogcat.domain.RefreshToken;
 import com.community.dogcat.domain.User;
 import com.community.dogcat.domain.UsersAuth;
 import com.community.dogcat.dto.user.CustomOAuth2User;
@@ -54,7 +54,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		String access = jwtUtil.createJwt("access", userId, role, 86400000L); //1day
 		String refresh = jwtUtil.createJwt("refresh", userId, role, 604800000L); //1week
 
-		addRefreshEntity(userId, refresh);
+		addRefreshToken(userId, refresh);
 
 		response.addCookie(createCookie("access", access));
 		response.addCookie(createCookie("refresh", refresh));
@@ -72,14 +72,14 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		return cookie;
 	}
 
-	private void addRefreshEntity(String username, String refresh) {
+	private void addRefreshToken(String username, String refresh) {
 
 		Date date = new Date(System.currentTimeMillis() + 604800000L);
 
-		RefreshEntity refreshEntity = RefreshEntity.builder()
+		RefreshToken refreshToken = RefreshToken.builder()
 			.username(username).refresh(refresh).expiration(date.toString()).build();
 
-		refreshRepository.save(refreshEntity);
+		refreshRepository.save(refreshToken);
 
 	}
 
