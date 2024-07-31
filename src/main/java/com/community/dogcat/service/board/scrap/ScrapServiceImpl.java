@@ -22,7 +22,9 @@ import lombok.extern.log4j.Log4j2;
 public class ScrapServiceImpl implements ScrapService {
 
 	private final UserRepository userRepository;
+
 	private final BoardRepository boardRepository;
+
 	private final ScrapRepository scrapRepository;
 
 	@Override
@@ -51,6 +53,7 @@ public class ScrapServiceImpl implements ScrapService {
 			return scrap.getScrapNo();
 
 		} else {
+			log.error("Scrap Service Register Error : Scrap already exists");
 			return null;
 		}
 	}
@@ -68,6 +71,9 @@ public class ScrapServiceImpl implements ScrapService {
 		if (scrap.isPresent()) {
 
 			scrapRepository.deleteById(scrapNo);
+
+		} else {
+			log.error("Scrap Service Delete Error : scrap does not exist.");
 		}
 
 	}

@@ -66,6 +66,7 @@ public class BoardController extends BaseController {
 		String userId = (String)model.getAttribute("username");
 
 		if (userId == null) {
+			log.error("BoardController Register Error : 401 Unauthorized");
 			return ResponseEntity.status(401).build(); // 인증되지 않은 경우(로그인 필요)
 		}
 
@@ -96,6 +97,7 @@ public class BoardController extends BaseController {
 
 		// 로그인 사용자 확인
 		if (userId == null) {
+			log.error("BoardController Read Error : 401 Unauthorized");
 			return "redirect:/user/login"; // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
 		}
 
@@ -109,6 +111,7 @@ public class BoardController extends BaseController {
 		// 게시글 작성자 확인
 		if (secret) {
 			if(!userId.equals(postDTO.getUserId()) && role.equals("ROLE_USER")) {
+				log.error("BoardController Read Error : 403 Forbidden");
 				return "redirect:/error"; // 권한이 없는 경우 403 오류
 			}
 		}
@@ -133,6 +136,7 @@ public class BoardController extends BaseController {
 			return "board/read";
 
 		} else {
+			log.error("BoardController Read Error : 404 Not Found");
 			return "redirect:/error"; // 해당 게시글이 없을경우 404 오류
 		}
 	}
@@ -147,16 +151,19 @@ public class BoardController extends BaseController {
 
 		// 로그인 사용자 확인
 		if (userId == null) {
+			log.error("BoardController Modify Error : 401 Unauthorized");
 			return "redirect:/user/login"; // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
 		}
 
 		// 게시글 조회
 		if (postDTO == null) {
+			log.error("BoardController Modify Error : 404 Not Found");
 			return "redirect:/error"; // 게시글이 존재하지 않는 경우 404 오류
 		}
 
 		// 게시글 작성자 확인
 		if (!userId.equals(postDTO.getUserId())) {
+			log.error("BoardController Modify Error : 403 Forbidden");
 			return "redirect:/error"; // 권한이 없는 경우 403 오류
 		}
 
@@ -178,11 +185,13 @@ public class BoardController extends BaseController {
 
 		// 로그인 사용자 확인
 		if (userId == null) {
+			log.error("BoardController Modify Post Error : 401 Unauthorized");
 			return ResponseEntity.status(401).build(); // 로그인되지 않은 경우 401 오류
 		}
 
 		// 게시글 작성자 확인
 		if (!userId.equals(postDTO.getUserId())) {
+			log.error("BoardController Modify Post Error : 403 Forbidden");
 			return ResponseEntity.status(403).build(); // 권한이 없는 경우 403 오류
 		}
 
@@ -203,11 +212,13 @@ public class BoardController extends BaseController {
 
 		// 로그인 사용자 확인
 		if (userId == null) {
+			log.error("BoardController Modify_q Post Error : 401 Unauthorized");
 			return ResponseEntity.status(401).build(); // 로그인되지 않은 경우 401 오류
 		}
 
 		// 게시글 작성자 확인
 		if (!userId.equals(postDTO.getUserId())) {
+			log.error("BoardController Modify_q Post Error : 403 Forbidden");
 			return ResponseEntity.status(403).build(); // 권한이 없는 경우 403 오류
 		}
 
@@ -244,17 +255,20 @@ public class BoardController extends BaseController {
 
 		// 로그인 사용자 확인
 		if (userId == null) {
+			log.error("BoardController Delete Error : 401 Unauthorized");
 			return "redirect:/user/login"; // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
 		}
 
 		// 게시글 조회
 		PostDTO postDTO = boardService.readOne(postNo);
 		if (postDTO == null) {
+			log.error("BoardController Delete Error : 404 Not Found");
 			return "redirect:/error"; // 게시글이 존재하지 않는 경우 404 오류
 		}
 
 		// 게시글 작성자 확인
 		if (!userId.equals(postDTO.getUserId()) && !role.equals("ROLE_ADMIN")) {
+			log.error("BoardController Delete Error : 403 Forbidden");
 			return "redirect:/error"; // 권한이 없는 경우 403 오류
 		}
 

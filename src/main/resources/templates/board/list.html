@@ -76,7 +76,8 @@
                                     <div class="d-flex align-items-center">
                                         <div class="replyAuth" th:if="${dto.replyAuth==true}">
                                             <img class="replyAuthImg" th:src="${dto.completeQna ? '/img/tag/completeQna.png' : '/img/tag/vetScope.png'}"
-                                                 th:alt="${dto.completeQna ? '답변 완료' : '수의사만 답변 가능'}">                                        </div>
+                                                 th:alt="${dto.completeQna ? '답변 완료' : '수의사만 답변 가능'}">
+                                        </div>
                                         <div>
                                             <div class="title">
                                                 <span>
@@ -292,18 +293,20 @@
         //registerBtn, register_qBtn 버튼 클릭 이벤트
         const registerBtns = document.querySelectorAll(".registerBtn");
         if (registerBtns.length > 0) {
-            registerBtns.forEach(function (registerBtn) {
+            registerBtns.forEach(registerBtn => {
                 registerBtn.addEventListener("click", function (e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     location.href = '/board/register/';
                 }, false);
             });
         }
         const register_qBtns = document.querySelectorAll(".register_qBtn");
         if (register_qBtns.length > 0) {
-            register_qBtns.forEach(function (register_qBtn) {
+            register_qBtns.forEach(register_qBtn => {
                 register_qBtn.addEventListener("click", function (e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     location.href = '/board/register_q/';
                 }, false);
             });
@@ -381,6 +384,7 @@
         document.querySelectorAll(".move").forEach(move => {
             move.addEventListener("click", function (e) {
                 e.preventDefault();
+                e.stopPropagation();
 
                 let role = '[[${role}]]';
                 let username = '[[${username}]]';

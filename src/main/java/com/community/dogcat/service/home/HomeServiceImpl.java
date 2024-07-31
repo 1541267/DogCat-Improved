@@ -32,6 +32,7 @@ import lombok.extern.log4j.Log4j2;
 public class HomeServiceImpl implements HomeService {
 
 	private final BoardRepository boardRepository;
+
 	private final ReplyRepository replyRepository;
 
 	// 통합 검색 : 첨부파일 유/무 + 비밀글 제외
