@@ -1,25 +1,31 @@
+body {
+    min-width: 1200px;
+}
+
 .modi-button {
     background-color: #67cafe;
-    border: 1px solid #67cafe;
+    border: none;
     color: white;
     border-radius: 0.375rem;
     width: 150px;
     height: 38px;
-    --bs-btn-active-color: #67cafe;
-    --bs-btn-active-border-color: #67cafe;
-    --bs-btn-active-bg: #ffff;
+}
+
+.modi-button:hover {
+    color: black;
 }
 
 .cancel-button {
-    background-color: white;
-    border: 1px solid #67cafe;
+    background-color: #67cafe;
+    border: none;
     border-radius: 0.375rem;
-    color: #67cafe;
+    color: white;
     width: 150px;
     height: 38px;
-    --bs-btn-active-color: #fff;
-    --bs-btn-active-border-color: #67cafe;
-    --bs-btn-active-bg: #67cafe;
+}
+
+.cancel-button:hover {
+    background-color: red;
 }
 
 .certification-button {
@@ -40,18 +46,6 @@
 .certification-button:focus {
     background-color: #fff;
     color: #67cafe;
-    border: 1px solid #67cafe;
-}
-
-.modi-button:hover {
-    background-color: white;
-    color: #67cafe;
-    border: 1px solid #67cafe;
-}
-
-.cancel-button:hover {
-    background-color: #67cafe;
-    color: white;
     border: 1px solid #67cafe;
 }
 
@@ -93,6 +87,7 @@
 }
 
 h1 {
+    font-size: 40px;
     color: #67cafe;
 }
 

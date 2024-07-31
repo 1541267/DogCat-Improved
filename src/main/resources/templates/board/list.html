@@ -69,7 +69,6 @@
                                        th:value="${dto.postNo}"
                                        th:attr="data-postNo=${dto.postNo}">
                             </td>
-
                             <!--비밀글이 아닐때-->
                             <td class="align-middle listOne" th:if="${dto.secret==false} or (${dto.secret == true} and (${username} == ${dto.userId})) or ((${dto.secret == true} and (${username} != ${dto.userId}))and(${role ne 'ROLE_USER'}))">
                                 <a class="move" href="#" th:attr="data-postNo=${dto.postNo}, data-secret=${dto.secret}, data-userId=${dto.userId}, data-page=${page}">
@@ -144,7 +143,6 @@
                                     </p>
                                 </a>
                             </td>
-
                         </tr>
                         </tbody>
                     </table>

@@ -1,3 +1,8 @@
+body {
+    min-width: 1100px;
+}
+
+
 .modi-button {
     background-color: #67cafe;
     border: 1px solid #67cafe;
@@ -68,6 +73,7 @@
 }
 
 h1 {
+    font-size: 40px;
     color: #67cafe;
 }
 

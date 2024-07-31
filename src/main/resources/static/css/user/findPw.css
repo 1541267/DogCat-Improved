@@ -1,3 +1,7 @@
+body {
+    min-width: 1200px;
+}
+
 .container,
 .container > div {
     height: 960px;
@@ -14,6 +18,7 @@
 }
 
 h1 {
+    font-size: 40px;
     color: #67cafe;
 }
 
@@ -22,8 +27,8 @@ h1 {
 }
 
 .appearance-button {
-    background-color: #67cafe;
-    border: 1px solid #67cafe;
+    background-color: #91d8fb;
+    border: none;
     color: white;
     border-radius: 0.375rem;
     width: 400px;
@@ -31,9 +36,7 @@ h1 {
 }
 
 .appearance-button:hover {
-    background-color: white;
-    color: #67cafe;
-    border: 1px solid #67cafe;
+    background-color: #67cafe;
 }
 
 
