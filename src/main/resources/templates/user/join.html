@@ -16,15 +16,13 @@
 
 </div>
 
-<div class="container" style="height: 960px;">
-    <div class="d-flex justify-content-center align-items-center" style="height: 960px">
+<div class="container">
+    <div class="d-flex justify-content-center align-items-center">
         <div>
-            <div class="d-flex justify-content-center align-items-center"
-                 style="height: 100px; width: 700px;">
-                <h1 style="color: #67cafe"><b>회원가입</b></h1>
+            <div class="d-flex justify-content-center align-items-center joinTitle">
+                <h1>회원가입</h1>
             </div>
-            <div class="d-flex justify-content-center align-items-center"
-                 style="height: 700px; width: 700px;">
+            <div class="d-flex justify-content-center align-items-center joinContent">
                 <form action="/user/join" method="post" class="d-flex flex-column justify-content-between">
                     <!-- 수의사 인증 섹션 -->
                     <div class="d-flex justify-content-end">
@@ -96,8 +94,7 @@
                         <label for="tel">연락처</label>
                         <div class="d-flex">
                             <label for="telPrefix"></label>
-                            <select name="telPrefix" id="telPrefix" class="form-control form-width me-2"
-                                    style="width: 116px;">
+                            <select name="telPrefix" id="telPrefix" class="form-control telWidth me-2">
                                 <option value="010">010</option>
                                 <option value="011">011</option>
                                 <option value="016">016</option>
@@ -107,12 +104,12 @@
                             </select>
                             <span class="align-self-center mx-1">-</span>
                             <label for="telMiddle"></label>
-                            <input type="text" id="telMiddle" class="form-control form-width mx-1" maxlength="4"
-                                   oninput="formatTelInput()" style="width: 116px;" required>
+                            <input type="text" id="telMiddle" class="form-control telWidth mx-1" maxlength="4"
+                                   oninput="formatTelInput()" required>
                             <span class="align-self-center mx-1">-</span>
                             <label for="telSuffix"></label>
-                            <input type="text" id="telSuffix" class="form-control form-width ms-2" maxlength="4"
-                                   oninput="formatTelInput()" style="width: 116px;" required>
+                            <input type="text" id="telSuffix" class="form-control telWidth ms-2" maxlength="4"
+                                   oninput="formatTelInput()" required>
                         </div>
                         <div id="telFeedback" class="feedback"></div>
                     </div>

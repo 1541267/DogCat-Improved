@@ -1,5 +1,5 @@
 body {
-    min-width: 1080px;
+    min-width: 1200px;
 }
 
 .userMenu {
@@ -216,14 +216,14 @@ h2 {
 
 .administratorBtn {
     color: #fff;
-    background-color: #67cafe;
-    border: 1px solid #67cafe;
+    background-color: #858181;
+    border: none;
     --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: #6610f2;
+    --bs-btn-hover-bg: #1d1d83;
     font-size: 12px;
     padding: 0.5rem;
-    width: 100px;
-    height: 30px;
+    width: 90px;
+    height: 32px;
 }
 
 .blockUserBtn {

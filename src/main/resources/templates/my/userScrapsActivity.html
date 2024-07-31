@@ -22,7 +22,6 @@
 
     <!--본문 영역-->
     <div class="content">
-
         <div th:with="userId=${responseDTO.getUserId()}">
             <span th:if="(${userId}!=${username})">
                 <h6 class="myPage">관리자페이지</h6>
@@ -186,7 +185,7 @@
                                             </select>
                                         </span> <!--type선택-->
                     <input type="text" class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}">
-                    <button class="btn searchBtn" type="submit"><span><i
+                    <button class="searchBtn" type="submit"><span><i
                             class="bi bi-search"></i></span>
                     </button>
                 </div>
@@ -196,10 +195,10 @@
     </div> <!--content--> <!--본문 영역-->
 
     <!--사이드 영역-->
-    <div class="sidebar">
+    <div class="sidebar" th:with="userId=${responseDTO.getUserId()}">
         <aside>
             <!--검색 필터-->
-            <div id="floating-element" class="floating-element">
+            <div id="floating-element" class="floating-element" th:if="(${userId}==${username})">
                 <div class="text-center pt-3 pb-2 mb-2 sideMyPage">
                     <div class="py-2">
                         <a href="/my/user-detail">

@@ -100,18 +100,21 @@ nav button:hover{
 }
 
 .header-fs {
+    width: 100px;
     border: 3px solid #67cafe;
     border-radius: 0;
     border-right:0;
 }
 
 .header-fc {
+    width: 247px;
     border: 3px solid #67cafe;
     border-left: white;
     border-radius: 0
 }
 
 .header-sb {
+    width: 50px;
     border: 3px solid #67cafe;
     border-radius: 0;
     background-color: #67cafe

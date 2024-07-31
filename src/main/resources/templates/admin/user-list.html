@@ -70,12 +70,6 @@
                                                    class="my-2" th:text="${user.nickname}"
                                                    style="font-size: x-large; text-decoration: none; color: #131314">
                                                 </a>
-                                                <!-- 관리자 지정 버튼 -->
-<!--                                                <button th:if="${user.authorities != 'ROLE_ADMIN'}"-->
-<!--                                                        class="btn administratorBtn ms-3"-->
-<!--                                                        th:data-userid="${user.userId}"-->
-<!--                                                        onclick="administrator(this.getAttribute('data-userid'))">관리자지정-->
-<!--                                                </button>-->
 
                                                 <!-- 관리자인 경우 "(관리자)" 표시 -->
                                                 <span th:if="${user.authorities} == 'ROLE_ADMIN'" class="adminCheck">
@@ -93,6 +87,12 @@
                                                        th:text="${user.userName}"></p>
                                                     <p class="m-1 px-2 opacity-75"
                                                        th:text="${#dates.format(user.regDate, 'yyyy-MM-dd')}"></p>
+                                                    <!-- 관리자 지정 버튼 -->
+                                                    <button th:if="${user.authorities != 'ROLE_ADMIN'}"
+                                                            class="btn administratorBtn ms-3"
+                                                            th:data-userid="${user.userId}"
+                                                            onclick="administrator(this.getAttribute('data-userid'))">관리자 지정
+                                                    </button>
                                                 </div>
                                             </div>
                                             <!--우측버튼메뉴-->

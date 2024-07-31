@@ -212,11 +212,12 @@ div a {
 .myPage {
     color: #67cafe;
     margin-top: 30px;
-    font-weight: lighter;
+    font-size: 15px;
 }
 
 .myTitle {
     color: #67cafe;
+    font-size: 30px;
 }
 
 .myList {

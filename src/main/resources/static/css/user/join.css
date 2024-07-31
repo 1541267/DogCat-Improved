@@ -1,3 +1,27 @@
+body {
+    min-width: 1200px;
+}
+
+.container,
+.container > div {
+    height: 960px;
+}
+
+.joinTitle {
+    height: 100px;
+    width: 700px;
+}
+
+h1 {
+    font-size: 40px;
+    color: #67cafe;
+}
+
+.joinContent {
+    height: 700px;
+    width: 700px;
+}
+
 .join-button {
     background-color: #67cafe;
     border: 1px solid #67cafe;
@@ -40,17 +64,9 @@
     border: 1px solid #67cafe;
 }
 
-/*.certification-button:active {*/
-/*    background-color: #67cafe;*/
-/*    color: white;*/
-/*    border: 1px solid #67cafe;*/
-/*}*/
-
-/*.show:active {*/
-/*    background-color: #67cafe;*/
-/*    color: #67cafe;*/
-/*    border: 1px solid #67cafe;*/
-/*}*/
+.telWidth {
+    width: 116px;
+}
 
 .join-button:hover {
     background-color: #67cafe;
@@ -70,7 +86,7 @@
     border: 1px solid #67cafe;
 }
 
-.form-control {
+.form-width {
     width: 400px;
 }
 
