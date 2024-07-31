@@ -27,6 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 		if (user == null) {
 
+			log.warn("User not found");
 			throw new UsernameNotFoundException("User not found");
 
 		}
