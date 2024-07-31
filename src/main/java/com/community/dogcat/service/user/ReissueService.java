@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Service;
 
-import com.community.dogcat.domain.RefreshEntity;
+import com.community.dogcat.domain.RefreshToken;
 import com.community.dogcat.jwt.JWTUtil;
 import com.community.dogcat.repository.user.RefreshRepository;
 
@@ -71,7 +71,7 @@ public class ReissueService {
 
 		if (!category.equals("refresh")) {
 
-			log.warn("Invalid refresh token");
+			log.warn("Not a refresh token");
 
 			return false;
 
@@ -81,7 +81,7 @@ public class ReissueService {
 
 		if (!isExist) {
 
-			log.warn("Invalid refresh token");
+			log.warn("The refresh token is not stored in the database");
 
 			return false;
 
@@ -94,7 +94,7 @@ public class ReissueService {
 		String newRefresh = jwtUtil.createJwt("refresh", username, role, 604800000L); // 1 week
 
 		refreshRepository.deleteByRefresh(refresh);
-		addRefreshEntity(username, newRefresh);
+		addRefreshToken(username, newRefresh);
 
 		for (Cookie cookie : cookies) {
 			if (cookie.getName().equals("refresh") || cookie.getName().equals("access")) {
@@ -111,17 +111,17 @@ public class ReissueService {
 
 	}
 
-	private void addRefreshEntity(String username, String refresh) {
+	private void addRefreshToken(String username, String refresh) {
 
 		Date date = new Date(System.currentTimeMillis() + 604800000L);
 
-		RefreshEntity refreshEntity = RefreshEntity.builder()
+		RefreshToken refreshToken = RefreshToken.builder()
 			.username(username)
 			.refresh(refresh)
 			.expiration(date.toString())
 			.build();
 
-		refreshRepository.save(refreshEntity);
+		refreshRepository.save(refreshToken);
 
 	}
 

@@ -37,6 +37,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
 		if (!requestUri.matches("^/logout$")) {
 
+			log.warn("The path is wrong");
 			filterChain.doFilter(request, response);
 			return;
 
@@ -46,6 +47,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
 		if (!requestMethod.equals("POST")) {
 
+			log.warn("This is not a POST method");
 			filterChain.doFilter(request, response);
 			return;
 

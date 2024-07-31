@@ -19,7 +19,9 @@ import com.community.dogcat.repository.user.UserRepository;
 import com.community.dogcat.repository.user.UsersAuthRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -81,18 +83,21 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		} else {
 			if (!existData.isSocial()) {
 
+				log.warn("The email is already registered");
 				throw new CustomOAuth2Exception("해당 이메일로 이미 회원가입이 되어 있습니다.\\n일반 로그인을 시도해 주세요.");
 
 			}
 
 			if (!existData.getNickname().startsWith(registrationId + "_")) {
 
+				log.warn("The same email ID is being used by another social provider");
 				throw new CustomOAuth2Exception("동일한 이메일 ID가 다른 소셜 제공자에 의해 사용되고 있습니다.");
 
 			}
 
 			if (existData.isBlock()) {
 
+				log.warn("Your account has been blocked by the administrator");
 				throw new CustomOAuth2Exception("관리자에 의해 계정이 차단되었습니다.");
 
 			}
