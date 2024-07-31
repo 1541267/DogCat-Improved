@@ -15,9 +15,9 @@ import com.community.dogcat.domain.User;
 import com.community.dogcat.oauth2.CustomOAuth2Exception;
 import com.community.dogcat.repository.user.UserRepository;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Component
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 

@@ -1,6 +1,6 @@
 package com.community.dogcat.controller.advice;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -16,14 +16,14 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestControllerAdvice
-@Log4j2
+@Slf4j
 public class CustomRestAdvice {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     public ResponseEntity<Map<String, String>> handleBindException(BindException e) {
 
-        log.error(e);
+        log.error(String.valueOf(e));
 
         Map<String, String> errorMap = new HashMap<>();
 
@@ -42,7 +42,7 @@ public class CustomRestAdvice {
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     public ResponseEntity<Map<String, String>> handleFKException(Exception e) {
 
-        log.error(e);
+        log.error(String.valueOf(e));
 
         Map<String, String> errorMap = new HashMap<>();
 
@@ -57,7 +57,7 @@ public class CustomRestAdvice {
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     public ResponseEntity<Map<String, String>> handleNoSuchElement(Exception e){
 
-        log.error(e);
+        log.error(String.valueOf(e));
 
         Map<String, String> errorMap = new HashMap<>();
 

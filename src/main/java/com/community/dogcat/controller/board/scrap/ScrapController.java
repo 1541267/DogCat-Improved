@@ -22,9 +22,9 @@ import com.community.dogcat.service.board.scrap.ScrapService;
 import com.community.dogcat.service.user.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @RestController
 @RequestMapping("/scrap")
 public class ScrapController extends BaseController {

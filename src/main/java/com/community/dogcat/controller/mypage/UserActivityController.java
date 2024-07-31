@@ -19,9 +19,9 @@ import com.community.dogcat.jwt.JWTUtil;
 import com.community.dogcat.service.myPage.activity.UserActivityService;
 import com.community.dogcat.service.user.UserService;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Controller
 @Transactional
 @RequestMapping("/my")

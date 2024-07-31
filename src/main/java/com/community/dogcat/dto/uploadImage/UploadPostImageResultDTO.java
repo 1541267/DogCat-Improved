@@ -8,10 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
-@Log4j2
+@Slf4j
 @Component
 @SuperBuilder
 @NoArgsConstructor

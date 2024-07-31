@@ -21,9 +21,9 @@ import com.community.dogcat.domain.ImgBoard;
 import com.community.dogcat.repository.upload.UploadRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class FileCheckTask {

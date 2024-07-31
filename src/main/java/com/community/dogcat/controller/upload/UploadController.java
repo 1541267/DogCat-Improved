@@ -29,9 +29,9 @@ import com.community.dogcat.util.uploader.S3Uploader;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/upload")

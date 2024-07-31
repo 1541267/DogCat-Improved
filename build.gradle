@@ -17,9 +17,6 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
-    // 기본 log4j2 기능 제외
-    all*.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-    all*.exclude group: 'org.springframework.boot', module: 'logback-classic'
 }
 
 repositories {
@@ -53,6 +50,10 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // slf4j
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+    implementation 'org.fusesource.jansi:jansi:2.4.1'
 
     // swagger ui
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
@@ -91,12 +92,6 @@ dependencies {
     // mockMultipartFile
     implementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-    // 파일 업로드
-    implementation 'commons-io:commons-io:2.11.0'
-
-    // 로그 파일 저장을 위해 log4j2
-    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.security:spring-security-test'

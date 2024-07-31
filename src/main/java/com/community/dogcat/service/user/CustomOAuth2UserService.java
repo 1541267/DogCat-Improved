@@ -19,9 +19,9 @@ import com.community.dogcat.repository.user.UserRepository;
 import com.community.dogcat.repository.user.UsersAuthRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {

@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.filter.GenericFilterBean;
 import com.community.dogcat.repository.user.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 public class CustomLogoutFilter extends GenericFilterBean {
 
 	private final JWTUtil jwtUtil;

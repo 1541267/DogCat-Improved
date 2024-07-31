@@ -13,7 +13,7 @@ import com.community.dogcat.jwt.JWTUtil;
 import com.community.dogcat.service.admin.AdminService;
 import com.community.dogcat.service.report.ReportService;
 import com.community.dogcat.service.user.UserService;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-@Log4j2
+@Slf4j
 @Secured("ROLE_ADMIN")
 @Controller
 @RequestMapping("/admin")

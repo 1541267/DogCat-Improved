@@ -9,13 +9,13 @@ import com.community.dogcat.service.board.BoardServiceImpl;
 import com.community.dogcat.service.board.reply.ReplyServiceImpl;
 import com.community.dogcat.service.report.ReportService;
 import com.community.dogcat.service.user.UserService;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@Log4j2
+@Slf4j
 @Controller
 @RequestMapping("/report")
 public class ReportController extends BaseController {

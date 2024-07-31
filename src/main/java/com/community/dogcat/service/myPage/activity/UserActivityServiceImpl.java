@@ -17,10 +17,10 @@ import com.community.dogcat.repository.board.reply.ReplyRepository;
 import com.community.dogcat.repository.board.scrap.ScrapRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Log4j2
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 public class UserActivityServiceImpl implements UserActivityService {

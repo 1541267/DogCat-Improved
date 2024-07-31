@@ -29,9 +29,9 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPQLQuery;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardSearch {
 
 	public BoardSearchImpl() {
