@@ -1,4 +1,3 @@
-
 ![header](https://capsule-render.vercel.app/api?type=waving&color=67cafe&height=250&fontColor=ffffff&fontSize=50&fontAlignY=30&animation=fadeIn&desc=반려동물%20커뮤니티%20프로젝트&descAlignY=55&descFontSize=60&descAlign=50&&text=Goott%20Arcademy&textAlign=50)
 <div align=center>
 <b style= "font-size : 40px">🐈말랑 발자국🐕</b>
@@ -48,15 +47,15 @@
 |[@1541267](https://github.com/1541267)|[@seulbaong](https://github.com/seulbaong)|[@parkminwoo0802](https://github.com/parkminwoo0802)|[@ongdanul](https://github.com/ongdanul)|[@hyunseok-goo](https://github.com/hyunseok-goo)|
 
 <br>
-
+	
 <h2>1. 개발 및 배포 환경</h2>
 
 - Window10/11<br>
-- IntelliJ <br>
+- IntelliJ <br> 
 - JpaRepository <br>
 - Naver Java Coding Convention + CheckStyle
 - SpringBoot 2.7.18<br>
-- MariaDB(RDS) 10.11.7
+- MariaDB(RDS) 10.11.7 
 - AWS EC2(Linux)<br>
 
 <h2>2. 채택한 개발 기술과 브랜치 전략</h2>
@@ -64,17 +63,17 @@ Github Flow
 <br>
 
 - 브랜치 <br>
-  1 . 각 개인 작업용 브랜치 <br>
-  2 . 개발용 Dev 브랜치<br>
-  3 . 배포용 EC2(Prd) 브랜치 <br>
+1 . 각 개인 작업용 브랜치 <br>
+2 . 개발용 Dev 브랜치<br>
+3 . 배포용 EC2(Prd) 브랜치 <br>
 
 <h2>3. 역할 분담</h2>
 
 - 팀장: 김윤섭 (<a href="https://github.com/1541267">@a1541267</a>)
-  <br>
-- 게시판 담당: 김주희(<a href="https://github.com/ongdanul">@ongdanul</a>) | 구현석(<a href="https://github.com/hyunseok-goo">@hyunseok-goo</a>)
+<br>
+- 게시판 담당: 김주희(<a href="https://github.com/ongdanul">@ongdanul</a>) | 김현석(<a href="https://github.com/hyunseok-goo">@hyunseok-goo</a>)
 - 시큐리티, 신고 담당: 김슬기(<a href="https://github.com/seulbaong">@seulbaong</a>) | 박민우(<a href="https://github.com/parkminwoo0802">@parkminwoo0802</a>)<br><br>
-  <h2>4. 페이지별 기능</h2>
+<h2>4. 페이지별 기능</h2>
 
 <br>
 
@@ -83,11 +82,11 @@ Github Flow
 - 6.11 (화): 주제 선정 / 쇼핑몰 vs 커뮤니티<br>1.  커뮤니티 채택<br><br>
 - 6.12 (수): 커뮤니티의 컨셉 선정 / 건강 vs 음식 vs 반려동물 <br> 1. 실제 운영중인 사이트들을 밴치마킹 하여 구조 조사 <br>2. 어떠한 카테고리로 내용을 구현할 수 있을지 각자 아이디어 만들기<br><br>
 - 6.13 (목): 각자 파트를 정해 페이지의 레이아웃 작성 후 각자 기능 발표, 부족한점 회의로 추가/수정<br> 1. 전체적으로 정해진 기능을 토대로 요구사항명세서 / 기능명세서 작성
-  <br><br>
+<br><br>
 - 6.14 (금): 요구사항 / 기능명세서 다듬고 기능별로 분류, 주말동안 ERD에 대해 공부, 직접 작성<br><br>
 - 6.17 (월): 각자 그려온 ERD로 전체 회의<br>1. DB 구성 <br>2.  기능명세서 기준으로 테이블관계를 어떻게 만들것인가<br><br>
 - 6.18 (화): DB 설계 완료<br> <img width="1131" alt="Malang 완성" src="https://private-user-images.githubusercontent.com/68197163/353371108-d83c6d41-ceeb-4ad5-9d73-e0de6c438c09.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjIzMjY0NzMsIm5iZiI6MTcyMjMyNjE3MywicGF0aCI6Ii82ODE5NzE2My8zNTMzNzExMDgtZDgzYzZkNDEtY2VlYi00YWQ1LTlkNzMtZTBkZTZjNDM4YzA5LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA3MzAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwNzMwVDA3NTYxM1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTM3Y2FjMzJlNzdkZTRkMTc4YTE0MzNiNzI1NjZiYzAzMWI4YjQ0MjMxZmQxMjBkZTkzMWE3NDUwZDVmODE1YmQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.u_HF0ru7u2C5FMscG2O84D6kC4yRfZdC5rv5bHFh0Rw" style="max-width: 100%;">
-  <br><a href="https://www.erdcloud.com/d/oHPQBkBtQBTig7kMv">ERD 사이트</a><br>1. 각자 만들었던 레이아웃을 실제 view 파일로 코딩 <br><br>
+<br><a href="https://www.erdcloud.com/d/oHPQBkBtQBTig7kMv">ERD 사이트</a><br>1. 각자 만들었던 레이아웃을 실제 view 파일로 코딩 <br><br>
 - 6.19 (수): 뷰 작업 마무리<br>1. 각자 만들어온 뷰를 토대로 전체 기능 다듬으며 기능명세서 수정<br><br>
 - 6.20 (목): 수정된 기능명세서를 참고하며 페이지 디자인 결정 후 기능별로 카테고리를 정렬<br><br>
 - 6.21 (금): 기능별 카테고리를 기준으로 2개의 조 편성<br>1. 유저관련(가입/로그인/마이페이지 -> 회원정보 관련) + 관리자 페이지(회원정보 직접 수정, 신고처리, 회원제제)<br>2. 게시판 CRUD + 페이징(정렬) + (마이페이지 -> 게시글 / 댓글 / 보관함 관련)<br>3. 코딩 시작
@@ -103,6 +102,6 @@ Github Flow
 <b>- 수정 전</b><br><br> <img width="622" alt="summernote deleteArrays 코드 수정 전" src="https://private-user-images.githubusercontent.com/68197163/353310536-2cae5e15-da9f-4f49-9784-de95d7e403d9.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjIzMTM2NDQsIm5iZiI6MTcyMjMxMzM0NCwicGF0aCI6Ii82ODE5NzE2My8zNTMzMTA1MzYtMmNhZTVlMTUtZGE5Zi00ZjQ5LTk3ODQtZGU5NWQ3ZTQwM2Q5LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA3MzAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwNzMwVDA0MjIyNFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWZjNGZjYWZlYTQ1NDZlZGVjNDY2MjQ1Y2ExYTE5NGFlNzdhYjEzZDYzNzJkMWU4NmYxNWRjOWIzYTUzZTNiMTAmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.RBAsBYjLK-9jAes8yumeS1jHfzPBLxdrKmDiZuaiR-w" style="max-width: 50%;"> <hr><b>- 수정 후</b><br><br> <img width="775" alt="summernote deleteArrays 코드 수정 후" src="https://private-user-images.githubusercontent.com/68197163/353310544-1bcfb7cc-9c43-4aa1-a604-9cfd6fe1e3c8.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjIzMTM2NDQsIm5iZiI6MTcyMjMxMzM0NCwicGF0aCI6Ii82ODE5NzE2My8zNTMzMTA1NDQtMWJjZmI3Y2MtOWM0My00YWExLWE2MDQtOWNmZDZmZTFlM2M4LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA3MzAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwNzMwVDA0MjIyNFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWU3YmEzYmIzY2JiODlkMWE1MzU3NmNlOTZlZTUxYzEzZGI0OTUxMGM0YWJlMDVjMzEzZDU1ODgwNmM4NjY5NmYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.I-mOAc_SPwoEupr8uZck2dItuBgSylz3Wy7fsOAOXpw" style="max-width: 50%;">
 <br>
 <h2>6. 프로젝트 후기</h2>
-<br>
+<br> 
 
 - 팀장: 
