@@ -261,4 +261,4 @@ src/main/generated/
 # Cache of project
 .gradletasknamecache
 
-*.yml
+src/main/resources/*.yml
