@@ -29,9 +29,13 @@ import lombok.extern.log4j.Log4j2;
 public class ReplyServiceImpl implements ReplyService {
 
 	private final UserRepository userRepository;
+
 	private final UsersAuthRepository usersAuthRepository;
+
 	private final BoardRepository boardRepository;
+
 	private final ReplyRepository replyRepository;
+
 	private final ReportLogRepository reportLogRepository;
 
 	private final ModelMapper modelMapper;
@@ -72,6 +76,7 @@ public class ReplyServiceImpl implements ReplyService {
 				replyRepository.save(reply);
 
 			} else {
+				log.error("reply Service Register Error : 403 Forbidden");
 				return null;
 			}
 
@@ -104,7 +109,7 @@ public class ReplyServiceImpl implements ReplyService {
 		String auth = usersAuthRepository.findByUserId(userId).getAuthorities();
 
 		// 회원 아이디로 작성한 댓글이거나 관리자이면 삭제
-		if (reply.isPresent()|| auth.equals("ROLE_ADMIN")) {
+		if (reply.isPresent() || auth.equals("ROLE_ADMIN")) {
 
 			// 해당 댓글 신고 내역있으면 삭제
 			List<Long> reportLogIds = reportLogRepository.findByReplyNo(replyNo);
@@ -115,6 +120,9 @@ public class ReplyServiceImpl implements ReplyService {
 			}
 
 			replyRepository.deleteById(replyNo);
+
+		} else {
+			log.error("reply Service Delete Error : 403 Forbidden");
 		}
 	}
 

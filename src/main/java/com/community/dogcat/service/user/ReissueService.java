@@ -94,7 +94,7 @@ public class ReissueService {
 		String newRefresh = jwtUtil.createJwt("refresh", username, role, 604800000L); // 1 week
 
 		refreshRepository.deleteByRefresh(refresh);
-		addRefreshEntity(username, newRefresh);
+		addRefreshToken(username, newRefresh);
 
 		for (Cookie cookie : cookies) {
 			if (cookie.getName().equals("refresh") || cookie.getName().equals("access")) {
@@ -111,7 +111,7 @@ public class ReissueService {
 
 	}
 
-	private void addRefreshEntity(String username, String refresh) {
+	private void addRefreshToken(String username, String refresh) {
 
 		Date date = new Date(System.currentTimeMillis() + 604800000L);
 

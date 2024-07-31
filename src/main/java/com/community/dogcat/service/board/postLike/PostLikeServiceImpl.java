@@ -24,7 +24,9 @@ import lombok.extern.log4j.Log4j2;
 public class PostLikeServiceImpl implements PostLikeService {
 
 	private final UserRepository userRepository;
+
 	private final BoardRepository boardRepository;
+
 	private final PostLikeRepository postLikeRepository;
 
 	@Override
@@ -89,10 +91,13 @@ public class PostLikeServiceImpl implements PostLikeService {
 				return postLike.getLikeNo();
 
 			} else {
-				return null;  // 좋아요와 싫어요 상태가 동시에 true이거나 둘 다 false인 경우
+				// 좋아요와 싫어요 상태가 동시에 true인 경우
+				log.error("PostLike Service Register Error : likeState and dislikeState can't be true at the same time");
+				throw new IllegalArgumentException("likeState and dislikeState can't be true at the same time");
 			}
 
 		} else {
+			log.error("PostLike Service Register Error : 'likeState' or 'dislikeState' already exists");
 			return null;  // 이미 좋아요나 싫어요를 한 경우
 		}
 	}
@@ -144,6 +149,9 @@ public class PostLikeServiceImpl implements PostLikeService {
 			}
 
 			postLikeRepository.deleteById(likeNo);
+
+		} else {
+			log.error("PostLike Service Delete Error : 'likeState' or 'dislikeState' does not exist.");
 		}
 	}
 }

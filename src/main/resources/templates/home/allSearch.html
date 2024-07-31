@@ -149,56 +149,58 @@
 </body>
 <div th:include="include/footer :: footer"></div>
 <script>
-    //replyCountBtn 버튼 클릭 이벤트
-    document.querySelectorAll(".replyCountBtn").forEach(function (button) {
-        button.addEventListener("click", function (e) {
-            e.preventDefault(); //권한 설정 추가 할 것
-            e.stopPropagation();
-            let postNo = this.getAttribute("data-postNo");
-            location.href = '/board/read/' + postNo + '#reply';
-        });
-    });
-
-    //pagination 클릭 이벤트
-    document.querySelector(".pagination").addEventListener("click", function (e) {
-        e.preventDefault()
-        e.stopPropagation()
-
-        //실제 클릭된 요소를 가져와서 target 변수에 할당
-        let target = e.target.closest('a');
-
-        if (!target) {
-            return;
-        }
-
-        let num = target.getAttribute("data-num")
-        if (!num) {
-            num = 1; // 기본값 설정
-        }
-
-        // 현재 URL 가져오기
-        let currentUrl = new URL(window.location.href);
-
-        // 페이지 번호 업데이트
-        currentUrl.searchParams.set('page', num);
-
-        // 수정된 URL로 이동
-        window.location.href = currentUrl.href;
-
-    }, false)
-
-    // tr이 10번째인 것 만 아랫 밑줄 제거
     document.addEventListener("DOMContentLoaded", function () {
+
+        // tr이 10번째인 것 만 아랫 밑줄 제거
         const rows = document.querySelectorAll(".table.read tbody tr");
         if (rows.length >= 10) {
-            const targetRow = rows[9]; // 10번째 tr, 인덱스 9
-            targetRow.style.borderBottom = "none"; // 10번째 tr의 밑줄 제거
+            const targetRow = rows[9];
+            targetRow.style.borderBottom = "none";
 
-            const cells = targetRow.querySelectorAll("td"); // 10번째 tr의 모든 td
+            const cells = targetRow.querySelectorAll("td");
             cells.forEach(cell => {
-                cell.style.borderBottom = "none"; // 모든 td의 밑줄 제거
+                cell.style.borderBottom = "none";
             });
         }
+
+        //replyCountBtn 버튼 클릭 이벤트
+        document.querySelectorAll(".replyCountBtn").forEach(function (button) {
+            button.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                let postNo = this.getAttribute("data-postNo");
+                location.href = '/board/read/' + postNo + '#reply';
+            });
+        });
+
+        //pagination 클릭 이벤트
+        document.querySelector(".pagination").addEventListener("click", function (e) {
+            e.preventDefault()
+            e.stopPropagation()
+
+            //실제 클릭된 요소를 가져와서 target 변수에 할당
+            let target = e.target.closest('a');
+
+            if (!target) {
+                return;
+            }
+
+            let num = target.getAttribute("data-num")
+            if (!num) {
+                num = 1; // 기본값 설정
+            }
+
+            // 현재 URL 가져오기
+            let currentUrl = new URL(window.location.href);
+
+            // 페이지 번호 업데이트
+            currentUrl.searchParams.set('page', num);
+
+            // 수정된 URL로 이동
+            window.location.href = currentUrl.href;
+
+        });
+
     });
 </script>
 </html>

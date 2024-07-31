@@ -31,6 +31,6 @@ public class UsersVet {
 	@Setter
 	@Column(name = "status", nullable = false)
 	@ColumnDefault("false")
-	private boolean verificationStatus ;
+	private boolean verificationStatus;
 
 }

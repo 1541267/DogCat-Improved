@@ -26,7 +26,9 @@ import lombok.extern.log4j.Log4j2;
 public class UserActivityServiceImpl implements UserActivityService {
 
 	private final BoardRepository boardRepository;
+
 	private final ReplyRepository replyRepository;
+
 	private final ScrapRepository scrapRepository;
 
 	// userId에 해당하는 게시물들 목록

@@ -57,7 +57,7 @@
                 <div>
                     <table class="table read">
                         <!--게시물 정보 받아오기-->
-                        <tbody>
+                        <tbody th:with="page = ${pageRequestDTO.getPage()}">
                         <tr th:each="dto:${responseDTO.dtoList}" class="showOffList">
                             <td class="align-middle checkBox" th:if="${role eq 'ROLE_ADMIN'}">
                                 <!--td에 추가 삭제 체크 박스 권한에 따라 버튼 나타내기-->
@@ -65,7 +65,7 @@
                                        th:attr="data-postNo=${dto.postNo}">
                             </td>
                             <td class="align-middle listOne">
-                                <a th:href="@{'/board/read/'+${dto.postNo}}">
+                                <a class="move" href="#" th:attr="data-postNo=${dto.postNo}, data-page=${page}">
                                     <div class="d-flex align-items-center listPost">
                                         <div class="me-4" th:if="${!dto.imgBoards.isEmpty()}">
                                             <img th:src="${dto.imgBoards[0].thumbnailPath}" class="boardImg"
@@ -162,13 +162,13 @@
             </ul> <!--pagination-->
             <!--버튼-->
             <span class="d-flex text-end align-self-start btnSection">
-                        <button class="btn writeBtn registerBtn" th:if="${boardCode ne 'qna'}"><i
-                                class="bi bi-pencil-fill"></i>글쓰기</button>
-                        <button class="btn writeBtn register_qBtn" th:if="${boardCode eq 'qna'}"><i
-                                class="bi bi-pencil-fill"></i>글쓰기</button>
+                <button class="btn writeBtn registerBtn" th:if="${boardCode ne 'qna'}"><i
+                        class="bi bi-pencil-fill"></i>글쓰기</button>
+                <button class="btn writeBtn register_qBtn" th:if="${boardCode eq 'qna'}"><i
+                        class="bi bi-pencil-fill"></i>글쓰기</button>
                 <!--삭제 버튼 권한에 따라 버튼 나타내기-->
-                         <button class="btn ms-2 deleteBtn" th:if="${role eq 'ROLE_ADMIN'}">글 삭제</button>
-                    </span> <!--버튼-->
+                <button class="btn ms-2 deleteBtn" th:if="${role eq 'ROLE_ADMIN'}">글 삭제</button>
+            </span> <!--버튼-->
         </div> <!--하단-->
         <!-- 검색 -->
         <div class="d-flex flex-row justify-content-center input-group searchForm">
@@ -177,18 +177,18 @@
                 <div class="d-flex">
                     <!--type선택-->
                     <span class="p-0">
-                            <select class="form-select" name="type">
-                                <option value="tcu" th:selected="${pageRequestDTO.type == 'tcu'}">---</option>
-                                <option value="t"
-                                        th:selected="${pageRequestDTO.type eq 't'}">제목</option>
-                                <option value="c"
-                                        th:selected="${pageRequestDTO.type eq 'c'}">내용</option>
-                                <option value="u"
-                                        th:selected="${pageRequestDTO.type eq 'u'}">작성자</option>
-                                <option value="tc"
-                                        th:selected="${pageRequestDTO.type eq 'tc'}">제목+내용</option>
-                            </select>
-                        </span> <!--type선택-->
+                        <select class="form-select" name="type">
+                            <option value="tcu" th:selected="${pageRequestDTO.type == 'tcu'}">---</option>
+                            <option value="t"
+                                    th:selected="${pageRequestDTO.type eq 't'}">제목</option>
+                            <option value="c"
+                                    th:selected="${pageRequestDTO.type eq 'c'}">내용</option>
+                            <option value="u"
+                                    th:selected="${pageRequestDTO.type eq 'u'}">작성자</option>
+                            <option value="tc"
+                                    th:selected="${pageRequestDTO.type eq 'tc'}">제목+내용</option>
+                        </select>
+                    </span> <!--type선택-->
                     <input type="text" class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}">
                     <button class="btn searchBtn" type="submit">
                         <span><i class="bi bi-search"></i></span>
@@ -242,15 +242,15 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
-        // tr이 10번째인 것 만 아랫 밑줄 제거
+        // tr이 5번째인 것 만 아랫 밑줄 제거
         const rows = document.querySelectorAll(".table.read tbody tr");
-        if (rows.length >= 10) {
-            const targetRow = rows[9]; // 10번째 tr, 인덱스 9
-            targetRow.style.borderBottom = "none"; // 10번째 tr의 밑줄 제거
+        if (rows.length >= 5) {
+            const targetRow = rows[4];
+            targetRow.style.borderBottom = "none";
 
-            const cells = targetRow.querySelectorAll("td"); // 10번째 tr의 모든 td
+            const cells = targetRow.querySelectorAll("td");
             cells.forEach(cell => {
-                cell.style.borderBottom = "none"; // 모든 td의 밑줄 제거
+                cell.style.borderBottom = "none";
             });
         }
 
@@ -267,18 +267,20 @@
         //registerBtn, register_qBtn 버튼 클릭 이벤트
         const registerBtns = document.querySelectorAll(".registerBtn");
         if (registerBtns.length > 0) {
-            registerBtns.forEach(function (registerBtn) {
+            registerBtns.forEach(registerBtn => {
                 registerBtn.addEventListener("click", function (e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     location.href = '/board/register/';
                 }, false);
             });
         }
         const register_qBtns = document.querySelectorAll(".register_qBtn");
         if (register_qBtns.length > 0) {
-            register_qBtns.forEach(function (register_qBtn) {
+            register_qBtns.forEach(register_qBtn => {
                 register_qBtn.addEventListener("click", function (e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     location.href = '/board/register_q/';
                 }, false);
             });
@@ -350,6 +352,20 @@
             // 수정된 URL로 이동
             window.location.href = currentUrl.href;
 
+        });
+
+        // page 번호 유지
+        document.querySelectorAll(".move").forEach(move => {
+            move.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let postNo = this.getAttribute("data-postNo");
+                let page = this.getAttribute("data-page");
+
+                location.href = '/board/read/' + postNo + '?page=' + page;
+
+            });
         });
 
     });

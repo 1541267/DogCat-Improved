@@ -114,7 +114,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		String access = jwtUtil.createJwt("access", userId, role, 86400000L); //1day
 		String refresh = jwtUtil.createJwt("refresh", userId, role, 604800000L); //1week
 
-		addRefreshEntity(userId, refresh);
+		addRefreshToken(userId, refresh);
 
 		if (autoLogin) {
 			response.addCookie(createCookie("access", access));
@@ -146,7 +146,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	}
 
-	private void addRefreshEntity(String username, String refresh) {
+	private void addRefreshToken(String username, String refresh) {
 
 		Date date = new Date(System.currentTimeMillis() + 604800000L);
 
