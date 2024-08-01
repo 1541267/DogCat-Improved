@@ -46,9 +46,8 @@ public class ReportLog {
 	@JoinColumn(name = "reply_no")
 	private Reply replyNo;
 
-	@Size(max = 20)
 	@NotNull
-	@Column(name = "report_title", nullable = false, length = 20)
+	@Column(name = "report_title", nullable = false, length = 50)
 	private String reportTitle;
 
 	@Size(max = 255)
