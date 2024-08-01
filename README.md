@@ -2,7 +2,7 @@
 <div align=center>
 <b style= "font-size : 40px">🐈말랑 발자국🐕</b>
 <hr>
-	<p style= "font-size : 40px ">📚 Tech Stack 📚<p>
+	<p style= "font-size : 80px ">📚 Tech Stack 📚<p>
 </>
 </><br>
 	<p style= "font-size : 30px">✨Front End✨<p>
