@@ -199,31 +199,14 @@ public class BoardServiceImpl implements BoardService {
 		Long replyCount = replyRepository.countRepliesByPost(post.getPostNo());
 
 		// 게시물 정보 설정
-		return PostReadDTO.builder()
-			.postNo(post.getPostNo())
-			.userId(post.getUserId().getUserId())
-			.nickname(post.getUserId().getNickname())
-			.exp(post.getUserId().getExp())
-			.userVet(post.getUserId().isUserVet())
-			.boardCode(post.getBoardCode())
-			.postTitle(post.getPostTitle())
-			.postContent(post.getPostContent())
-			.regDate(post.getRegDate())
-			.modDate(post.getModDate())
-			.postTag(post.getPostTag())
-			.secret(post.isSecret())
-			.likeCount(post.getLikeCount())
-			.dislikeCount(post.getDislikeCount())
-			.viewCount(post.getViewCount())
-			.replyAuth(post.isReplyAuth())
-			.completeQna(post.isCompleteQna())
-			.replyCount(replyCount)
-			.scrapNo(scrap.map(Scrap::getScrapNo).orElseGet(() -> null))
-			.likeNo(postLike.map(PostLike::getLikeNo).orElseGet(() -> null))
-			.likeState(postLike.map(PostLike::isLikeState).orElseGet(() -> false))
-			.dislikeState(postLike.map(PostLike::isDislikeState).orElseGet(() -> false))
-			.imgBoards(post.getImages().stream().toList())
-			.build();
+		PostReadDTO postReadDTO = new PostReadDTO(post);
+		postReadDTO.setReplyCount(replyCount);
+		postReadDTO.setScrapNo(scrap.map(Scrap::getScrapNo).orElseGet(() -> null));
+		postReadDTO.setLikeNo(postLike.map(PostLike::getLikeNo).orElseGet(() -> null));
+		postReadDTO.setLikeState(postLike.map(PostLike::isLikeState).orElseGet(() -> false));
+		postReadDTO.setDislikeState(postLike.map(PostLike::isDislikeState).orElseGet(() -> false));
+
+		return postReadDTO;
 	}
 
 	// 게시글 존재 유무위해 - ys
@@ -362,4 +345,3 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 }
-

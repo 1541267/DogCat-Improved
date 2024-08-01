@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,23 +40,23 @@ public class PostLikeController extends BaseController {
 
 	@Operation(summary = "like register", description = "게시물 좋아요/싫어요 등록")
 	@PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, Long> register(@Valid @RequestBody PostLikeDTO postLikeDTO, Model model) {
+	public ResponseEntity<Map<String, Long>> register(@Valid @RequestBody PostLikeDTO postLikeDTO, Model model) {
 
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
-		postLikeDTO.setUserId(userId);
 
 		Map<String, Long> response = new HashMap<>();
+
 		Long likeNo = postLikeService.register(postLikeDTO);
 
 		response.put("likeNo", likeNo);
 
-		return response;
+		return ResponseEntity.ok(response);
 	}
 
 	@Operation(summary = "like Delete", description = "게시물 좋아요/싫어요 취소")
 	@DeleteMapping("/{likeNo}")
-	public Map<String, Long> delete(@PathVariable("likeNo") Long likeNo, Model model) {
+	public ResponseEntity<Map<String, Long>> delete(@PathVariable("likeNo") Long likeNo, Model model) {
 
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
@@ -66,7 +67,7 @@ public class PostLikeController extends BaseController {
 
 		response.put("likeNo", likeNo);
 
-		return response;
+		return ResponseEntity.ok(response);
 	}
 
 }

@@ -52,19 +52,14 @@ body {
 }
 
 .postContent {
-    min-height: 250px   ;
+    min-height: 250px;
     max-width: 100%;
-    margin-top: 60px;
     margin-bottom: 100px;
     overflow-x: hidden;
 }
 
-.postContentQ {
-    min-height: 250px   ;
-    max-width: 100%;
-    margin-top: 20px;
-    margin-bottom: 100px;
-    overflow-x: hidden;
+.completeBtnSection {
+    height: 60px;
 }
 
 .bi-hand-thumbs-up {

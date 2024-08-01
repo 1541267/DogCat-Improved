@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +40,7 @@ public class ScrapController extends BaseController {
 
 	@Operation(summary = "Scrap Register", description = "게시물 보관 등록")
 	@PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, Long> register(@Valid @RequestBody ScrapDTO scrapDTO, Model model) {
+	public ResponseEntity<Map<String, Long>> register(@Valid @RequestBody ScrapDTO scrapDTO, Model model) {
 
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
@@ -47,16 +48,17 @@ public class ScrapController extends BaseController {
 		scrapDTO.setUserId(userId);
 
 		Map<String, Long> response = new HashMap<>();
+
 		Long scrapNo = scrapService.register(scrapDTO);
 
 		response.put("scrapNo", scrapNo);
 
-		return response;
+		return ResponseEntity.ok(response);
 	}
 
 	@Operation(summary = "Scrap Delete", description = "게시물 보관 삭제")
 	@DeleteMapping("/{scrapNo}")
-	public Map<String, Long> delete(@PathVariable("scrapNo") Long scrapNo, Model model) {
+	public ResponseEntity<Map<String, Long>> delete(@PathVariable("scrapNo") Long scrapNo, Model model) {
 
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
@@ -67,6 +69,6 @@ public class ScrapController extends BaseController {
 
 		response.put("scrapNo", scrapNo);
 
-		return response;
+		return ResponseEntity.ok(response);
 	}
 }
