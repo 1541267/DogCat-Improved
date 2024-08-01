@@ -28,9 +28,9 @@ import com.community.dogcat.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/replies")
-@Slf4j
 public class ReplyController extends BaseController {
 
 	private final ReplyService replyService;
