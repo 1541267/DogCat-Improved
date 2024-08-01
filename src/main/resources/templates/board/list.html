@@ -395,7 +395,7 @@
                     if (role === 'ROLE_ADMIN' || role === 'ROLE_VET' || username === userId) {
                         location.href = '/board/read/' + postNo + '?page=' + page;
                     } else {
-                        alert('접근 권한이 없습니다.');
+                        alert('비밀글 열람 권한이 없습니다.');
                     }
                 } else {
                     // 비밀글이 아닌 경우
