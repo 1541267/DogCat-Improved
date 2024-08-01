@@ -31,7 +31,7 @@
 	<h3>🛠 Tools 🛠</h3>
 <img style = "height: 30px;" src="https://img.shields.io/badge/Windows10-0078D6?style=flat&logo=windows&logoColor=white"/>
 <img style = "height: 30px;" src="https://img.shields.io/badge/Windows11-0078D6?style=flat&logo=windows&logoColor=white"/>
-<img style = "height: 30px;" src="https://img.shields.io/badge/IntelliJ_IDEA-000000.svg?style=flat&logo=intellij-idea&logoColor=white"/>
+<img style = "height: 30px;" src="https://img.shields.io/badge/IntelliJ_IDEA-000000.svg?style=flat&logo=intellij-idea&logoColor=white"/><br>
 <img style = "height: 30px;" src="https://img.shields.io/badge/Visual%20Studio%20Code-007ACC?style=flat&logo=VisualStudioCode&logoColor=white" />
 
 <img style = "height: 30px;" src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=GitHub&logoColor=white" />
