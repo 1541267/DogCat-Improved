@@ -13,7 +13,7 @@ import com.community.dogcat.domain.UsersVet;
 import com.community.dogcat.repository.user.VetRepository;
 
 @SpringBootTest
-class VetRepositoryTest {
+class ForDummyData {
 
 	@Autowired
 	private VetRepository vetRepository;
