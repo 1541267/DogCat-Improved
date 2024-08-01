@@ -100,7 +100,7 @@ Github Flow
 - 7.20 (토) ~ 8.4 (일): 서버 안정화, 발표 준비
 <h2>5. 신경 쓴 부분</h2>
 
-- 팀장: 최대한 코드 퀄리티에 신경쓰며 코딩을 했다. <br>1. 중복 코드 최소화 및 기능 간략화
+- 팀장: 최대한 코드 퀄리티에 신경쓰며 코딩을 했다. <br>1. 중복 코드 최소화 및 기능 간략화 <br>2. 서버 모니터링을 위한 WARN레벨 이상의 로그 저장<br><br>
 
 <b>- 수정 전</b><br><br> <img width="622" alt="summernote deleteArrays 코드 수정 전" src="https://i.imgur.com/xIbEgx9.png" style="max-width: 50%;"> <br><br><b>- 수정 후</b><br><br> <img width="775" alt="summernote deleteArrays 코드 수정 후" src="https://i.imgur.com/vKAfrA3.png" style="max-width: 50%;"><br><hr><b>- 로깅</b><br><br> <img width="775" alt="summernote deleteArrays 코드 수정 후" src="https://i.imgur.com/RurYTLi.png" style="max-width: 50%;">
 <br><br>
