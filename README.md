@@ -1,6 +1,4 @@
-<p align="center">
-    <img src="https://capsule-render.vercel.app/api?type=waving&color=67cafe&height=250&fontColor=ffffff&fontSize=50&fontAlignY=30&animation=fadeIn&desc=반려동물%20커뮤니티%20프로젝트&descAlignY=55&descFontSize=60&descAlign=50&&text=Goott%20Arcademy&textAlign=50" />
-</p>
+![header](https://capsule-render.vercel.app/api?type=waving&color=67cafe&height=250&fontColor=ffffff&fontSize=50&fontAlignY=30&animation=fadeIn&desc=반려동물%20커뮤니티%20프로젝트&descAlignY=55&descFontSize=60&descAlign=50&&text=Goott%20Arcademy&textAlign=50)
 <div align=center>
 <b style= "font-size : 40px">🐈말랑 발자국🐕</b>
 <hr>
@@ -67,7 +65,8 @@ Github Flow
 - 브랜치 <br>
 1 . 각 개인 작업용 브랜치 <br>
 2 . 개발용 Dev 브랜치<br>
-3 . 배포용 EC2(Prd) 브랜치 <br>
+3 . 배포용 EC2(Prd) 브랜치 <br><br>
+- Github Convention <br> 1.  초기 세팅을 완료한 Main 브랜치로 시작 <br> 2. 각 개인 개발자가 Main 브랜치를 Checkout, 개발 시작 <br> 3. 두명씩 두개의 조로 나뉘어 개발중인 기능 테스트가 필요 할 시 각 조의 브랜치에서 테스트  <br> 4. 매일 PM 5:50에 Pull Request <br> 5. 모든 PR요청 완료시 팀원들은 사용중이던 Remote 브랜치를 제거 후 팀장이  점검/테스트 후 Checkout 해서 작업 진행 
 
 <h2>3. 역할 분담</h2>
 
@@ -87,23 +86,29 @@ Github Flow
 <br><br>
 - 6.14 (금): 요구사항 / 기능명세서 다듬고 기능별로 분류, 주말동안 ERD에 대해 공부, 직접 작성<br><br>
 - 6.17 (월): 각자 그려온 ERD로 전체 회의<br>1. DB 구성 <br>2.  기능명세서 기준으로 테이블관계를 어떻게 만들것인가<br><br>
-- 6.18 (화): DB 설계 완료<br> <img width="1131" alt="Malang 완성" src="https://private-user-images.githubusercontent.com/68197163/353371108-d83c6d41-ceeb-4ad5-9d73-e0de6c438c09.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjIzMjY0NzMsIm5iZiI6MTcyMjMyNjE3MywicGF0aCI6Ii82ODE5NzE2My8zNTMzNzExMDgtZDgzYzZkNDEtY2VlYi00YWQ1LTlkNzMtZTBkZTZjNDM4YzA5LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA3MzAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwNzMwVDA3NTYxM1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTM3Y2FjMzJlNzdkZTRkMTc4YTE0MzNiNzI1NjZiYzAzMWI4YjQ0MjMxZmQxMjBkZTkzMWE3NDUwZDVmODE1YmQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.u_HF0ru7u2C5FMscG2O84D6kC4yRfZdC5rv5bHFh0Rw" style="max-width: 100%;">
+- 6.18 (화): DB 설계 완료<br> <img width="1131" alt="Malang 완성" src="https://i.imgur.com/Ac3DfkZ.png" style="max-width: 100%;">
 <br><a href="https://www.erdcloud.com/d/oHPQBkBtQBTig7kMv">ERD 사이트</a><br>1. 각자 만들었던 레이아웃을 실제 view 파일로 코딩 <br><br>
 - 6.19 (수): 뷰 작업 마무리<br>1. 각자 만들어온 뷰를 토대로 전체 기능 다듬으며 기능명세서 수정<br><br>
 - 6.20 (목): 수정된 기능명세서를 참고하며 페이지 디자인 결정 후 기능별로 카테고리를 정렬<br><br>
-- 6.21 (금): 기능별 카테고리를 기준으로 2개의 조 편성<br>1. 유저관련(가입/로그인/마이페이지 -> 회원정보 관련) + 관리자 페이지(회원정보 직접 수정, 신고처리, 회원제제)<br>2. 게시판 CRUD + 페이징(정렬) + (마이페이지 -> 게시글 / 댓글 / 보관함 관련)<br>3. 코딩 시작
-
+- 6.21 (금): 기능별 카테고리를 기준으로 2개의 조 편성<br>1. 유저관련(가입/로그인/마이페이지 -> 회원정보 관련) + 관리자 페이지(회원정보 직접 수정, 신고처리, 회원제제)<br>2. 게시판 CRUD + 페이징(정렬) + (마이페이지 -> 게시글 / 댓글 / 보관함 관련)<br>3. 각 조에서 기능을 만들며 뷰 페이지를 같이 코딩<br>4. 코딩 시작
 - 7.5 (금): 중간 테스트, 각자 만들어온 기능 Dev 브랜치(로컬)에서 다 같이 테스트 후 생긴 버그 인지, 주말동안 수정<br>
+
+- 7.8 (월): 주말동안 AWS 세팅 후 배포, 코드중 리눅스에 맞지 않는 코드, 기능 정리<br>
 
 - 7.19 (금): 마무리 하기 전 마지막 테스트<br>1. 배포 환경(EC2/Linux)에서 테스트<br>
 
+- 7.20 (토) ~ 8.4 (일): 서버 안정화, 발표 준비
 <h2>5. 신경 쓴 부분</h2>
 
 - 팀장: 최대한 코드 퀄리티에 신경쓰며 코딩을 했다. <br>1. 중복 코드 최소화 및 기능 간략화
 
-<b>- 수정 전</b><br><br> <img width="622" alt="summernote deleteArrays 코드 수정 전" src="https://private-user-images.githubusercontent.com/68197163/353310536-2cae5e15-da9f-4f49-9784-de95d7e403d9.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjIzMTM2NDQsIm5iZiI6MTcyMjMxMzM0NCwicGF0aCI6Ii82ODE5NzE2My8zNTMzMTA1MzYtMmNhZTVlMTUtZGE5Zi00ZjQ5LTk3ODQtZGU5NWQ3ZTQwM2Q5LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA3MzAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwNzMwVDA0MjIyNFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWZjNGZjYWZlYTQ1NDZlZGVjNDY2MjQ1Y2ExYTE5NGFlNzdhYjEzZDYzNzJkMWU4NmYxNWRjOWIzYTUzZTNiMTAmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.RBAsBYjLK-9jAes8yumeS1jHfzPBLxdrKmDiZuaiR-w" style="max-width: 50%;"> <hr><b>- 수정 후</b><br><br> <img width="775" alt="summernote deleteArrays 코드 수정 후" src="https://private-user-images.githubusercontent.com/68197163/353310544-1bcfb7cc-9c43-4aa1-a604-9cfd6fe1e3c8.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjIzMTM2NDQsIm5iZiI6MTcyMjMxMzM0NCwicGF0aCI6Ii82ODE5NzE2My8zNTMzMTA1NDQtMWJjZmI3Y2MtOWM0My00YWExLWE2MDQtOWNmZDZmZTFlM2M4LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA3MzAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwNzMwVDA0MjIyNFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWU3YmEzYmIzY2JiODlkMWE1MzU3NmNlOTZlZTUxYzEzZGI0OTUxMGM0YWJlMDVjMzEzZDU1ODgwNmM4NjY5NmYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.I-mOAc_SPwoEupr8uZck2dItuBgSylz3Wy7fsOAOXpw" style="max-width: 50%;">
-<br>
+<b>- 수정 전</b><br><br> <img width="622" alt="summernote deleteArrays 코드 수정 전" src="https://i.imgur.com/xIbEgx9.png" style="max-width: 50%;"> <br><br><b>- 수정 후</b><br><br> <img width="775" alt="summernote deleteArrays 코드 수정 후" src="https://i.imgur.com/vKAfrA3.png" style="max-width: 50%;"><br><hr><b>- 로깅</b><br><br> <img width="775" alt="summernote deleteArrays 코드 수정 후" src="https://i.imgur.com/RurYTLi.png" style="max-width: 50%;">
+<br><br>
 <h2>6. 프로젝트 후기</h2>
 <br> 
+1. 김윤섭(팀장): <br><br>
 
-- 팀장: 
+- 팀장 역할<br><br> -  팀 전체의 역량과 개발 일정을 생각해 팀원들의 아이디어를 모으며 수용하되 과열되지 않도록 조율했습니다<br><br> - 팀원들의 작업 방식을 통일 시키기 위해 네이버 컨벤션 도입과 깃허브로 체크를 했습니다. <br> <br>- 프로젝트 진행 일정을 상황을 보며 직접 조절하고 결정하는게 어려웠고 고민하는 시간이 많았습니다.<br><br> - 회의와 문서화를 하며 프로젝트를 진행했지만 중간중간 정해진 내용이 기억이 나지 않아 햇갈리는 경우가 많았습니다.   <br><br>
+- 협업 프로젝트를 해 보며 많은 걸 느낀 좋은 기회였습니다.  <br><br> - Github Flow 로 협업을 해보며 팀원들과의 소통, git 히스토리 관리의 중요성을 느겼습니다.<br> <br>- 코딩 진행 상황을 보며 코드 퀄리티나 로깅 등 디테일에서 아쉬움을 많이 느꼈습니다 <br><br> -  회의 내용을 메모하고 정리하면 편할거라 생각 했지만 정보를 이용하는게 어려웠고 문서화의 중요성을 깨달았습니다. <br><br>
+
+- 아직 배울게 많지만 이번 프로젝트로 진행의 진행 흐름과 깃 사용, 팀장역할로 얻은 경험 등 배운게 많았던 프로젝트 였습니다.
