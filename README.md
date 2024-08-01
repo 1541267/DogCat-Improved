@@ -2,10 +2,10 @@
 <div align=center>
 	<h3>🐈말랑 발자국🐕</h3>
 <hr>
-	<p style= "font-size : 40px ">📚 Tech Stack 📚<p>
+	<h3>📚 Tech Stack 📚</h3>
 </>
 </><br>
-	<p style= "font-size : 30px">✨Front End✨<p>
+	<h3>✨Front End✨</h3>
 		<img style = "height: 30px;" src="https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=HTML5&logoColor=white" />
 		<img style = "height: 30px;" src="https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=CSS3&logoColor=white" />
 		<img style = "height: 30px;" src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=JavaScript&logoColor=white" />
@@ -13,14 +13,14 @@
 		<img style = "height: 30px;" src="https://img.shields.io/badge/jQuery-0769AD?style=flat&logo=jQuery&logoColor=white" />
 </><br><br>
 </>
-  	<p style= "font-size : 30px">💖Back End💖</p>
+  	<h3>💖Back End💖</h3>
 <img style = "height: 30px;" src="https://img.shields.io/badge/Java-007396?style=flat&logo=Conda-Forge&logoColor=white" />
 <img style = "height: 30px;" src="https://img.shields.io/badge/Spring-6DB33F?style=flat&logo=Spring&logoColor=white" />
 <img style = "height: 30px;" src="https://img.shields.io/badge/MariaDB-003545?style=flat&logo=MariaDB&logoColor=white" /><img style = "height: 30px;" src="https://img.shields.io/badge/JpaRepository-ff0063?style=flat&logo=&logoColor=white" 
 <br>
 <br>
 <br>
-	<p style= "font-size : 30px"><img src="https://cdn.iconscout.com/icon/free/png-256/free-aws-1869025-1583149.png?f=webp&w=30"> AWS <img src="https://cdn.iconscout.com/icon/free/png-256/free-aws-1869025-1583149.png?f=webp&w=30"></p>
+	<h3><img src="https://cdn.iconscout.com/icon/free/png-256/free-aws-1869025-1583149.png?f=webp&w=30"> AWS <img src="https://cdn.iconscout.com/icon/free/png-256/free-aws-1869025-1583149.png?f=webp&w=30"></h3>
 
 <img style = "height: 30px;" src="https://img.shields.io/badge/Amazon RDS-527FFF?style=flat&logo=AmazonRDS&logoColor=FFFFFF">
 <img style = "height: 30px;" src="https://img.shields.io/badge/Amazon EC2-FF9900?style=flat&logo=AmazonEC2&logoColor=FFFFFF">
@@ -28,7 +28,7 @@
 <br><img style = "height: 30px;" src="https://img.shields.io/badge/Amazon S3-569A31?style=flat&logo=AmazonS3&logoColor=white" />
 <img style = "height: 30px;" src="https://img.shields.io/badge/Amazon Route53-8C4FFF?style=flat&logo=AmazonRoute53&logoColor=white" />
 <br><br><br>
-	<p style= "font-size : 30px">🛠 Tools 🛠</p>
+	<h3>🛠 Tools 🛠</h3>
 <img style = "height: 30px;" src="https://img.shields.io/badge/Windows10-0078D6?style=flat&logo=windows&logoColor=white"/>
 <img style = "height: 30px;" src="https://img.shields.io/badge/Windows11-0078D6?style=flat&logo=windows&logoColor=white"/>
 <img style = "height: 30px;" src="https://img.shields.io/badge/IntelliJ_IDEA-000000.svg?style=flat&logo=intellij-idea&logoColor=white"/>
@@ -38,7 +38,7 @@
 </>
 </>
 <br><br><br><hr>
-	<p style= "font-size : 30px">🎨 SNS & Portfolio 🎨</p>
+	<h3>🎨 SNS & Portfolio 🎨</h3>
 </div>
 <h2>팀원 소개</h2>
 
