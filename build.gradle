@@ -53,7 +53,6 @@ dependencies {
 
     // slf4j
     implementation 'org.springframework.boot:spring-boot-starter-logging'
-    implementation 'org.fusesource.jansi:jansi:2.4.1'
 
     // swagger ui
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
@@ -106,19 +105,19 @@ test {
     useJUnitPlatform()
 }
 
-processResources.dependsOn('copyYml')
-
-tasks.register('copyYml', Copy) {
-    from './Secret-DogCat/Dev'
-    include "*.yml"  // 복사할 파일들
-    into 'src/main/resources'  // 복사 위치
-}
-
-//  TODO 배포시 활성화
-//processResources.dependsOn('copySecret')
+//processResources.dependsOn('copyYml')
 //
-//tasks.register('copySecret', Copy) {
-//    from './Secret-DogCat/EC2'
-//    include "application.yml"  // 복사할 파일들
+//tasks.register('copyYml', Copy) {
+//    from './Secret-DogCat/Dev'
+//    include "*.yml"  // 복사할 파일들
 //    into 'src/main/resources'  // 복사 위치
 //}
+//
+//  TODO 배포시 활성화
+processResources.dependsOn('copySecret')
+
+tasks.register('copySecret', Copy) {
+    from './Secret-DogCat/EC2'
+    include "application.yml"  // 복사할 파일들
+    into 'src/main/resources'  // 복사 위치
+}
