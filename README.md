@@ -106,15 +106,7 @@ Github Flow
 
 
 - home
-  <style>
-	table, tr, td {
-	 border: 1px solid gray;
-	 border-spacing: 0;
-	}
-	td:first-child {
-	width: 200px;
-	}
-</style>
+
   <table>
 	  <tr>
 		  <td>전체 게시판</td>
@@ -421,6 +413,16 @@ Github Flow
 	    </tr>
     </table>
     <br>
+
+      <style>
+	table, tr, td {
+	 border: 1px solid gray;
+	 border-spacing: 0;
+	}
+	td:first-child {
+	width: 200px;
+	}
+</style>
 
 
 <h2>5. 개발 기간 및 작업 관리</h2>
