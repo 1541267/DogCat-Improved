@@ -75,6 +75,35 @@ Github Flow
 - 시큐리티, 신고 담당: 김슬기(<a href="https://github.com/seulbaong">@seulbaong</a>) | 박민우(<a href="https://github.com/parkminwoo0802">@parkminwoo0802</a>)<br><br>
 <h2>4. 페이지별 기능</h2>
 
+
+
+- login(Spring Security, JWT)<br>
+일반로그인 : 홈페이지 내에서 회원가입 한 사용자 로그인<br>
+자동로그인 : 자동로그인 체크 후 로그인 시 1주일 간 자동로그인<br>
+아이디저장 : 최근 로그인 한 사용자 아이디를 저장<br>
+소셜로그인 : 카카오, 네이버, 구글
+
+- join<br>
+회원가입 시 필요한 정보를 입력하여 저장<br>
+수의사인증 : 이름, 수의사번호로 수의사인증 가능
+
+- findId<br>
+이름, 연락처를 입력하면 해당하는 아이디를 보여줌<br>
+아이디 찾기 완료 후 비밀번호 찾기 페이지로 이동 가능
+
+- findPw<br>
+이름, 아이디를 입력하고 임시비밀번호를 발급하면 아이디(메일주소)로 임시 비밀번호 발급
+
+- userDetail<br>
+현재 로그인한 사용자의 정보를 보여줌<br>
+회원탈퇴 : 회원탈퇴 기능. 회원탈퇴 시 글, 댓글, 좋아요, 스크랩, 신고 제거
+
+- userModify<br>
+현재 로그인한 사용자의 정보를 수정하는 페이지<br>
+모든 항목은 기존 비밀번호를 입력해야 수정 가능<br>
+수의사인증 : 이름, 수의사번호로 수의사인증 가능
+<br>
+
 <br>
 
 <h2>5. 개발 기간 및 작업 관리</h2>
@@ -103,6 +132,14 @@ Github Flow
 
 <b>- 수정 전</b><br><br> <img width="622" alt="summernote deleteArrays 코드 수정 전" src="https://i.imgur.com/xIbEgx9.png" style="max-width: 50%;"> <br><br><b>- 수정 후</b><br><br> <img width="775" alt="summernote deleteArrays 코드 수정 후" src="https://i.imgur.com/vKAfrA3.png" style="max-width: 50%;"><br><hr><b>- 로깅</b><br><br> <img width="775" alt="summernote deleteArrays 코드 수정 후" src="https://i.imgur.com/RurYTLi.png" style="max-width: 50%;">
 <br><br>
+
+
+- 김슬기<br>
+JWT방식의 정확한 구현을 위해 학습시간을 가짐<br>
+로그인 기능을 JWT 발급 방식으로 구현하면서, 구글에서 찾을 수 있는 정보와 코드들이 종종 부정확하거나 비정상적으로 작동하는 경우가 많았음.<br>
+이를 해결하기 위해 관련 강의를 여러개 수강하고, 실제로 여러 번 테스트를 진행하여 최적의 구현 방법을 찾아 프로젝트에 성공적으로 적용함.
+<br><br>
+
 <h2>6. 프로젝트 후기</h2>
 <br> 
 1. 김윤섭(팀장): <br><br>
