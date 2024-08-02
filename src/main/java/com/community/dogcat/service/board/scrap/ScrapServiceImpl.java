@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.community.dogcat.domain.Post;
+import com.community.dogcat.domain.PostLike;
 import com.community.dogcat.domain.Scrap;
 import com.community.dogcat.domain.User;
 import com.community.dogcat.dto.board.scrap.ScrapDTO;
@@ -31,11 +32,11 @@ public class ScrapServiceImpl implements ScrapService {
 	public Long register(ScrapDTO scrapDTO) {
 
 		// 게시물 번호 조회
-		Post post = boardRepository.findById(scrapDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("Post not found"));
+		Post post = boardRepository.findById(scrapDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("Scrap Service Register Error : 404 Not Found"));
 
 		// 로그인한 회원정보를 받아 userId 조회
 		String userId = scrapDTO.getUserId();
-		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
+		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Scrap Service Register Error : 401 Unauthorized"));
 
 		// 로그인한 회원의 스크랩 여부 확인
 		Optional<Scrap> scrapState = scrapRepository.findByPostNoAndUserId(post, user);
@@ -62,7 +63,7 @@ public class ScrapServiceImpl implements ScrapService {
 	public void delete(Long scrapNo, String userId) {
 
 		// 로그인한 회원정보를 받아 userId 조회
-		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
+		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Scrap Service Delete Error : 401 Unauthorized"));
 
 		// 로그인한 회원의 스크랩 여부 확인
 		Optional<Scrap> scrap = scrapRepository.findByScrapNoAndUserId(scrapNo, user);

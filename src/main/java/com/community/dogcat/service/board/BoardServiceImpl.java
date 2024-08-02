@@ -82,7 +82,7 @@ public class BoardServiceImpl implements BoardService {
 
 		// 로그인한 회원정보를 받아 userId 조회
 		String userId = postDTO.getUserId();
-		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
+		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Board Service Register Error : 401 Unauthorized"));
 
 		// 조회한 회원정보 DTO에 추가
 		postDTO.setNickname(user.getNickname());
@@ -120,7 +120,7 @@ public class BoardServiceImpl implements BoardService {
 	public void delete(Long postNo, String userId) {
 
 		// 로그인한 회원 정보 확인
-		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
+		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Board Service Delete Error : 401 Unauthorized"));
 
 		// 게시물 번호와 회원 아이디가 일치하는 게시물인지 확인
 		Optional<Post> post = boardRepository.findByPostNoAndUserId(postNo, user);
@@ -158,7 +158,7 @@ public class BoardServiceImpl implements BoardService {
 			boardRepository.deleteById(postNo);
 
 		} else {
-			log.error("board Service Delete Error : 403 Forbidden");
+			log.error("Board Service Delete Error : 403 Forbidden");
 		}
 	}
 
@@ -166,7 +166,7 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public PostDTO readOne(Long postNo) {
 		// 게시물 번호 조회
-		Post post = boardRepository.findById(postNo).orElseThrow();
+		Post post = boardRepository.findById(postNo).orElseThrow(() -> new NoSuchElementException("Board Service ReadOne Error : 404 Not Found"));
 
 		return new PostDTO(post);
 	}
@@ -184,10 +184,10 @@ public class BoardServiceImpl implements BoardService {
 	public PostReadDTO readDetail(Long postNo, String userId) {
 
 		// 게시물 번호 조회 (게시물 정보 확인용)
-		Post post = boardRepository.findById(postNo).orElseThrow(() -> new NoSuchElementException("Post not found"));
+		Post post = boardRepository.findById(postNo).orElseThrow(() -> new NoSuchElementException("Board Service ReadDetail Error : 404 Not Found"));
 
 		// 로그인한 회원정보를 받아 userId 조회
-		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
+		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Board Service ReadDetail Error : 401 Unauthorized"));
 
 		// 로그인한 회원의 스크랩 여부 확인
 		Optional<Scrap> scrap = scrapRepository.findByPostNoAndUserId(post, user);
@@ -215,7 +215,7 @@ public class BoardServiceImpl implements BoardService {
 
 		Optional<Post> optionalPost = boardRepository.findById(postNo);
 
-		return optionalPost.get();
+		return optionalPost.orElseGet(()->null);
 	}
 
 	// 게시글 조회시 사진 찾기 - ys
@@ -250,7 +250,7 @@ public class BoardServiceImpl implements BoardService {
 	public Long modify(PostDTO postDTO, String userId) {
 
 		// 게시물 번호 조회
-		Post post = boardRepository.findById(postDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("Post not found"));
+		Post post = boardRepository.findById(postDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("Board Service Modify Error : 404 Not Found"));
 
 		// 게시물 작성자 확인
 		if (postDTO.getUserId().equals(userId)) {
@@ -275,7 +275,7 @@ public class BoardServiceImpl implements BoardService {
 			boardRepository.save(post);
 
 		} else {
-			log.error("board Service Modify Error : 403 Forbidden");
+			log.error("Board Service Modify Error : 403 Forbidden");
 		}
 
 		return post.getPostNo();
@@ -285,7 +285,7 @@ public class BoardServiceImpl implements BoardService {
 	public Long completeQna(PostDTO postDTO, String userId) {
 
 		// 게시물 번호 조회
-		Post post = boardRepository.findById(postDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("Post not found"));
+		Post post = boardRepository.findById(postDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("Board Service CompleteQna Error : 404 Not Found"));
 
 		// 게시물 작성자 확인
 		if (postDTO.getUserId().equals(userId)) {
@@ -296,7 +296,7 @@ public class BoardServiceImpl implements BoardService {
 				postDTO.isCompleteQna());
 
 		} else {
-			log.error("board Service completeQna Error : 403 Forbidden");
+			log.error("Board Service completeQna Error : 403 Forbidden");
 		}
 
 		return post.getPostNo();

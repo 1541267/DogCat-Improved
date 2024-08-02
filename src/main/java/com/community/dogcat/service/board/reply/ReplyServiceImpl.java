@@ -45,12 +45,12 @@ public class ReplyServiceImpl implements ReplyService {
 
 		// 로그인한 회원정보를 받아 userId 조회
 		String userId = replyDTO.getUserId();
-		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
+		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Reply Service Register Error : 401 Unauthorized"));
 		// 조회한 회원정보 DTO에 추가
 		replyDTO.setNickname(user.getNickname());
 
 		// 댓글 작성을 위해 게시물 번호 조회
-		Post post = boardRepository.findById(replyDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("Post not found"));
+		Post post = boardRepository.findById(replyDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("Reply Service Register Error : 404 Not Found"));
 
 		// 게시물이 비밀글인 경우
 		boolean secret = post.isSecret();
@@ -76,7 +76,7 @@ public class ReplyServiceImpl implements ReplyService {
 				replyRepository.save(reply);
 
 			} else {
-				log.error("reply Service Register Error : 403 Forbidden");
+				log.error("Reply Service Register Error : 403 Forbidden");
 				return null;
 			}
 
@@ -100,7 +100,7 @@ public class ReplyServiceImpl implements ReplyService {
 	public void delete(Long replyNo, String userId) {
 
 		// 로그인한 회원 정보 확인
-		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
+		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Reply Service Delete Error : 401 Unauthorized"));
 
 		// 댓글 번호와 회원 아이디가 일치하는 댓글인지 확인
 		Optional<Reply> reply = replyRepository.findByReplyNoAndUserId(replyNo, user);
@@ -122,7 +122,7 @@ public class ReplyServiceImpl implements ReplyService {
 			replyRepository.deleteById(replyNo);
 
 		} else {
-			log.error("reply Service Delete Error : 403 Forbidden");
+			log.error("Reply Service Delete Error : 403 Forbidden");
 		}
 	}
 

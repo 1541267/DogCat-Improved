@@ -1,8 +1,11 @@
 package com.community.dogcat.controller.board;
 
+import static org.springframework.http.HttpStatus.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -67,7 +70,7 @@ public class BoardController extends BaseController {
 
 		if (userId == null) {
 			log.error("BoardController Register Error : 401 Unauthorized");
-			return ResponseEntity.status(401).build(); // 인증되지 않은 경우(로그인 필요)
+			return ResponseEntity.status(UNAUTHORIZED).build(); // 인증되지 않은 경우(로그인 필요)
 		}
 
 		postDTO.setUserId(userId);
@@ -87,6 +90,10 @@ public class BoardController extends BaseController {
 
 		// 게시글 유무 - ys
 		Post post = boardService.findPostByPostNo(postNo);
+		if (post == null) {
+			log.error("BoardController Read Error : 404 Not Found");
+			return "redirect:/error"; // 게시글이 존재하지 않는 경우 404 오류
+		}
 
 		// 조회수 증가
 		boardService.updateViewCount(postNo);
@@ -108,7 +115,7 @@ public class BoardController extends BaseController {
 		model.addAttribute("postDTO", postDTO);
 		boolean secret = postDTO.isSecret();
 
-		// 게시글 작성자 확인
+		// 비밀글 게시글 작성자 확인
 		if (secret) {
 			if(!userId.equals(postDTO.getUserId()) && role.equals("ROLE_USER")) {
 				log.error("BoardController Read Error : 403 Forbidden");
@@ -126,19 +133,12 @@ public class BoardController extends BaseController {
 		model.addAttribute("pageRequestDTO", pageRequestDTO);
 		model.addAttribute("responseDTO", responseDTO);
 
-		if (post != null) {
-			// 이미지 정보
-			List<String> uploadPaths = boardService.getImages(postNo);
+		// 이미지 정보
+		List<String> uploadPaths = boardService.getImages(postNo);
 
-			model.addAttribute("uploadPaths", uploadPaths);
-			model.addAttribute("post", post);
+		model.addAttribute("uploadPaths", uploadPaths);
 
-			return "board/read";
-
-		} else {
-			log.error("BoardController Read Error : 404 Not Found");
-			return "redirect:/error"; // 해당 게시글이 없을경우 404 오류
-		}
+		return "board/read";
 	}
 
 	@GetMapping({"/modify/{postNo}", "/modify_q/{postNo}"})
@@ -156,7 +156,7 @@ public class BoardController extends BaseController {
 		}
 
 		// 게시글 조회
-		if (postDTO == null) {
+		if (postNo == null) {
 			log.error("BoardController Modify Error : 404 Not Found");
 			return "redirect:/error"; // 게시글이 존재하지 않는 경우 404 오류
 		}
@@ -183,16 +183,23 @@ public class BoardController extends BaseController {
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 
+		// 게시글 조회
+		Post post = boardService.findPostByPostNo(postDTO.getPostNo());
+		if (post == null) {
+			log.error("BoardController completeQna Error : 404 Not Found");
+			return ResponseEntity.status(NOT_FOUND).build(); // 게시글이 존재하지 않는 경우 404 오류
+		}
+
 		// 로그인 사용자 확인
 		if (userId == null) {
 			log.error("BoardController Modify Post Error : 401 Unauthorized");
-			return ResponseEntity.status(401).build(); // 로그인되지 않은 경우 401 오류
+			return ResponseEntity.status(UNAUTHORIZED).build(); // 로그인되지 않은 경우 401 오류
 		}
 
 		// 게시글 작성자 확인
 		if (!userId.equals(postDTO.getUserId())) {
 			log.error("BoardController Modify Post Error : 403 Forbidden");
-			return ResponseEntity.status(403).build(); // 권한이 없는 경우 403 오류
+			return ResponseEntity.status(FORBIDDEN).build(); // 권한이 없는 경우 403 오류
 		}
 
 		Long id = boardService.modify(postDTO, userId);
@@ -210,16 +217,23 @@ public class BoardController extends BaseController {
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 
+		// 게시글 조회
+		Post post = boardService.findPostByPostNo(postDTO.getPostNo());
+		if (post == null) {
+			log.error("BoardController completeQna Error : 404 Not Found");
+			return ResponseEntity.status(NOT_FOUND).build(); // 게시글이 존재하지 않는 경우 404 오류
+		}
+
 		// 로그인 사용자 확인
 		if (userId == null) {
 			log.error("BoardController Modify_q Post Error : 401 Unauthorized");
-			return ResponseEntity.status(401).build(); // 로그인되지 않은 경우 401 오류
+			return ResponseEntity.status(UNAUTHORIZED).build(); // 로그인되지 않은 경우 401 오류
 		}
 
 		// 게시글 작성자 확인
 		if (!userId.equals(postDTO.getUserId())) {
 			log.error("BoardController Modify_q Post Error : 403 Forbidden");
-			return ResponseEntity.status(403).build(); // 권한이 없는 경우 403 오류
+			return ResponseEntity.status(FORBIDDEN).build(); // 권한이 없는 경우 403 오류
 		}
 
 		Long id = boardService.modify(postDTO, userId);
@@ -236,6 +250,25 @@ public class BoardController extends BaseController {
 
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
+
+		// 게시글 조회
+		Post post = boardService.findPostByPostNo(postDTO.getPostNo());
+		if (post == null) {
+			log.error("BoardController completeQna Error : 404 Not Found");
+			return ResponseEntity.status(NOT_FOUND).build(); // 게시글이 존재하지 않는 경우 404 오류
+		}
+
+		// 로그인 사용자 확인
+		if (userId == null) {
+			log.error("BoardController completeQna Post Error : 401 Unauthorized");
+			return ResponseEntity.status(UNAUTHORIZED).build(); // 로그인되지 않은 경우 403 오류
+		}
+
+		// 게시글 작성자 확인
+		if (!userId.equals(postDTO.getUserId())) {
+			log.error("BoardController completeQna Post Error : 403 Forbidden");
+			return ResponseEntity.status(FORBIDDEN).build(); // 권한이 없는 경우 403 오류
+		}
 
 		Long postNo = boardService.completeQna(postDTO, userId);
 
@@ -261,7 +294,7 @@ public class BoardController extends BaseController {
 
 		// 게시글 조회
 		PostDTO postDTO = boardService.readOne(postNo);
-		if (postDTO == null) {
+		if (postNo == null) {
 			log.error("BoardController Delete Error : 404 Not Found");
 			return "redirect:/error"; // 게시글이 존재하지 않는 경우 404 오류
 		}
