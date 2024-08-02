@@ -76,7 +76,7 @@
                                                  alt="Image">
                                         </div>
                                         <div>
-                                            <div class="showOffTitle">
+                                            <div class="showOffTitle d-flex flex-row">
                                                 <span>
                                                     <img class="tag" src="/img/tag/tag_dog.png"
                                                          th:if="${dto.postTag eq '강아지'}"
@@ -85,7 +85,7 @@
                                                          th:if="${dto.postTag eq '고양이'}"
                                                          alt="고양이태그">
                                                 </span>
-                                                <span th:text="${dto.postTitle}">
+                                                <span th:text="${dto.postTitle}" class="showoffTitleIn">
                                                     게시물 제목
                                                 </span>
                                             </div>
