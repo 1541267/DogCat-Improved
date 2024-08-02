@@ -275,7 +275,7 @@ Github Flow
 
  - register
  
-  <table>
+   <table>
 	    <tr>
 		    <td>게시판 설명</td>
 		    <td>글쓰기 페이지 상단에 페이지 이름과 게시판 선택에 대한 각 게시판 설명을 표시한다.<br>
@@ -414,15 +414,7 @@ Github Flow
     </table>
     <br>
 
-      <style>
-	table, tr, td {
-	 border: 1px solid gray;
-	 border-spacing: 0;
-	}
-	td:first-child {
-	width: 200px;
-	}
-</style>
+      <style>table, tr, td { border: 1px solid gray; border-spacing: 0;} td:first-child {width: 200px;}</style>
 
 
 <h2>5. 개발 기간 및 작업 관리</h2>
