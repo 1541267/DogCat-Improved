@@ -7,9 +7,14 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.community.dogcat.domain.User;
+import com.community.dogcat.domain.UsersAuth;
 import com.community.dogcat.domain.UsersVet;
+import com.community.dogcat.repository.user.UserRepository;
+import com.community.dogcat.repository.user.UsersAuthRepository;
 import com.community.dogcat.repository.user.VetRepository;
 
 @SpringBootTest
@@ -18,8 +23,45 @@ class ForDummyData {
 	@Autowired
 	private VetRepository vetRepository;
 
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private UsersAuthRepository usersAuthRepository;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
 	@Test
-	public void testInsertVets() {
+	public void ForDummyData() {
+
+		User admin = User.builder()
+			.userId("admin@admin.aa")
+			.userName("admin")
+			.userPw(passwordEncoder.encode("aaaaaaaa"))
+			.nickname("admin")
+			.exp(0L)
+			.tel("010-0000-0000")
+			.build();
+		UsersAuth adminAuth =UsersAuth.builder().userId("admin@admin.aa").authorities("ROLE_ADMIN").build();
+
+
+		User admin1 = User.builder()
+			.userId("admin1@admin.aa")
+			.userName("admin1")
+			.userPw(passwordEncoder.encode("aaaaaaaa"))
+			.nickname("admin1")
+			.exp(0L)
+			.tel("010-0000-0000")
+			.build();
+
+		UsersAuth adminAuth1 =UsersAuth.builder().userId("admin1@admin.aa").authorities("ROLE_ADMIN").build();
+
+
+		userRepository.save(admin);
+		userRepository.save(admin1);
+		usersAuthRepository.save(adminAuth);
+		usersAuthRepository.save(adminAuth1);
 
 		UsersVet vet1 = new UsersVet("김윤섭", 11111L, false);
 		UsersVet vet2 = new UsersVet("박민우", 22222L, false);

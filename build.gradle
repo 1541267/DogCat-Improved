@@ -112,7 +112,7 @@ test {
 //    include "*.yml"  // 복사할 파일들
 //    into 'src/main/resources'  // 복사 위치
 //}
-//
+
 //  TODO 배포시 활성화
 processResources.dependsOn('copySecret')
 
