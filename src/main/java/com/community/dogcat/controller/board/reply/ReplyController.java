@@ -43,16 +43,11 @@ public class ReplyController extends BaseController {
 
 	@Operation(summary = "Reply Register", description = "댓글 등록")
 	@PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, Long> register(@Valid @RequestBody ReplyDTO replyDTO, BindingResult bindingResult,
-		Model model) throws
+	public Map<String, Long> register(@Valid @RequestBody ReplyDTO replyDTO, BindingResult bindingResult) throws
 		BindException {
 		if (bindingResult.hasErrors()) {
 			throw new BindException(bindingResult);
 		}
-
-		// 모델에서 사용자 정보를 가져옴
-		String userId = (String)model.getAttribute("username");
-		replyDTO.setUserId(userId);
 
 		Map<String, Long> resultMap = new HashMap<>();
 		Long replyNo = replyService.register(replyDTO);

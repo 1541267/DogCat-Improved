@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.community.dogcat.domain.Post;
 import com.community.dogcat.domain.PostLike;
+import com.community.dogcat.domain.Scrap;
 import com.community.dogcat.domain.User;
 import com.community.dogcat.dto.board.postLike.PostLikeDTO;
 import com.community.dogcat.repository.board.BoardRepository;
@@ -33,11 +34,11 @@ public class PostLikeServiceImpl implements PostLikeService {
 	public Long register(PostLikeDTO postLikeDTO) {
 
 		// 게시물 번호로 게시물 조회
-		Post post = boardRepository.findById(postLikeDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("Post not found"));
+		Post post = boardRepository.findById(postLikeDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("PostLike Service Register Error : 404 Not Found"));
 
 		// 로그인한 회원 정보 조회
 		String userId = postLikeDTO.getUserId();
-		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
+		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("PostLike Service Register Error : 401 Unauthorized"));
 
 		// 해당 게시물에 대한 사용자의 좋아요, 싫어요 상태 조회
 		Optional<PostLike> like = postLikeRepository.findByPostAndUser(post, user);
@@ -106,10 +107,10 @@ public class PostLikeServiceImpl implements PostLikeService {
 	public void delete(Long likeNo, String userId) {
 
 		// 로그인한 회원정보를 받아 userId 조회
-		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
+		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("PostLike Service Delete Error : 401 Unauthorized"));
 
 		// likeNo를 통해 postLike 찾아오기
-		PostLike postLike = postLikeRepository.findById(likeNo).orElseThrow(() -> new NoSuchElementException("PostLike not found"));
+		PostLike postLike = postLikeRepository.findById(likeNo).orElseThrow(() -> new NoSuchElementException("PostLike Service Delete Error : 404 Not Found"));
 
 		// 해당 게시물에 대한 사용자의 좋아요, 싫어요 상태 조회
 		Optional<PostLike> like = postLikeRepository.findByPostAndUser(postLike.getPostNo(), user);
@@ -154,6 +155,7 @@ public class PostLikeServiceImpl implements PostLikeService {
 			log.error("PostLike Service Delete Error : 'likeState' or 'dislikeState' does not exist.");
 		}
 	}
+
 }
 
 

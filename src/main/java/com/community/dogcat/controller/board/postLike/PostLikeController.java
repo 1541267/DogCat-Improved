@@ -1,5 +1,7 @@
 package com.community.dogcat.controller.board.postLike;
 
+import static org.springframework.http.HttpStatus.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.community.dogcat.controller.BaseController;
+import com.community.dogcat.domain.PostLike;
 import com.community.dogcat.dto.board.postLike.PostLikeDTO;
 import com.community.dogcat.jwt.JWTUtil;
 import com.community.dogcat.service.board.postLike.PostLikeService;
@@ -45,6 +48,12 @@ public class PostLikeController extends BaseController {
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 
+		// 로그인 사용자 확인
+		if (userId == null) {
+			log.error("PostLikeController register Error : 401 Unauthorized");
+			return ResponseEntity.status(UNAUTHORIZED).build(); // 로그인되지 않은 경우 401 오류
+		}
+
 		Map<String, Long> response = new HashMap<>();
 
 		Long likeNo = postLikeService.register(postLikeDTO);
@@ -60,6 +69,18 @@ public class PostLikeController extends BaseController {
 
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
+
+		// 로그인 사용자 확인
+		if (userId == null) {
+			log.error("PostLikeController Delete Error : 401 Unauthorized");
+			return ResponseEntity.status(UNAUTHORIZED).build(); // 로그인되지 않은 경우 401 오류
+		}
+
+		// 좋아요/싫어요 조회
+		if (likeNo == null) {
+			log.error("PostLikeController Delete Error : 404 Not Found");
+			return ResponseEntity.status(NOT_FOUND).build(); // 좋아요가 존재하지 않는 경우 404 오류
+		}
 
 		postLikeService.delete(likeNo, userId);
 
