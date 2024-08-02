@@ -90,6 +90,13 @@ td > a {
     font-size: 16px;
 }
 
+.listTitle {
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .title.sub {
     font-size: 12px;
     color: gray;
@@ -97,6 +104,14 @@ td > a {
 
 .showOffTitle {
     font-size: 22px;
+    width: 600px;
+}
+
+.showoffTitleIn {
+    max-width: 500px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .showOffTitle.sub {

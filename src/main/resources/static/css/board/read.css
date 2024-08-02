@@ -27,7 +27,15 @@ body {
 }
 
 .readTitle {
+    width: 700px;
     font-size: 25px;
+}
+
+.readTitleIn {
+    max-width: 600px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .readTitle.sub {
@@ -52,14 +60,19 @@ body {
 }
 
 .postContent {
-    min-height: 250px;
+    min-height: 250px   ;
     max-width: 100%;
+    margin-top: 60px;
     margin-bottom: 100px;
     overflow-x: hidden;
 }
 
-.completeBtnSection {
-    height: 60px;
+.postContentQ {
+    min-height: 250px   ;
+    max-width: 100%;
+    margin-top: 20px;
+    margin-bottom: 100px;
+    overflow-x: hidden;
 }
 
 .bi-hand-thumbs-up {
@@ -326,6 +339,13 @@ td > a {
     font-size: 22px;
 }
 
+.downShowTitle {
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .showOffTitle.sub {
     font-size: 18px;
     color: gray;
@@ -361,3 +381,11 @@ td > a {
     --bs-btn-active-border-color: #67cafe;
     --bs-btn-active-bg: #67cafe;
 }
+
+.downList {
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+

@@ -78,24 +78,26 @@
                                                  th:alt="${dto.completeQna ? '답변 완료' : '수의사만 답변 가능'}">
                                         </div>
                                         <div>
-                                            <div class="title">
-                                                <span>
-                                                    <img class="tag" src="/img/tag/tag_dog.png"
-                                                         th:if="${dto.postTag eq '강아지'}"
-                                                         alt="강아지태그">
-                                                    <img class="tag" src="/img/tag/tag_cat.png"
-                                                         th:if="${dto.postTag eq '고양이'}"
-                                                         alt="고양이태그">
-                                                </span>
-                                                <span th:text="${dto.postTitle}">
-                                                    게시물 제목
-                                                </span>
+                                            <div class="title d-flex flex-row">
+                                                <div class="listTitle mt-2">
+                                                    <span>
+                                                        <img class="tag" src="/img/tag/tag_dog.png"
+                                                             th:if="${dto.postTag eq '강아지'}"
+                                                             alt="강아지태그">
+                                                        <img class="tag" src="/img/tag/tag_cat.png"
+                                                             th:if="${dto.postTag eq '고양이'}"
+                                                             alt="고양이태그">
+                                                    </span>
+                                                    <span th:text="${dto.postTitle}" class="mt-2">
+                                                        게시물 제목
+                                                    </span>
+                                                </div>
                                                 <!--비밀글여부-->
-                                                <span class="icon secret" th:if="${dto.secret == true}">
+                                                <span class="icon secret mt-2" th:if="${dto.secret == true}">
                                                  <i class="bi bi-file-lock"></i>
                                                 </span>
                                                 <!--비밀글일경우 첨부파일이 존재해도 표시안하고 비밀글처리 ~> 첨부파잂 표시하려면 비밀글값이 0이어야함(디폴트값)-->
-                                                <span class="icon file"
+                                                <span class="icon file mt-2"
                                                       th:if="${dto.imgBoards != null && dto.imgBoards.size() > 0 && dto.secret == false}">
                                                      <i class="bi bi-file-earmark-image"></i>
                                                 </span>

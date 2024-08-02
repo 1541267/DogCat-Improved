@@ -46,22 +46,22 @@
                     <tbody>
                     <tr class="justify-content-center">
                         <td class="read-one">
-                            <span class="align-middle" th:if="${postDTO.replyAuth==true}">
-                                <img class="replyAuthImg" th:src="${postDTO.completeQna ? '/img/tag/completeQna.png' : '/img/tag/vetScope.png'}"
-                                     th:alt="${postDTO.completeQna ? '답변 완료' : '수의사만 답변 가능'}">
-                            </span>
-                            <span>
+                            <div class="readTitle d-flex flex-row">
+                                <span class="align-middle" th:if="${postDTO.replyAuth==true}">
+                                        <img class="replyAuthImg" th:src="${postDTO.completeQna ? '/img/tag/completeQna.png' : '/img/tag/vetScope.png'}"
+                                             th:alt="${postDTO.completeQna ? '답변 완료' : '수의사만 답변 가능'}">
+                                </span>
+                                <span>
                                     <img class="tag" src="/img/tag/tag_dog.png" th:if="${postDTO.postTag eq '강아지'}"
                                          alt="강아지태그">
                                     <img class="tag" src="/img/tag/tag_cat.png" th:if="${postDTO.postTag eq '고양이'}"
                                          alt="고양이태그">
-                            </span>
-                            <span class="readTitle" th:text="${postDTO.postTitle}">
-                            </span>
-                            <span class="icon secret" th:if="${postDTO.secret != false}">
+                                </span>
+                                <span class="readTitleIn" th:text="${postDTO.postTitle}"></span>
+                                <span class="icon secret" th:if="${postDTO.secret != false}">
                                     <i class="bi bi-file-lock"></i>
-                            </span>
-                            <br>
+                                </span>
+                            </div>
                             <div class="readTitle sub">
                                 <span th:text="${postDTO.nickname}">작성자</span>
                                 <span>
@@ -86,7 +86,7 @@
                             <div>
                                 <span>조회수</span>
                                 <span th:text="${postDTO?.viewCount}"></span>
-                                <span>좋아요</span>
+                                <span>추천수</span>
                                 <span th:text="${postDTO?.likeCount}"></span>
                                 <span>댓글수</span>
                                 <span th:text="${postDTO?.replyCount}"></span>
@@ -97,13 +97,16 @@
                 </table>
             </div> <!--글제목-->
             <!--답변 완료 버튼-->
-            <div class="d-flex flex-row justify-content-end completeBtnSection">
+            <div class="d-flex flex-row justify-content-end">
                 <div th:if="${postDTO.replyAuth==true} and ${postDTO.completeQna==false} and (${username}==${postDTO.userId})">
                     <button class="btn completeBtn">답변 완료</button>
                 </div>
             </div>
             <!--글내용-->
-            <div th:utext="${postDTO.postContent}" class="mx-4 postContent"></div>
+            <div th:if="${postDTO.replyAuth==false} or ${postDTO.completeQna==true}"
+                 th:utext="${postDTO.postContent}" class="mx-4 postContent"></div>
+            <div th:if="${postDTO.replyAuth==true} and ${postDTO.completeQna==false} and (${username}==${postDTO.userId})"
+                 th:utext="${postDTO.postContent}" class="mx-4 postContentQ"></div>
             <!--좋아요/싫어요/보관/신고 버튼-->
             <div class="mt-3 justify-content-center text-center">
                 <div class="d-flex justify-content-center">
@@ -277,34 +280,35 @@
                             <tbody th:with="page = ${pageRequestDTO.getPage()}">
                             <tr class="postList" th:each="dto:${responseDTO.dtoList}">
                                 <!-- 게시글이 비밀글이 아닐 때 -->
-                                <td class="align-middle listOne" th:if="${dto.secret==false} or (${dto.secret == true} and (${username} == ${dto.userId})) or ((${dto.secret == true} and (${username} != ${dto.userId}))and(${role ne 'ROLE_USER'}))">
-                                    <a class="move" href="#" th:attr="data-postNo=${dto.postNo}, data-secret=${dto.secret}, data-userId=${dto.userId}, data-page=${page}">
-                                        <span class="align-middle" th:if="${dto.replyAuth==true}">
-                                            <img class="replyAuthImg" th:src="${dto.completeQna ? '/img/tag/completeQna.png' : '/img/tag/vetScope.png'}"
-                                                 th:alt="${dto.completeQna ? '답변 완료' : '수의사만 답변 가능'}">
-                                        </span>
-                                        <span>
-                                            <img class="listTag" src="/img/tag/tag_dog.png"
-                                                 th:if="${dto.postTag eq '강아지'}"
-                                                 alt="강아지태그">
-                                            <img class="listTag" src="/img/tag/tag_cat.png"
-                                                 th:if="${dto.postTag eq '고양이'}"
-                                                 alt="고양이태그">
-                                        </span>
-                                        <span th:text="${dto.postTitle}">
-                                            게시물 제목
-                                        </span>
+                                <td class="d-flex flex-column align-middle listOne" th:if="${dto.secret==false} or (${dto.secret == true} and (${username} == ${dto.userId})) or ((${dto.secret == true} and (${username} != ${dto.userId}))and(${role ne 'ROLE_USER'}))">
+                                    <a class="move d-flex flex-row" href="#" th:attr="data-postNo=${dto.postNo}, data-secret=${dto.secret}, data-userId=${dto.userId}, data-page=${page}">
+                                            <span class="align-middle" th:if="${dto.replyAuth==true}">
+                                                <img class="replyAuthImg" th:src="${dto.completeQna ? '/img/tag/completeQna.png' : '/img/tag/vetScope.png'}"
+                                                     th:alt="${dto.completeQna ? '답변 완료' : '수의사만 답변 가능'}">
+                                            </span>
+                                            <span>
+                                                <img class="listTag" src="/img/tag/tag_dog.png"
+                                                     th:if="${dto.postTag eq '강아지'}"
+                                                     alt="강아지태그">
+                                                <img class="listTag" src="/img/tag/tag_cat.png"
+                                                     th:if="${dto.postTag eq '고양이'}"
+                                                     alt="고양이태그">
+                                            </span>
+                                        <div class="downList mt-2 ms-1">
+                                            <span th:text="${dto.postTitle}" class="mt-2">
+                                                게시물 제목
+                                            </span>
+                                        </div>
                                         <!--비밀글여부-->
-                                        <span class="icon listSecret" th:if="${dto.secret == true}">
+                                        <span class="icon listSecret mt-2" th:if="${dto.secret == true}">
                                          <i class="bi bi-file-lock flex-fill"></i>
                                         </span>
                                         <!--비밀글일경우 첨부파일이 존재해도 표시안하고 비밀글처리 ~> 첨부파일 표시하려면 비밀글값이 0이어야함(디폴트값)-->
-                                        <span class="icon listFile"
+                                        <span class="icon listFile mt-2"
                                               th:if="${dto.imgBoards != null && dto.imgBoards.size() > 0 && dto.secret == false}">
-                                        <i class="bi bi-file-earmark-image flex-fill"></i>
+                                            <i class="bi bi-file-earmark-image flex-fill"></i>
                                         </span>
                                     </a>
-                                    <br>
                                     <div class="title sub">
                                         <span th:text="${dto.nickname}">작성자</span>
                                         <span>
@@ -356,8 +360,8 @@
                             <!--게시물 정보 받아오기-->
                             <tbody th:with="page = ${pageRequestDTO.getPage()}">
                             <tr th:each="dto:${responseDTO.dtoList}" class="showOffList">
-                                <td class="align-middle listOne">
-                                    <a class="move" href="#" th:attr="data-postNo=${dto.postNo}, data-page=${page}">
+                                <td class="d-flex flex-column align-middle listOne">
+                                    <a class="move d-flex flex-row" href="#" th:attr="data-postNo=${dto.postNo}, data-page=${page}">
                                         <div class="d-flex align-items-center listPost">
                                             <div class="me-4" th:if="${!dto.imgBoards.isEmpty()}">
                                                 <img th:src="${dto.imgBoards[0].thumbnailPath}" class="boardImg"
@@ -368,18 +372,18 @@
                                                      alt="Image">
                                             </div>
                                             <div>
-                                                <div class="showOffTitle">
-                                                <span>
-                                                    <img class="tag" src="/img/tag/tag_dog.png"
-                                                         th:if="${dto.postTag eq '강아지'}"
-                                                         alt="강아지태그">
-                                                    <img class="tag" src="/img/tag/tag_cat.png"
-                                                         th:if="${dto.postTag eq '고양이'}"
-                                                         alt="고양이태그">
-                                                </span>
-                                                    <span th:text="${dto.postTitle}">
-                                                    게시물 제목
-                                                </span>
+                                                <div class="showOffTitle downShowTitle">
+                                                    <span>
+                                                        <img class="tag" src="/img/tag/tag_dog.png"
+                                                             th:if="${dto.postTag eq '강아지'}"
+                                                             alt="강아지태그">
+                                                        <img class="tag" src="/img/tag/tag_cat.png"
+                                                             th:if="${dto.postTag eq '고양이'}"
+                                                             alt="고양이태그">
+                                                    </span>
+                                                        <span th:text="${dto.postTitle}">
+                                                        게시물 제목
+                                                    </span>
                                                 </div>
                                                 <div class="showOffTitle sub">
                                                     <span th:text="${dto.nickname}">작성자</span>

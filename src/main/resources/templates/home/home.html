@@ -81,7 +81,7 @@
                                     <a th:href="@{'/board/read/'+${dto.postNo}}">
                                         <div class="d-flex align-items-center">
                                             <div class="d-flex flex-column justify-content-evenly homeList">
-                                                <div>
+                                                <div class="largeTitle d-flex flex-row">
                                                     <span>
                                                         <img class="tag" src="/img/tag/tag_dog.png"
                                                              th:if="${dto.postTag eq '강아지'}"
@@ -90,15 +90,15 @@
                                                              th:if="${dto.postTag eq '고양이'}"
                                                              alt="고양이태그">
                                                     </span>
-                                                    <span th:text="${dto.postTitle}">
+                                                    <span th:text="${dto.postTitle}" class="largeTitleIn mt-1">
                                                         게시물 제목
                                                     </span>
                                                     <!--비밀글여부-->
-                                                    <span class="icon secret" th:if="${dto.secret == true}">
+                                                    <span class="icon secret mt-1" th:if="${dto.secret == true}">
                                                         <i class="bi bi-file-lock"></i>
                                                     </span>
                                                     <!--비밀글일경우 첨부파일이 존재해도 표시안하고 비밀글처리 ~> 첨부파잂 표시하려면 비밀글값이 0이어야함(디폴트값)-->
-                                                    <span class="icon file"
+                                                    <span class="icon file mt-1"
                                                           th:if="${dto.imgBoards != null && dto.imgBoards.size() > 0 && dto.secret == false}">
                                                         <i class="bi bi-file-earmark-image"></i>
                                                     </span>
@@ -151,27 +151,27 @@
                                     <a th:href="@{'/board/read/'+${dto.postNo}}">
                                         <div class="d-flex align-items-center">
                                             <div class="d-flex flex-column justify-content-evenly homeList">
-                                                <div>
-                                                <span>
-                                                    <img class="tag" src="/img/tag/tag_dog.png"
-                                                         th:if="${dto.postTag eq '강아지'}"
-                                                         alt="강아지태그">
-                                                    <img class="tag" src="/img/tag/tag_cat.png"
-                                                         th:if="${dto.postTag eq '고양이'}"
-                                                         alt="고양이태그">
-                                                </span>
-                                                    <span th:text="${dto.postTitle}">
-                                                    게시물 제목
-                                                </span>
+                                                <div class="largeTitle d-flex flex-row">
+                                                    <span>
+                                                        <img class="tag" src="/img/tag/tag_dog.png"
+                                                             th:if="${dto.postTag eq '강아지'}"
+                                                             alt="강아지태그">
+                                                        <img class="tag" src="/img/tag/tag_cat.png"
+                                                             th:if="${dto.postTag eq '고양이'}"
+                                                             alt="고양이태그">
+                                                    </span>
+                                                    <span th:text="${dto.postTitle}" class="largeTitleIn mt-1">
+                                                        게시물 제목
+                                                    </span>
                                                     <!--비밀글여부-->
-                                                    <span class="icon secret" th:if="${dto.secret == true}">
-                                                 <i class="bi bi-file-lock"></i>
-                                                </span>
+                                                    <span class="icon secret mt-1" th:if="${dto.secret == true}">
+                                                        <i class="bi bi-file-lock"></i>
+                                                    </span>
                                                     <!--비밀글일경우 첨부파일이 존재해도 표시안하고 비밀글처리 ~> 첨부파잂 표시하려면 비밀글값이 0이어야함(디폴트값)-->
-                                                    <span class="icon file"
+                                                    <span class="icon file mt-1"
                                                           th:if="${dto.imgBoards != null && dto.imgBoards.size() > 0 && dto.secret == false}">
-                                                     <i class="bi bi-file-earmark-image"></i>
-                                                </span>
+                                                        <i class="bi bi-file-earmark-image"></i>
+                                                    </span>
                                                 </div>
                                                 <div class="title sub">
                                                     <span th:text="${dto.nickname}">작성자</span>
@@ -360,26 +360,28 @@
                                             <div class="d-flex align-items-center">
                                                 <div class="d-flex flex-column justify-content-evenly homeList">
                                                     <div>
-                                                        <span>
-                                                            <img class="tag" src="/img/tag/tag_dog.png"
-                                                                 th:if="${dto.postTag eq '강아지'}"
-                                                                 alt="강아지태그">
-                                                            <img class="tag" src="/img/tag/tag_cat.png"
-                                                                 th:if="${dto.postTag eq '고양이'}"
-                                                                 alt="고양이태그">
-                                                        </span>
-                                                        <span th:text="${dto.postTitle}">
-                                                            게시물 제목
-                                                        </span>
-                                                        <!--비밀글여부-->
-                                                        <span class="icon secret" th:if="${dto.secret == true}">
-                                                            <i class="bi bi-file-lock"></i>
-                                                        </span>
-                                                        <!--비밀글일경우 첨부파일이 존재해도 표시안하고 비밀글처리 ~> 첨부파잂 표시하려면 비밀글값이 0이어야함(디폴트값)-->
-                                                        <span class="icon file"
-                                                              th:if="${dto.imgBoards != null && dto.imgBoards.size() > 0 && dto.secret == false}">
-                                                            <i class="bi bi-file-earmark-image"></i>
-                                                        </span>
+                                                        <div class="d-flex flex-row smallTitle">
+                                                            <span>
+                                                                <img class="tag" src="/img/tag/tag_dog.png"
+                                                                     th:if="${dto.postTag eq '강아지'}"
+                                                                     alt="강아지태그">
+                                                                <img class="tag" src="/img/tag/tag_cat.png"
+                                                                     th:if="${dto.postTag eq '고양이'}"
+                                                                     alt="고양이태그">
+                                                            </span>
+                                                            <span th:text="${dto.postTitle}" class="smallTitleIn mt-1">
+                                                                게시물 제목
+                                                            </span>
+                                                            <!--비밀글여부-->
+                                                            <span class="icon secret mt-1" th:if="${dto.secret == true}">
+                                                                <i class="bi bi-file-lock"></i>
+                                                            </span>
+                                                            <!--비밀글일경우 첨부파일이 존재해도 표시안하고 비밀글처리 ~> 첨부파잂 표시하려면 비밀글값이 0이어야함(디폴트값)-->
+                                                            <span class="icon file mt-1"
+                                                                  th:if="${dto.imgBoards != null && dto.imgBoards.size() > 0 && dto.secret == false}">
+                                                                <i class="bi bi-file-earmark-image"></i>
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                     <div class="title sub">
                                                         <span th:text="${dto.nickname}">작성자</span>
@@ -435,7 +437,7 @@
                                                          th:alt="${dto.completeQna ? '답변 완료' : '수의사만 답변 가능'}">
                                                 </div>
                                                 <div class="d-flex flex-column justify-content-evenly homeList">
-                                                    <div>
+                                                    <div class="smallTitle d-flex flex-row">
                                                         <span>
                                                             <img class="tag" src="/img/tag/tag_dog.png"
                                                                  th:if="${dto.postTag eq '강아지'}"
@@ -444,15 +446,15 @@
                                                                  th:if="${dto.postTag eq '고양이'}"
                                                                  alt="고양이태그">
                                                         </span>
-                                                        <span th:text="${dto.postTitle}">
+                                                        <span th:text="${dto.postTitle}" class="smallTitleIn mt-1">
                                                             게시물 제목
                                                         </span>
                                                         <!--비밀글여부-->
-                                                        <span class="icon secret" th:if="${dto.secret == true}">
+                                                        <span class="icon secret mt-1" th:if="${dto.secret == true}">
                                                             <i class="bi bi-file-lock"></i>
                                                         </span>
                                                         <!--비밀글일경우 첨부파일이 존재해도 표시안하고 비밀글처리 ~> 첨부파잂 표시하려면 비밀글값이 0이어야함(디폴트값)-->
-                                                        <span class="icon file"
+                                                        <span class="icon file mt-1"
                                                               th:if="${dto.imgBoards != null && dto.imgBoards.size() > 0 && dto.secret == false}">
                                                             <i class="bi bi-file-earmark-image"></i>
                                                         </span>
