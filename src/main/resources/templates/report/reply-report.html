@@ -46,12 +46,12 @@
         <!--신고 제목, 내용-->
         <div class="report-title">
             <label for="reportTitle" class="form-label">신고 제목</label>
-            <input name="reportTitle" type="text" id="reportTitle" class="form-control">
+            <input name="reportTitle" type="text" id="reportTitle" class="form-control" placeholder="최대 50자까지 작성 가능합니다" maxlength="50">
         </div>
 
         <div class="report-content">
             <label for="reportContent" class="form-label">신고 내용</label>
-            <textarea name="reportContent" id="reportContent" class="form-control"  rows="6" style="resize: none"></textarea>
+            <textarea name="reportContent" id="reportContent" class="form-control" rows="6" style="resize: none" maxlength="255"></textarea>
         </div>
 
         <!--신고버튼-->
@@ -66,13 +66,10 @@
 
 <script>
 
-
     function createReplyReportLog() {
-
         const userId = document.getElementById("userName").textContent.trim();
         const reportTitle = document.getElementById("reportTitle").value;
         const reportContent = document.getElementById("reportContent").value;
-
 
         // 입력값 검증
         if (!reportTitle) {
@@ -89,8 +86,6 @@
         if (!isConfirmed) {
             return;
         }
-
-
 
         // reportLogDTO생성
         const reportLogDTO = {
@@ -109,17 +104,12 @@
             .catch(function (error) {
                 console.error("에러 발생:", error);
             });
-
-
     }
-
 
     function closeWindow() {
         window.close();
     }
-
 </script>
-
 
 </body>
 </html>
