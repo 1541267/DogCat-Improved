@@ -38,17 +38,19 @@ public class FileCheckTask {
 
 	private final UploadRepository uploadRepository;
 
+	private String bigLogLine = "===========================================";
+	private String smolLogLine = "-------------------------------------------";
+
 	//TODO 꼭 배포 전에 활성화 시키기
 	// 매월 1일 자정에 요일무시 파일 정리 실행
 	// @Scheduled(cron = "0 0 0 1 * ?")
-
 	@Transactional
 	public void checkFiles() throws Exception {
-		log.info("===========================================");
+		log.info(bigLogLine);
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 EEEE");
 		log.info("File Check Task run.................");
 		log.info("오늘은 {} ", LocalDateTime.now().format(formatter) + " 입니다.");
-		log.info("-------------------------------------------");
+		log.info(smolLogLine);
 
 		// 남아있는 모든 임시 데이터 모두 삭제
 		if (Paths.get(uploadPath).toFile().exists()) {
@@ -57,7 +59,7 @@ public class FileCheckTask {
 		} else {
 			log.info("Upload Directory: 남아있는 파일이 없습니다.");
 		}
-		log.info("-------------------------------------------");
+		log.info(smolLogLine);
 		// S3 버킷과 DB의 이미지 테이블과 비교해 S3에 없는 파일 제거
 		List<String> uploadedFiles = fileListInBucket();
 		deleteUploadedFiles(uploadedFiles);
@@ -117,8 +119,8 @@ public class FileCheckTask {
 			}
 		}
 
-		log.info("-------------------------------------------");
+		log.info(smolLogLine);
 		log.info("DB에 존재하지 않는 S3업로드 이미지 정리 완료");
-		log.info("===========================================");
+		log.info(bigLogLine);
 	}
 }
