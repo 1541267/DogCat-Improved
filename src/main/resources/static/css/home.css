@@ -295,17 +295,6 @@ a {
     text-overflow: ellipsis;
 }
 
-.largeTitle {
-    width: 500px;
-}
-
-.largeTitleIn {
-    max-width: 400px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 .smallTitle {
     width: 240px;
 }
