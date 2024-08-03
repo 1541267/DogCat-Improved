@@ -31,12 +31,12 @@ body {
     font-size: 25px;
 }
 
-.readTitleIn {
-    max-width: 600px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+/*.readTitleIn {*/
+/*    max-width: 600px;*/
+/*    white-space: nowrap;*/
+/*    overflow: hidden;*/
+/*    text-overflow: ellipsis;*/
+/*}*/
 
 .readTitle.sub {
     font-size: 17px;
@@ -339,13 +339,6 @@ td > a {
     font-size: 22px;
 }
 
-.downShowTitle {
-    max-width: 400px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 .showOffTitle.sub {
     font-size: 18px;
     color: gray;
@@ -381,11 +374,3 @@ td > a {
     --bs-btn-active-border-color: #67cafe;
     --bs-btn-active-bg: #67cafe;
 }
-
-.downList {
-    max-width: 400px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-

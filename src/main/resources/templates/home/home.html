@@ -81,7 +81,7 @@
                                     <a th:href="@{'/board/read/'+${dto.postNo}}">
                                         <div class="d-flex align-items-center">
                                             <div class="d-flex flex-column justify-content-evenly homeList">
-                                                <div class="largeTitle d-flex flex-row">
+                                                <div class="d-flex flex-row">
                                                     <span>
                                                         <img class="tag" src="/img/tag/tag_dog.png"
                                                              th:if="${dto.postTag eq '강아지'}"
@@ -90,7 +90,7 @@
                                                              th:if="${dto.postTag eq '고양이'}"
                                                              alt="고양이태그">
                                                     </span>
-                                                    <span th:text="${dto.postTitle}" class="largeTitleIn mt-1">
+                                                    <span th:text="${dto.postTitle}" class="mt-1">
                                                         게시물 제목
                                                     </span>
                                                     <!--비밀글여부-->
@@ -151,7 +151,7 @@
                                     <a th:href="@{'/board/read/'+${dto.postNo}}">
                                         <div class="d-flex align-items-center">
                                             <div class="d-flex flex-column justify-content-evenly homeList">
-                                                <div class="largeTitle d-flex flex-row">
+                                                <div class="d-flex flex-row">
                                                     <span>
                                                         <img class="tag" src="/img/tag/tag_dog.png"
                                                              th:if="${dto.postTag eq '강아지'}"
@@ -160,7 +160,7 @@
                                                              th:if="${dto.postTag eq '고양이'}"
                                                              alt="고양이태그">
                                                     </span>
-                                                    <span th:text="${dto.postTitle}" class="largeTitleIn mt-1">
+                                                    <span th:text="${dto.postTitle}" class="mt-1">
                                                         게시물 제목
                                                     </span>
                                                     <!--비밀글여부-->
