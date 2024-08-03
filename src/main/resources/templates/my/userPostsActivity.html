@@ -14,8 +14,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
     <!--부트스트랩 아이콘 사이즈 조절-->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-
-    <title>MyPage</title>
+    <title>말랑발자국 - 내 활동</title>
 </head>
 <body>
 <div th:include="include/header :: header"></div>
@@ -25,25 +24,27 @@
     <!--본문 영역-->
     <div class="content">
 
-        <h6 class="myPage">마이페이지</h6>
-        <h2 class="myTitle">내 활동</h2>
+        <div th:with="userId=${responseDTO.getUserId()}">
+            <span th:if="(${userId}!=${username})">
+                <h6 class="myPage">관리자페이지</h6>
+                <h2 class="myTitle">회원 활동</h2>
+            </span>
+            <span th:if="(${userId}==${username})">
+                <h6 class="myPage">마이페이지</h6>
+                <h2 class="myTitle">내 활동</h2>
+            </span>
+        </div>
 
         <div class="d-flex justify-content-center align-items-center nav">
-            <div class="col-4 text-center align-content-center countPost1">
-                <a th:href="@{/my/userActivity/{userId}/posts(userId=${userId})}">
+            <button class="col-4 text-center align-content-center myPost" th:onclick="|location.href='@{/my/userActivity/{userId}/posts(userId=${userId})}'|">
                     작성글 <span th:text="${responseDTO?.postCount}"></span>
-                </a>
-            </div>
-            <div class="col-4 text-center align-content-center countPost2">
-                <a th:href="@{/my/userActivity/{userId}/replies(userId=${userId})}">
+            </button>
+            <button class="col-4 text-center align-content-center myReply" th:onclick="|location.href='@{/my/userActivity/{userId}/replies(userId=${userId})}'|">
                     댓글 <span th:text="${responseDTO?.replyCount}"></span>
-                </a>
-            </div>
-            <div class="col-4 text-center align-content-center countPost3">
-                <a th:href="@{/my/userActivity/{userId}/scraps(userId=${userId})}">
-                    공감글 <span th:text="${responseDTO?.scrapCount}"></span>
-                </a>
-            </div>
+            </button>
+            <button class="col-4 text-center align-content-center myScrap" th:onclick="|location.href='@{/my/userActivity/{userId}/scraps(userId=${userId})}'|">
+                    보관함 <span th:text="${responseDTO?.scrapCount}"></span>
+            </button>
         </div> <!--상단-->
 
         <!--본문-->
@@ -54,7 +55,7 @@
                 <table class="table read">
                     <!--게시물 정보 받아오기-->
                     <tbody>
-                    <tr th:each="dto:${responseDTO.dtoList}" style="height: 69.67px;">
+                    <tr th:each="dto:${responseDTO.dtoList}">
                         <td class="align-middle text-center boardCode">
                                 <span class="boardTag">
                                     <span th:if="${dto.boardCode eq 'showoff'}" th:text="자랑"></span>
@@ -67,7 +68,8 @@
                             <a th:href="@{'/board/read/'+${dto.postNo}}">
                                 <div class="d-flex align-items-center">
                                     <div class="replyAuth" th:if="${dto.replyAuth==true}">
-                                        <img class="replyAuthImg" src="/img/tag/vetScope.png" alt="수의사만 답변 가능">
+                                        <img class="replyAuthImg" th:src="${dto.completeQna ? '/img/tag/completeQna.png' : '/img/tag/vetScope.png'}"
+                                             th:alt="${dto.completeQna ? '답변 완료' : '수의사만 답변 가능'}">
                                     </div>
                                     <div>
                                         <div>
@@ -95,17 +97,17 @@
                                         <div class="title sub">
                                             <span th:text="${dto.nickname}">작성자</span>
                                             <span>
-                                                    <img class="level" src="/img/level/red.png" alt="레벨이미지 red"
-                                                         th:if="${dto.exp < 200}">
-                                                    <img class="level" src="/img/level/orange.png" alt="레벨이미지 orange"
-                                                         th:if="${dto.exp >= 200 and dto.exp < 400}">
-                                                    <img class="level" src="/img/level/yellow.png" alt="레벨이미지 yellow"
-                                                         th:if="${dto.exp >= 400 and dto.exp < 600}">
-                                                    <img class="level" src="/img/level/mint.png" alt="레벨이미지 mint"
-                                                         th:if="${dto.exp >= 600 and dto.exp < 800}">
-                                                    <img class="level" src="/img/level/purple.png" alt="레벨이미지 purple"
-                                                         th:if="${dto.exp >= 800}">
-                                                </span>
+                                                <img class="level" src="/img/level/red.png" alt="User Level Image"
+                                                     th:if="${dto.exp < 750}">
+                                                <img class="level" src="/img/level/orange.png" alt="User Level Image"
+                                                     th:if="${dto.exp >= 750 and dto.exp < 1500}">
+                                                <img class="level" src="/img/level/yellow.png" alt="User Level Image"
+                                                     th:if="${dto.exp >= 1500 and dto.exp < 2250}">
+                                                <img class="level" src="/img/level/mint.png" alt="User Level Image"
+                                                     th:if="${dto.exp >= 2250 and dto.exp < 3000}">
+                                                <img class="level" src="/img/level/purple.png" alt="User Level Image"
+                                                     th:if="${dto.exp >= 3000}">
+                                            </span>
                                             <span class="mx-1">조회수 <span th:text="${dto?.viewCount}">5</span></span>
                                             <span class="mx-1" th:if="${dto?.modDate == null}"
                                                   th:text="${#temporals.format(dto.regDate, 'yyyy-MM-dd')}">작성일</span>
@@ -173,20 +175,20 @@
                 <!--type선택-->
                 <div class="d-flex">
                         <span class="p-0">
-                                            <select class="form-select" name="type">
-                                                <option value="tc"
-                                                        th:selected="${pageRequestDTO.type == 'tc'}">---</option>
-                                                <option value="t"
-                                                        th:selected="${pageRequestDTO.type == 't'}">제목</option>
-                                                <option value="c"
-                                                        th:selected="${pageRequestDTO.type == 'c'}">내용</option>
-                                                <option value="tc"
-                                                        th:selected="${pageRequestDTO.type == 'tc'}">제목+내용</option>
-                                            </select>
-                                        </span> <!--type선택-->
+                            <select class="form-select" name="type">
+                                <option value="tc"
+                                        th:selected="${pageRequestDTO.type == 'tc'}">---</option>
+                                <option value="t"
+                                        th:selected="${pageRequestDTO.type == 't'}">제목</option>
+                                <option value="c"
+                                        th:selected="${pageRequestDTO.type == 'c'}">내용</option>
+                                <option value="tc"
+                                        th:selected="${pageRequestDTO.type == 'tc'}">제목+내용</option>
+                            </select>
+                        </span> <!--type선택-->
                     <input type="text" class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}"
                     >
-                    <button class="btn searchBtn" type="submit"><span><i
+                    <button class="searchBtn" type="submit"><span><i
                             class="bi bi-search"></i></span>
                     </button>
                 </div>
@@ -196,10 +198,10 @@
     </div> <!--content--> <!--본문 영역-->
 
     <!--사이드 영역-->
-    <div class="sidebar">
+    <div class="sidebar" th:with="userId=${responseDTO.getUserId()}">
         <aside>
             <!--검색 필터-->
-            <div id="floating-element" class="floating-element">
+            <div id="floating-element" class="floating-element" th:if="(${userId}==${username})">
                 <div class="text-center pt-3 pb-2 mb-2 sideMyPage">
                     <div class="py-2">
                         <a href="/my/user-detail">
@@ -209,9 +211,6 @@
                 </div>
                 <div class="text-center p-2 sideActivity">
                     <a th:href="@{/my/userActivity/{userId}/posts(userId=${userId})}">내 활동</a>
-                </div>
-                <div class="text-center p-2 sideLetterbox" style="">
-                    쪽지함
                 </div>
                 <div class="text-center p-2 sideMyInfo">
                     <a th:href="@{'/my/user-modify?userId=' + ${username}}">내 정보 수정</a>
@@ -224,56 +223,58 @@
 </body>
 <div th:include="include/footer :: footer"></div>
 <script>
-    //replyCountBtn 버튼 클릭 이벤트
-    document.querySelectorAll(".replyCountBtn").forEach(function (button) {
-        button.addEventListener("click", function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            let postNo = this.getAttribute("data-postNo");
-            location.href = '/board/read/' + postNo + '#reply';
-        });
-    });
-
-    //pagination 클릭 이벤트
-    document.querySelector(".pagination").addEventListener("click", function (e) {
-        e.preventDefault()
-        e.stopPropagation()
-
-        //실제 클릭된 요소를 가져와서 target 변수에 할당
-        let target = e.target.closest('a');
-
-        if (!target) {
-            return;
-        }
-
-        let num = target.getAttribute("data-num")
-        if (!num) {
-            num = 1; // 기본값 설정
-        }
-
-        // 현재 URL 가져오기
-        let currentUrl = new URL(window.location.href);
-
-        // 페이지 번호 업데이트
-        currentUrl.searchParams.set('page', num);
-
-        // 수정된 URL로 이동
-        window.location.href = currentUrl.href;
-
-    }, false)
-
-    // tr이 10번째인 것 만 아랫 밑줄 제거
     document.addEventListener("DOMContentLoaded", function () {
+
+        // tr이 10번째인 것 만 아랫 밑줄 제거
         let rows = document.querySelectorAll(".table.read tbody tr");
         if (rows.length >= 10) {
-            let targetRow = rows[9]; // 10번째 tr, 인덱스 9
-            targetRow.style.borderBottom = "none"; // 10번째 tr의 밑줄 제거
+            let targetRow = rows[9];
+            targetRow.style.borderBottom = "none";
 
-            let cells = targetRow.querySelectorAll("td"); // 10번째 tr의 모든 td
+            let cells = targetRow.querySelectorAll("td");
             cells.forEach(cell => {
-                cell.style.borderBottom = "none"; // 모든 td의 밑줄 제거
+                cell.style.borderBottom = "none";
             });
         }
+
+        //replyCountBtn 버튼 클릭 이벤트
+        document.querySelectorAll(".replyCountBtn").forEach(function (button) {
+            button.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                let postNo = this.getAttribute("data-postNo");
+                location.href = '/board/read/' + postNo + '#reply';
+            });
+        });
+
+        //pagination 클릭 이벤트
+        document.querySelector(".pagination").addEventListener("click", function (e) {
+            e.preventDefault()
+            e.stopPropagation()
+
+            //실제 클릭된 요소를 가져와서 target 변수에 할당
+            let target = e.target.closest('a');
+
+            if (!target) {
+                return;
+            }
+
+            let num = target.getAttribute("data-num")
+            if (!num) {
+                num = 1; // 기본값 설정
+            }
+
+            // 현재 URL 가져오기
+            let currentUrl = new URL(window.location.href);
+
+            // 페이지 번호 업데이트
+            currentUrl.searchParams.set('page', num);
+
+            // 수정된 URL로 이동
+            window.location.href = currentUrl.href;
+
+        });
+
     });
 
 </script>

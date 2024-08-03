@@ -13,36 +13,34 @@ import org.springframework.transaction.annotation.Transactional;
 public interface AdminRepository extends JpaRepository<User, String> {
 
 
+    // 유저 차단
     @Modifying
     @Query("UPDATE User u SET u.block = true WHERE u.userId = :userId")
     int blockUserByUserId(@Param("userId") String userId);
 
+    // 차단 유저 복구
     @Modifying
     @Query("UPDATE User u SET u.block = false WHERE u.userId = :userId")
     int restoreUserByUserId(@Param("userId") String userId);
 
-    @Modifying
-    @Query("DELETE FROM ReportLog rl WHERE rl.reportNo = :reportNo")
-    int deleteReportLog(@Param("reportNo") Long reportNo);
+    // 차단당하지 않은 유저 목록
+    @Query("SELECT u FROM User u WHERE u.block = false AND (u.nickname LIKE %:keyword1% OR u.userName LIKE %:keyword2%)")
+    Page<User> findByBlockFalseKeyword(@Param("keyword1") String keyword1, @Param("keyword2") String keyword2, Pageable pageable);
+    Page<User> findByBlockFalse(Pageable pageable);
 
-
-    // 전체 유저목록
-    Page<User> findAllByBlockFalseAndNicknameContainingOrBlockFalseAndUserNameContaining(String keyword1, String keyword2, Pageable pageable);
-
-    Page<User> findByBlockIsTrue(Pageable pageable);
-
-    long countByBlockFalseAndNicknameContainingOrUserNameContaining(String keyword1, String keyword2);
-
+    // 차단당하지 않은 유저 숫자
+    @Query("SELECT COUNT(u) FROM User u WHERE u.block = false AND (u.nickname LIKE %:keyword1% OR u.userName LIKE %:keyword2%)")
+    long countByBlockFalseKeyword(@Param("keyword1") String keyword1, @Param("keyword2") String keyword2);
     long countByBlockFalse();
 
+    // 차단당한 유저 목록
+    @Query("SELECT u FROM User u WHERE u.block = true AND (u.nickname LIKE %:keyword1% OR u.userName LIKE %:keyword2%)")
+    Page<User> findByBlockTrueKeyword(@Param("keyword1") String keyword1, @Param("keyword2") String keyword2, Pageable pageable);
+    Page<User> findByBlockIsTrue(Pageable pageable);
 
-    //차단된 유저목록
-    Page<User> findAllByBlockTrueAndNicknameContainingOrBlockTrueAndUserNameContaining(String keyword1, String keyword2, Pageable pageable);
-
-    Page<User> findByBlockIsFalse(Pageable pageable);
-
-    long countByBlockTrueAndNicknameContainingOrUserNameContaining(String keyword1, String keyword2);
-
+    // 차단당한 유저 숫자
+    @Query("SELECT COUNT(u) FROM User u WHERE u.block = true AND (u.nickname LIKE %:keyword1% OR u.userName LIKE %:keyword2%)")
+    long countByBlockTrueKeyword(@Param("keyword1") String keyword1, @Param("keyword2") String keyword2);
     long countByBlockTrue();
 
 

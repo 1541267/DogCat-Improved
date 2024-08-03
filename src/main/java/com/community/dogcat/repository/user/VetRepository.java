@@ -6,5 +6,6 @@ import com.community.dogcat.domain.UsersVet;
 
 public interface VetRepository extends JpaRepository<UsersVet, Long> {
 
-	Boolean existsByVetNameAndVetLicense(String vetName, Long vetLicense);
+	UsersVet findByVetNameAndVetLicense(String vetName, Long vetLicense);
+
 }

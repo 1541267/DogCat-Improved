@@ -11,23 +11,29 @@ import com.community.dogcat.jwt.JWTUtil;
 import com.community.dogcat.repository.user.UserRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-	private final UserRepository userRepository;
 	private final JWTUtil jwtUtil;
+	private final UserRepository userRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userRepository.findByUserId(username);
 
 		if (user == null) {
+
+			log.warn("User not found");
 			throw new UsernameNotFoundException("User not found");
+
 		}
+
 		return new CustomUserDetails(user, jwtUtil);
+
 	}
+
 }

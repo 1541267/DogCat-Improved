@@ -20,9 +20,9 @@ import com.community.dogcat.service.user.ReissueService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
 
@@ -49,13 +49,13 @@ public class JWTFilter extends OncePerRequestFilter {
 
 		} catch (ExpiredJwtException e) {
 
-			log.info("Access token has expired");
+			log.warn("Access token has expired");
 
 			boolean reissued = reissueService.reissue(request, response);
 
 			if (reissued) {
 
-				response.sendRedirect("/sample/home");
+				response.sendRedirect("/");
 
 			}
 
@@ -68,7 +68,7 @@ public class JWTFilter extends OncePerRequestFilter {
 		if (!category.equals("access")) {
 
 			PrintWriter writer = response.getWriter();
-			writer.print("invalid access token");
+			writer.print("Invalid access token");
 
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
@@ -79,8 +79,7 @@ public class JWTFilter extends OncePerRequestFilter {
 		User user = new User();
 
 		CustomUserDetails customUserDetails = new CustomUserDetails(user, jwtUtil);
-		Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null,
-			customUserDetails.getAuthorities());
+		Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(authToken);
 
 		filterChain.doFilter(request, response);

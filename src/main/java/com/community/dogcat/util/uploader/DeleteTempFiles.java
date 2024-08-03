@@ -7,49 +7,23 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Component
 public class DeleteTempFiles {
 
 	@Value("${tempUploadPath}")
 	private String tempUploadPath;
 
-	// s3 업로드시 썸머노트 임시 파일 삭제 + 썸머노트 게시글 취소시 파일 삭제
-	public void deleteTempFile(List<String> fileNames) {
-		List<File> savedTempFile = new ArrayList<>();
+	public void deleteFile(String fileName) {
 
-		for (String fileName : fileNames) {
-			savedTempFile.add(new File(tempUploadPath, fileName));
-		}
-
-		log.info("fileNames: {}", fileNames);
+		File file = new File(tempUploadPath, fileName);
 
 		try {
-			for (File file : savedTempFile) {
-				log.info("Deleting temp file: {}", file.getName());
-				file.delete();
-			}
-
-			log.info("썸머노트 임시파일 리스트 삭제 완료!");
-
+			file.delete();
 		} catch (Exception e) {
-			log.info("썸머노트 임시파일 리스트 삭제 에러! - 이미 삭제 되었거나 존재하지 않습니다.");
-		}
-	}
-
-	// s3 업로드시 썸머노트 임시 파일 삭제 + 썸머노트 게시글 취소시 파일 삭제
-	public void deleteSingleTempFile(String fileName) {
-
-		File savedTempFile = new File(tempUploadPath, fileName);
-
-		try {
-			savedTempFile.delete();
-			log.info("썸머노트 임시파일 리스트 삭제 완료!");
-
-		} catch (Exception e) {
-			log.info("썸머노트 임시파일 리스트 삭제 에러! - 이미 삭제 되었거나 존재하지 않습니다.");
+			log.error("썸머노트 임시파일 리스트 삭제 에러! - 이미 삭제 되었거나 존재하지 않습니다.");
 		}
 	}
 }

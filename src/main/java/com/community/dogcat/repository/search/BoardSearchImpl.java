@@ -17,20 +17,21 @@ import com.community.dogcat.domain.QPost;
 import com.community.dogcat.domain.QReply;
 import com.community.dogcat.domain.QUser;
 import com.community.dogcat.dto.board.BoardListDTO;
+import com.community.dogcat.dto.home.HomeTodayListDTO;
 import com.community.dogcat.dto.myPage.activity.UserPostsActivityDTO;
-import com.community.dogcat.dto.sample.home.SampleGeneralListDTO;
-import com.community.dogcat.dto.sample.home.SampleQnaListDTO;
-import com.community.dogcat.dto.sample.home.SampleShowOffListDTO;
-import com.community.dogcat.dto.sample.home.SampleTipListDTO;
-import com.community.dogcat.dto.sample.home.SampleTodayListDTO;
-import com.community.dogcat.dto.sample.search.AllSearchDTO;
+import com.community.dogcat.dto.home.HomeGeneralListDTO;
+import com.community.dogcat.dto.home.HomeQnaListDTO;
+import com.community.dogcat.dto.home.HomeShowOffListDTO;
+import com.community.dogcat.dto.home.HomeTipListDTO;
+import com.community.dogcat.dto.home.HomeTodayListDTO;
+import com.community.dogcat.dto.home.search.AllSearchDTO;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPQLQuery;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardSearch {
 
 	public BoardSearchImpl() {
@@ -108,10 +109,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
-				.replyAuth(post1.isReplyAuth())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
@@ -185,16 +183,16 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
 				.replyAuth(post1.isReplyAuth())
+				.completeQna(post1.isCompleteQna())
 				.replyCount(replyCount)
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
 				.map(image -> ImgBoard.builder()
 					.fileUuid(image.getFileUuid())
+					.thumbnailPath(image.getThumbnailPath())
 					.build()
 				).collect(Collectors.toList());
 
@@ -312,10 +310,9 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
 				.replyAuth(post1.isReplyAuth())
+				.completeQna(post1.isCompleteQna())
 				.replyCount(replyCount)
 				.build();
 
@@ -400,10 +397,9 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
 				.replyAuth(post1.isReplyAuth())
+				.completeQna(post1.isCompleteQna())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
@@ -426,7 +422,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 
 	// 홈 : 실시간 인기 게시글 리스트
 	@Override
-	public List<SampleTodayListDTO> todayList(Instant startOfDay, Instant endOfDay, int size) {
+	public List<HomeTodayListDTO> todayList(Instant startOfDay, Instant endOfDay, int size) {
 
 		QPost post = QPost.post;
 		JPQLQuery<Post> query = from(post);
@@ -437,12 +433,12 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 		// 쿼리 실행 및 반환
 		List<Post> list = query.fetch();
 
-		// SampleTodayListDTO List 생성
-		List<SampleTodayListDTO> dtoList = new ArrayList<>();
+		// HomeTodayListDTO List 생성
+		List<HomeTodayListDTO> dtoList = new ArrayList<>();
 
 		for (Post post1 : list) {
 
-			SampleTodayListDTO sampleTodayListDTO = SampleTodayListDTO.builder()
+			HomeTodayListDTO homeTodayListDTO = HomeTodayListDTO.builder()
 				.postNo(post1.getPostNo())
 				.userId(post1.getUserId().getUserId())
 				.nickname(post1.getUserId().getNickname())
@@ -455,10 +451,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
-				.replyAuth(post1.isReplyAuth())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
@@ -467,10 +460,10 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 					.build()
 				).collect(Collectors.toList());
 
-			sampleTodayListDTO.setImgBoards(imgBoards);
+			homeTodayListDTO.setImgBoards(imgBoards);
 
-			// 생성한 sampleTodayListDTO를 dtoList에 추가
-			dtoList.add(sampleTodayListDTO);
+			// 생성한 homeTodayListDTO를 dtoList에 추가
+			dtoList.add(homeTodayListDTO);
 		}
 
 		return dtoList;
@@ -478,7 +471,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 
 	// 홈 : 게시판별 리스트 showOff, 첨부파일 유/무 + 비밀글 제외
 	@Override
-	public List<SampleShowOffListDTO> showOffList(int size) {
+	public List<HomeShowOffListDTO> showOffList(int size) {
 		QPost post = QPost.post;
 		JPQLQuery<Post> query = from(post);
 		query.where(post.secret.isFalse().and(post.boardCode.eq("showOff")));
@@ -488,12 +481,12 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 		// 쿼리 실행 및 반환
 		List<Post> list = query.fetch();
 
-		// SampleSowOffListDTO List 생성
-		List<SampleShowOffListDTO> dtoList = new ArrayList<>();
+		// HomeSowOffListDTO List 생성
+		List<HomeShowOffListDTO> dtoList = new ArrayList<>();
 
 		for (Post post1 : list) {
 
-			SampleShowOffListDTO sampleShowOffListDTO = SampleShowOffListDTO.builder()
+			HomeShowOffListDTO homeShowOffListDTO = HomeShowOffListDTO.builder()
 				.postNo(post1.getPostNo())
 				.userId(post1.getUserId().getUserId())
 				.nickname(post1.getUserId().getNickname())
@@ -506,10 +499,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
-				.replyAuth(post1.isReplyAuth())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
@@ -519,10 +509,10 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 					.build()
 				).collect(Collectors.toList());
 
-			sampleShowOffListDTO.setImgBoards(imgBoards);
+			homeShowOffListDTO.setImgBoards(imgBoards);
 
-			// 생성한 sampleShowOffListDTO를 dtoList에 추가
-			dtoList.add(sampleShowOffListDTO);
+			// 생성한 homeShowOffListDTO를 dtoList에 추가
+			dtoList.add(homeShowOffListDTO);
 		}
 
 		return dtoList;
@@ -530,7 +520,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 
 	// 홈 : 게시판별 리스트 general, 첨부파일 유/무 + 비밀글 제외
 	@Override
-	public List<SampleGeneralListDTO> generalList(int size) {
+	public List<HomeGeneralListDTO> generalList(int size) {
 		QPost post = QPost.post;
 		JPQLQuery<Post> query = from(post);
 		query.where(post.secret.isFalse().and(post.boardCode.eq("general")));
@@ -540,12 +530,12 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 		// 쿼리 실행 및 반환
 		List<Post> list = query.fetch();
 
-		// SampleGeneralListDTO List 생성
-		List<SampleGeneralListDTO> dtoList = new ArrayList<>();
+		// HomeGeneralListDTO List 생성
+		List<HomeGeneralListDTO> dtoList = new ArrayList<>();
 
 		for (Post post1 : list) {
 
-			SampleGeneralListDTO sampleGeneralListDTO = SampleGeneralListDTO.builder()
+			HomeGeneralListDTO homeGeneralListDTO = HomeGeneralListDTO.builder()
 				.postNo(post1.getPostNo())
 				.userId(post1.getUserId().getUserId())
 				.nickname(post1.getUserId().getNickname())
@@ -558,10 +548,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
-				.replyAuth(post1.isReplyAuth())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
@@ -570,10 +557,10 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 					.build()
 				).collect(Collectors.toList());
 
-			sampleGeneralListDTO.setImgBoards(imgBoards);
+			homeGeneralListDTO.setImgBoards(imgBoards);
 
-			// 생성한 sampleGeneralListDTO를 dtoList에 추가
-			dtoList.add(sampleGeneralListDTO);
+			// 생성한 homeGeneralListDTO를 dtoList에 추가
+			dtoList.add(homeGeneralListDTO);
 		}
 
 		return dtoList;
@@ -581,7 +568,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 
 	// 홈 : 게시판별 리스트 tip, 첨부파일 유/무 + 비밀글 제외
 	@Override
-	public List<SampleTipListDTO> tipList(int size) {
+	public List<HomeTipListDTO> tipList(int size) {
 		QPost post = QPost.post;
 		JPQLQuery<Post> query = from(post);
 		query.where(post.secret.isFalse().and(post.boardCode.eq("tip")));
@@ -591,12 +578,12 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 		// 쿼리 실행 및 반환
 		List<Post> list = query.fetch();
 
-		// SampleTipListDTO List 생성
-		List<SampleTipListDTO> dtoList = new ArrayList<>();
+		// HomeTipListDTO List 생성
+		List<HomeTipListDTO> dtoList = new ArrayList<>();
 
 		for (Post post1 : list) {
 
-			SampleTipListDTO sampleTipListDTO = SampleTipListDTO.builder()
+			HomeTipListDTO homeTipListDTO = HomeTipListDTO.builder()
 				.postNo(post1.getPostNo())
 				.userId(post1.getUserId().getUserId())
 				.nickname(post1.getUserId().getNickname())
@@ -609,10 +596,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
-				.replyAuth(post1.isReplyAuth())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
@@ -621,10 +605,10 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 					.build()
 				).collect(Collectors.toList());
 
-			sampleTipListDTO.setImgBoards(imgBoards);
+			homeTipListDTO.setImgBoards(imgBoards);
 
-			// 생성한 sampleTipListDTO를 dtoList에 추가
-			dtoList.add(sampleTipListDTO);
+			// 생성한 homeTipListDTO를 dtoList에 추가
+			dtoList.add(homeTipListDTO);
 		}
 
 		return dtoList;
@@ -632,7 +616,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 
 	// 홈 : 게시판별 리스트 qna, 첨부파일 유/무 + 비밀글 제외
 	@Override
-	public List<SampleQnaListDTO> qnaList(int size) {
+	public List<HomeQnaListDTO> qnaList(int size) {
 		QPost post = QPost.post;
 		JPQLQuery<Post> query = from(post);
 		query.where(post.secret.isFalse().and(post.boardCode.eq("qna")));
@@ -642,12 +626,12 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 		// 쿼리 실행 및 반환
 		List<Post> list = query.fetch();
 
-		// SampleQnaListDTO List 생성
-		List<SampleQnaListDTO> dtoList = new ArrayList<>();
+		// HomeQnaListDTO List 생성
+		List<HomeQnaListDTO> dtoList = new ArrayList<>();
 
 		for (Post post1 : list) {
 
-			SampleQnaListDTO sampleQnaListDTO = SampleQnaListDTO.builder()
+			HomeQnaListDTO homeQnaListDTO = HomeQnaListDTO.builder()
 				.postNo(post1.getPostNo())
 				.userId(post1.getUserId().getUserId())
 				.nickname(post1.getUserId().getNickname())
@@ -660,10 +644,9 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 				.modDate(post1.getModDate())
 				.postTag(post1.getPostTag())
 				.secret(post1.isSecret())
-				.likeCount(post1.getLikeCount())
-				.dislikeCount(post1.getDislikeCount())
 				.viewCount(post1.getViewCount())
 				.replyAuth(post1.isReplyAuth())
+				.completeQna(post1.isCompleteQna())
 				.build();
 
 			List<ImgBoard> imgBoards = post1.getImages().stream()
@@ -672,10 +655,10 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 					.build()
 				).collect(Collectors.toList());
 
-			sampleQnaListDTO.setImgBoards(imgBoards);
+			homeQnaListDTO.setImgBoards(imgBoards);
 
-			// 생성한 sampleQnaListDTO를 dtoList에 추가
-			dtoList.add(sampleQnaListDTO);
+			// 생성한 homeQnaListDTO를 dtoList에 추가
+			dtoList.add(homeQnaListDTO);
 		}
 
 		return dtoList;

@@ -12,6 +12,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -20,16 +21,15 @@ import com.community.dogcat.domain.ImgBoard;
 import com.community.dogcat.repository.upload.UploadRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class FileCheckTask {
 
-	//TODO 배포시 리눅스 경로로 변경
-	@Value("tempUploadPath")
-	private String tempUploadPath;
+	@Value("${uploadPath}")
+	private String uploadPath;
 
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucketName;
@@ -38,43 +38,31 @@ public class FileCheckTask {
 
 	private final UploadRepository uploadRepository;
 
+	private String bigLogLine = "===========================================";
+	private String smolLogLine = "-------------------------------------------";
+
 	//TODO 꼭 배포 전에 활성화 시키기
-
-	// 매일 자정에 파일 정리 실행
-	// @Scheduled(cron = "0 0 0 * * *")
-
-	// 테스트용 20초마다 정리 실행
-	// @Scheduled(cron = "0/10 * * * * *")
-
-	// 테스트용 30분마다 정리 실행
-	// @Scheduled(cron = "0 30 * * * *")
+	// 매월 1일 자정에 요일무시 파일 정리 실행
+	// @Scheduled(cron = "0 0 0 1 * ?")
 	@Transactional
 	public void checkFiles() throws Exception {
-		log.info("===========================================");
+		log.info(bigLogLine);
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 EEEE");
 		log.info("File Check Task run.................");
 		log.info("오늘은 {} ", LocalDateTime.now().format(formatter) + " 입니다.");
-		log.info("-------------------------------------------");
-		// summernote temp 폴더는 항상 삭제
-		if (Paths.get(tempUploadPath).toFile().exists()) {
-			deleteDirectory(Paths.get(tempUploadPath));
-			log.info("SummerNote Temp: 삭제 완료.");
+		log.info(smolLogLine);
+
+		// 남아있는 모든 임시 데이터 모두 삭제
+		if (Paths.get(uploadPath).toFile().exists()) {
+			deleteDirectory(Paths.get(uploadPath));
+			log.info("Upload Directory: 삭제 완료.");
 		} else {
-			log.info("SummerNote Temp: 존재하지 않습니다.");
+			log.info("Upload Directory: 남아있는 파일이 없습니다.");
 		}
-		log.info("-------------------------------------------");
+		log.info(smolLogLine);
 		// S3 버킷과 DB의 이미지 테이블과 비교해 S3에 없는 파일 제거
 		List<String> uploadedFiles = fileListInBucket();
 		deleteUploadedFiles(uploadedFiles);
-
-	}
-
-	// ImgBoard 에서 파일 찾기 위한 Uuid 추출
-	private String extractionUuid(String originalFileName) {
-
-		int lastIndex = originalFileName.lastIndexOf(".");
-
-		return lastIndex != -1 ? originalFileName.substring(0, lastIndex) : originalFileName;
 
 	}
 
@@ -101,6 +89,15 @@ public class FileCheckTask {
 		return uploadedFiles;
 	}
 
+	// ImgBoard 에서 파일 찾기 위한 Uuid 추출
+	private String extractionUuid(String originalFileName) {
+
+		int lastIndex = originalFileName.lastIndexOf(".");
+
+		return lastIndex != -1 ? originalFileName.substring(0, lastIndex) : originalFileName;
+
+	}
+
 	// DB에 저장되어있지 않는 업로드 파일들 제거
 	private void deleteUploadedFiles(List<String> uploadedFiles) {
 
@@ -122,8 +119,8 @@ public class FileCheckTask {
 			}
 		}
 
-		log.info("-------------------------------------------");
+		log.info(smolLogLine);
 		log.info("DB에 존재하지 않는 S3업로드 이미지 정리 완료");
-		log.info("===========================================");
+		log.info(bigLogLine);
 	}
 }

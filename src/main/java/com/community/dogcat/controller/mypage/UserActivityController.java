@@ -19,9 +19,9 @@ import com.community.dogcat.jwt.JWTUtil;
 import com.community.dogcat.service.myPage.activity.UserActivityService;
 import com.community.dogcat.service.user.UserService;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Controller
 @Transactional
 @RequestMapping("/my")
@@ -37,13 +37,8 @@ public class UserActivityController extends BaseController {
 
 	@GetMapping("/userActivity/{userId}/posts")
 	public String listWithPosts(@PathVariable String userId, UserPageRequestDTO pageRequestDTO, Model model) {
-		// 모델에서 사용자 정보를 가져옴
-		model.addAttribute("username", userId);
-		log.info("-----------------------userId" + userId);
 
 		UserPageResponseDTO<UserPostsActivityDTO> responseDTO = userActivityService.listWithPosts(pageRequestDTO);
-		log.info("Page Request DTO: {}", pageRequestDTO);
-		log.info("Response DTO: {}", responseDTO);
 
 		model.addAttribute("pageRequestDTO", pageRequestDTO);
 		model.addAttribute("responseDTO", responseDTO);
@@ -53,11 +48,8 @@ public class UserActivityController extends BaseController {
 
 	@GetMapping("/userActivity/{userId}/replies")
 	public String listWithReplies(@PathVariable String userId, UserPageRequestDTO pageRequestDTO, Model model) {
-		model.addAttribute("userId", userId);
 
 		UserPageResponseDTO<UserRepliesActivityDTO> responseDTO = userActivityService.listWithReplies(pageRequestDTO);
-		log.info("Page Request DTO: {}", pageRequestDTO);
-		log.info("Response DTO: {}", responseDTO);
 
 		model.addAttribute("pageRequestDTO", pageRequestDTO);
 		model.addAttribute("responseDTO", responseDTO);
@@ -67,11 +59,8 @@ public class UserActivityController extends BaseController {
 
 	@GetMapping("/userActivity/{userId}/scraps")
 	public String listWithScraps(@PathVariable String userId, UserPageRequestDTO pageRequestDTO, Model model) {
-		model.addAttribute("userId", userId);
 
 		UserPageResponseDTO<UserScrapsActivityDTO> responseDTO = userActivityService.listWithScraps(pageRequestDTO);
-		log.info("Page Request DTO: {}", pageRequestDTO);
-		log.info("Response DTO: {}", responseDTO);
 
 		model.addAttribute("pageRequestDTO", pageRequestDTO);
 		model.addAttribute("responseDTO", responseDTO);

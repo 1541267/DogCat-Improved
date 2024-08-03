@@ -19,7 +19,7 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" th:href="@{/css/board/register.css}">
 
-    <title>Board modify</title>
+    <title>말랑발자국 - 글 수정</title>
 </head>
 
 <body>
@@ -28,6 +28,8 @@
 <div class="container">
 
     <div class="content">
+
+        <h2 class="modifyTitle mb-4">글 수정</h2>
 
         <form th:action="@{/board/modify_q}" method="post">
             <!--숨겨서 전송할 정보들-->
@@ -50,49 +52,51 @@
                     </div>
                 </div> <!--게시판 코드-->
             </div>
-            <!--제목/게시판/태그 선택-->
-            <div class="d-flex justify-content-start mb-3">
-                <div class="me-3 postTitle">
+            <!--태그/답변자/비밀글/글 제목 입력-->
+            <div class="d-flex justify-content-between mb-1">
+                <div class="d-flex justify-content-start">
+                    <!--태그 선택-->
+                    <div class="postTag">
+                        <div class="form-group">
+                            <select class="form-select" name="postTag" aria-label="태그선택">
+                                <option value="null" th:selected="${postDTO.postTag == null}">전체</option>
+                                <option value="강아지" th:selected="${postDTO.postTag == '강아지'}">강아지</option>
+                                <option value="고양이" th:selected="${postDTO.postTag == '고양이'}">고양이</option>
+                            </select>
+                        </div>
+                    </div> <!--태그 선택-->
+                    <!--질문 답변자 선택-->
+                    <div class="replyAuth">
+                        <div class="form-group">
+                            <select class="form-select" name="replyAuth" aria-label="질문답변자선택">
+                                <option>답변자선택</option>
+                                <option value="false" th:selected="${postDTO.replyAuth == false}">전체회원</option>
+                                <option value="true" th:selected="${postDTO.replyAuth == true}">수의사</option>
+                            </select>
+                        </div>
+                    </div> <!--질문 답변자 선택-->
+                    <!--비밀글 선택-->
+                    <div class="secret">
+                        <div class="form-group">
+                            <select class="form-select" name="secret" aria-label="비밀글선택">
+                                <option value="false" th:selected="${postDTO.secret == false}">전체공개</option>
+                                <option value="true" th:selected="${postDTO.secret == true}">비밀글</option>
+                            </select>
+                        </div>
+                    </div> <!--비밀글 선택-->
+                </div>
+                <!--글 제목 입력-->
+                <div class="postTitleQ">
                     <div class="form-group">
-                        <input type="text" name="postTitle" class="form-control" th:value="${postDTO.postTitle}"
-                               aria-label="게시글제목">
+                        <input type="text" name="postTitle" class="form-control" th:value="${postDTO.postTitle}" aria-label="게시글제목" maxlength="30">
                     </div>
-                </div> <!--제목입력-->
-                <div class="postTag">
-                    <!--선택되어있음-->
-                    <select class="form-select" name="postTag" aria-label="태그선택">
-                        <option value="강아지" th:selected="${postDTO.postTag == '강아지'}">강아지</option>
-                        <option value="고양이" th:selected="${postDTO.postTag == '고양이'}">고양이</option>
-                    </select>
-                </div> <!--태그 선택-->
-            </div> <!--제목/게시판/태그 선택-->
-
-            <!--고민/답변자/비밀글 선택-->
-            <div class="d-flex justify-content-start mb-3">
-                <div class="me-3 replyAuth">
-                    <div class="form-group">
-                        <!--선택되어있음-->
-                        <select class="form-select" name="replyAuth" aria-label="질문답변자선택">
-                            <option value="false" th:selected="${postDTO.replyAuth == false}">전체회원</option>
-                            <option value="true" th:selected="${postDTO.replyAuth == true}">수의사</option>
-                        </select>
-                    </div>
-                </div> <!--질문 답변자 선택-->
-                <div class="secret">
-                    <div class="form-group">
-                        <!--선택되어있음-->
-                        <select class="form-select" name="secret" aria-label="비밀글선택">
-                            <option value="false" th:selected="${postDTO.secret == false}">비밀글선택</option>
-                            <option value="true" th:selected="${postDTO.secret == true}">비밀글</option>
-                        </select>
-                    </div>
-                </div> <!--비밀글 선택-->
-            </div> <!--고민/답변자/비밀글 선택-->
+                </div> <!--글 제목 입력-->
+            </div> <!--태그/답변자/비밀글/글 제목 입력-->
 
             <!--글내용 입력-->
             <div>
                 <!-- 서머노트 -->
-                <div th:include="/summernote/summernote :: summernote"></div>
+                <div th:include="summernote/summernote :: summernote"></div>
             </div> <!--글내용 입력-->
 
             <!--버튼-->
@@ -108,16 +112,6 @@
 </body>
 <div th:include="include/footer :: footer"></div>
 <script>
-    //cancel 버튼 클릭 이벤트
-    document.querySelector(".modifyCancelBtn").addEventListener("click", function (e) {
-        e.preventDefault();
-    }, false);
-
-    //modifyBtn 버튼 클릭 이벤트
-    document.querySelector(".modifyBtn").addEventListener("click", function (e) {
-        e.preventDefault();
-    }, false);
-
     function checkForm() {
         let postTitle = document.querySelector('input[name="postTitle"]').value.trim();
         let replyAuth = document.querySelector('select[name="replyAuth"]').value;
@@ -137,6 +131,5 @@
         }
         return true;
     }
-
 </script>
 </html>

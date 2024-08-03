@@ -2,12 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" th:href="@{/css/my/userModify.css}">
+    <title>말랑발자국 - 내 정보 수정</title>
 </head>
 <body>
 
@@ -15,17 +16,41 @@
 
 </div>
 
-<div class="container" style="height: 1060px;">
-    <div class="d-flex justify-content-center align-items-center" style="height: 1060px">
+<div class="container">
+    <div class="d-flex justify-content-center align-items-center">
         <div>
-            <div class="d-flex justify-content-center align-items-center"
-                 style="height: 100px; width: 800px;">
-                <h1 style="color: #67cafe"><b>EDIT MY INFORMATION</b></h1>
+            <div class="d-flex justify-content-center align-items-center myModifyTitle">
+                <h1>내 정보 수정</h1>
             </div>
-            <div class="d-flex justify-content-center align-items-center"
-                 style="height: 750px; width: 800px;">
+            <div class="d-flex justify-content-center align-items-center myModifyContent">
                 <form id="userForm" action="/my/user-modify" method="post"
                       class="d-flex flex-column justify-content-between">
+                    <!-- 수의사 인증 섹션 -->
+                    <div class="d-flex justify-content-end">
+                        <div class="dropdown">
+                            <button class="btn certification-button dropdown-toggle" type="button"
+                                    id="vetVerificationDropdown"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                수의사인증
+                            </button>
+                            <ul class="dropdown-menu p-4" aria-labelledby="vetVerificationDropdown">
+                                <li class="mb-3">
+                                    <label for="vetName">이름</label>
+                                    <input type="text" id="vetName" name="vetName" class="form-control" disabled>
+                                </li>
+                                <li class="mb-3">
+                                    <label for="vetLicense">수의사 번호</label>
+                                    <input type="text" id="vetLicense" name="vetLicense" class="form-control">
+                                </li>
+                                <li class="d-flex justify-content-center">
+                                    <button type="button" class="btn certification-button"
+                                            onclick="verifyVet()">
+                                        인증
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                     <div>
                         <label for="userId">아이디</label>
                         <div>
@@ -34,7 +59,7 @@
                         </div>
                         <div class="feedback"></div>
                     </div>
-                    <div th:if="${!user.social}">
+                    <div th:if="${!user.social && (role == 'ROLE_USER' || role == 'ROLE_VET')}">
                         <label for="existingPassword">기존비밀번호</label>
                         <div>
                             <input type="password" name="existingPassword" id="existingPassword"
@@ -46,7 +71,7 @@
                         <label for="password">신규비밀번호</label>
                         <div>
                             <input type="password" name="userPw" id="password" class="form-control form-width d-inline"
-                                   onkeyup="checkPasswordLength()" required>
+                                   onkeyup="checkPasswordLength()">
                         </div>
                         <div id="passwordFeedback" class="feedback"></div>
                     </div>
@@ -54,7 +79,7 @@
                         <label for="confirmPassword">비밀번호확인</label>
                         <div>
                             <input type="password" id="confirmPassword" class="form-control form-width d-inline"
-                                   onkeyup="checkPasswordMatch()" required>
+                                   onkeyup="checkPasswordMatch()">
                             <div id="confirmPasswordFeedback" class="feedback"></div>
                         </div>
                     </div>
@@ -63,7 +88,7 @@
                         <label for="userName">이름</label>
                         <div>
                             <input type="text" name="userName" id="userName" th:value="${user.userName}"
-                                   class="form-control form-width d-inline">
+                                   class="form-control form-width d-inline" readonly>
                         </div>
                         <div class="feedback"></div>
                     </div>
@@ -80,8 +105,7 @@
                         <label for="tel">연락처</label>
                         <div class="d-flex">
                             <label for="telPrefix"></label>
-                            <select name="telPrefix" id="telPrefix" class="form-control form-width me-2"
-                                    style="width: 116px;">
+                            <select name="telPrefix" id="telPrefix" class="form-control form-tel me-2">
                                 <option value="010">010</option>
                                 <option value="011">011</option>
                                 <option value="016">016</option>
@@ -91,28 +115,24 @@
                             </select>
                             <span class="align-self-center mx-1">-</span>
                             <label for="telMiddle"></label>
-                            <input type="text" id="telMiddle" name="telMiddle" class="form-control form-width mx-1"
-                                   maxlength="4"
-                                   oninput="formatTelInput()" style="width: 116px;">
+                            <input type="text" id="telMiddle" name="telMiddle" class="form-control form-tel mx-1" maxlength="4" oninput="formatTelInput()" required>
                             <span class="align-self-center mx-1">-</span>
                             <label for="telSuffix"></label>
-                            <input type="text" id="telSuffix" name="telSuffix" class="form-control form-width ms-2"
-                                   maxlength="4"
-                                   oninput="formatTelInput()" style="width: 116px;">
+                            <input type="text" id="telSuffix" name="telSuffix" class="form-control form-tel ms-2" maxlength="4" oninput="formatTelInput()" required>
                         </div>
                         <div id="telFeedback" class="feedback"></div>
                     </div>
                     <input type="hidden" name="tel" id="tel" th:value="${user.tel}" required>
-
+                    <input type="hidden" id="userVet" name="userVet" th:value="${user.userVet}"/>
 
                     <div class="blank"></div>
 
                     <div class="d-flex justify-content-evenly">
-                        <button type="submit" class="modi-button btn mb-4">
+                        <button type="submit" class="modi-button mb-4">
                             저장
                         </button>
-                        <button class="cancel-button btn mb-4"
-                                th:onclick="|location.href='@{/sample/home}'|">
+                        <button class="cancel-button mb-4"
+                                th:onclick="|location.href='@{/}'|">
                             <span>닫기</span>
                         </button>
                     </div>
@@ -134,9 +154,6 @@
                 </div>
                 <div class="text-center p-2 sideActivity">
                     <a th:href="@{/my/userActivity/{userId}/posts(userId=${user.getUserId})}">내 활동</a>
-                </div>
-                <div class="text-center p-2 sideLetterbox" style="">
-                    쪽지함
                 </div>
                 <div class="text-center p-2 mb-2 sideMyInfo">
                     <a th:href="@{'/my/user-modify?userId=' + ${username}}">내 정보 수정</a>
@@ -290,6 +307,36 @@
                 console.error('Error:', error);
             });
     }
+    function verifyVet() {
+        const vetName = document.getElementById('vetName').value;
+        const vetLicense = document.getElementById('vetLicense').value;
+
+        const data = { vetName: vetName, vetLicense: vetLicense };
+
+        // 서버로 인증 요청을 보냄
+        axios.post("/check/vet", null, { params: data })
+            .then(response => {
+                const responseData = response.data;
+                // 서버에서 보낸 메시지를 사용하여 알림을 표시
+                if (responseData.isVerified) {
+                    document.getElementById('userVet').value = 'true';
+                    alert(responseData.message); // 인증 완료 메시지
+                } else {
+                    alert(responseData.message); // 인증 실패 메시지
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('수의사 인증 중 오류가 발생하였습니다.');
+            });
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        function copyUserName() {
+            document.getElementById('vetName').value = document.getElementById('userName').value;
+        }
+
+        copyUserName(); // 페이지 로드 시 함수 호출
+    });
 </script>
 </body>
 </html>

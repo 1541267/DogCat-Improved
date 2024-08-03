@@ -9272,7 +9272,7 @@
                             pos.top -= containerOffset.top;
                             pos.left -= containerOffset.left;
                             this.$popover.css({
-                                display: 'block',
+                                display: 'none',
                                 left: pos.left,
                                 top: pos.top
                             });
@@ -9388,9 +9388,7 @@
                             pos.top -= containerOffset.top;
                             pos.left -= containerOffset.left;
                             this.$popover.css({
-                                display: 'block',
-                                left: pos.left,
-                                top: pos.top
+                                display: 'none',
                             });
                         } else {
                             this.hide();

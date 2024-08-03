@@ -77,7 +77,7 @@ public class ScrapSearchImpl extends QuerydslRepositorySupport implements ScrapS
 		for (Scrap scrap1 : list) {
 
 			UserScrapsActivityDTO userScrapsActivityDTO = UserScrapsActivityDTO.builder()
-				.scrapNo(scrap1.getScrapNo())
+				.scrapNo(scrap1. getScrapNo())
 				.postNo(scrap1.getPostNo().getPostNo())
 				.userId(scrap1.getPostNo().getUserId().getUserId())
 				.nickname(scrap1.getPostNo().getUserId().getNickname())
@@ -90,17 +90,14 @@ public class ScrapSearchImpl extends QuerydslRepositorySupport implements ScrapS
 				.modDate(scrap1.getPostNo().getModDate())
 				.postTag(scrap1.getPostNo().getPostTag())
 				.secret(scrap1.getPostNo().isSecret())
-				.likeCount(scrap1.getPostNo().getLikeCount())
-				.dislikeCount(scrap1.getPostNo().getDislikeCount())
 				.viewCount(scrap1.getPostNo().getViewCount())
 				.replyAuth(scrap1.getPostNo().isReplyAuth())
+				.completeQna(scrap1.getPostNo().isCompleteQna())
 				.build();
 
 			List<ImgBoard> imgBoards = scrap1.getPostNo().getImages().stream()
 				.map(image -> ImgBoard.builder()
 					.fileUuid(image.getFileUuid())
-					.fileName(image.getFileName())
-					.uploadTime(image.getUploadTime())
 					.build()
 				).collect(Collectors.toList());
 

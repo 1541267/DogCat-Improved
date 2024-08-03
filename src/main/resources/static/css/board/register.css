@@ -13,8 +13,13 @@ body {
     padding: 30px;
 }
 
-.boardCode {
+.boardCode,
+.boardCodeM {
     width: 150px;
+}
+
+.boardCodeM {
+    margin-right: 5px;
 }
 
 .postTag {
@@ -35,6 +40,9 @@ body {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 .cancelBtn,
@@ -45,6 +53,9 @@ body {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 .modifyBtn {
@@ -54,9 +65,13 @@ body {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
-.registerTitle {
+.registerTitle,
+.modifyTitle {
     color: #67cafe;
     margin-bottom: 1rem;
 }

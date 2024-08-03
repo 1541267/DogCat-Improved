@@ -19,7 +19,9 @@ import com.community.dogcat.repository.user.UserRepository;
 import com.community.dogcat.repository.user.UsersAuthRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -33,15 +35,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
-		OAuth2Response oAuth2Response = null;
+		OAuth2Response oAuth2Response;
 
 		switch (registrationId) {
+
 			case "naver" -> oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
 			case "google" -> oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
 			case "kakao" -> oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
+
 			default -> {
 				return null;
 			}
+
 		}
 
 		String userId = oAuth2Response.getEmail();
@@ -64,6 +69,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			UsersAuth usersAuth = UsersAuth.builder()
 				.userId(user.getUserId())
 				.build();
+
 			usersAuthRepository.save(usersAuth);
 
 			UserDTO userDTO = UserDTO.builder()
@@ -76,16 +82,24 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 		} else {
 			if (!existData.isSocial()) {
-				// 일반 회원이 이미 존재하는 경우 소셜 회원가입을 막음
+
+				log.warn("The email is already registered");
 				throw new CustomOAuth2Exception("해당 이메일로 이미 회원가입이 되어 있습니다.\\n일반 로그인을 시도해 주세요.");
+
 			}
 
-			if (existData.isSocial() && !existData.getNickname().startsWith(registrationId + "_")) {
+			if (!existData.getNickname().startsWith(registrationId + "_")) {
+
+				log.warn("The same email ID is being used by another social provider");
 				throw new CustomOAuth2Exception("동일한 이메일 ID가 다른 소셜 제공자에 의해 사용되고 있습니다.");
+
 			}
 
 			if (existData.isBlock()) {
+
+				log.warn("Your account has been blocked by the administrator");
 				throw new CustomOAuth2Exception("관리자에 의해 계정이 차단되었습니다.");
+
 			}
 
 			UsersAuth usersAuth = UsersAuth.builder()
@@ -100,5 +114,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 			return new CustomOAuth2User(userDTO);
 		}
+
 	}
+
 }

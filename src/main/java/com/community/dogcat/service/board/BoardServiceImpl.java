@@ -3,38 +3,46 @@ package com.community.dogcat.service.board;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.community.dogcat.domain.ImgBoard;
 import com.community.dogcat.domain.Post;
 import com.community.dogcat.domain.PostLike;
+import com.community.dogcat.domain.Reply;
 import com.community.dogcat.domain.Scrap;
 import com.community.dogcat.domain.User;
+import com.community.dogcat.domain.UsersAuth;
 import com.community.dogcat.dto.board.BoardListDTO;
 import com.community.dogcat.dto.board.BoardPageRequestDTO;
 import com.community.dogcat.dto.board.BoardPageResponseDTO;
 import com.community.dogcat.dto.board.PostReadDTO;
 import com.community.dogcat.dto.board.post.PostDTO;
+import com.community.dogcat.dto.report.UserReportDetailDTO;
 import com.community.dogcat.dto.uploadImage.UploadPostImageResultDTO;
 import com.community.dogcat.mapper.UploadResultMappingImgBoard;
 import com.community.dogcat.repository.board.BoardRepository;
 import com.community.dogcat.repository.board.postLike.PostLikeRepository;
 import com.community.dogcat.repository.board.reply.ReplyRepository;
 import com.community.dogcat.repository.board.scrap.ScrapRepository;
+import com.community.dogcat.repository.report.ReportLogRepository;
 import com.community.dogcat.repository.upload.UploadRepository;
 import com.community.dogcat.repository.user.UserRepository;
+import com.community.dogcat.repository.user.UsersAuthRepository;
 import com.community.dogcat.util.uploader.S3Uploader;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -43,6 +51,8 @@ public class BoardServiceImpl implements BoardService {
 	private final S3Uploader s3Uploader;
 
 	private final UserRepository userRepository;
+
+	private final UsersAuthRepository usersAuthRepository;
 
 	private final BoardRepository boardRepository;
 
@@ -53,6 +63,8 @@ public class BoardServiceImpl implements BoardService {
 	private final PostLikeRepository postLikeRepository;
 
 	private final UploadRepository uploadRepository;
+
+	private final ReportLogRepository reportLogRepository;
 
 	// 업로드된 이미지 정보 얻기 - ys
 	private final UploadResultMappingImgBoard uploadResultMappingImgBoard;
@@ -67,9 +79,10 @@ public class BoardServiceImpl implements BoardService {
 	//게시물을 작성한 회원 정보 조회
 	@Override
 	public Long register(PostDTO postDTO) {
+
 		// 로그인한 회원정보를 받아 userId 조회
 		String userId = postDTO.getUserId();
-		User user = userRepository.findById(userId).orElseThrow();
+		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Board Service Register Error : 401 Unauthorized"));
 
 		// 조회한 회원정보 DTO에 추가
 		postDTO.setNickname(user.getNickname());
@@ -77,27 +90,24 @@ public class BoardServiceImpl implements BoardService {
 		postDTO.setUserVet(user.isUserVet());
 
 		// 게시글 작성자 경험치 증가
-		user.exp(postDTO.getExp());
+		user.incrementPostExp();
 
 		// 게시글 등록시 이미지가 summernote 링크로 먼저 등록되기 때문에 x 박스가 뜸
 		// 고쳐주기 위해 업로드때 수행하던 작업을 게시판 등록할때 적용 - ys
 		if (postDTO.getPostContent().contains(oldUrl)) {
 			postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
 		}
+
 		// 게시물 작성
 		Post post = Post.builder()
 			.userId(user)
 			.boardCode(postDTO.getBoardCode())
-			.modDate(postDTO.getModDate())
-			.dislikeCount(postDTO.getDislikeCount())
-			.postContent(postDTO.getPostContent())
-			.postTag(postDTO.getPostTag())
 			.postTitle(postDTO.getPostTitle())
-			.likeCount(postDTO.getLikeCount())
+			.postContent(postDTO.getPostContent())
 			.regDate(postDTO.getRegDate())
-			.replyAuth(postDTO.isReplyAuth())
+			.postTag(postDTO.getPostTag())
 			.secret(postDTO.isSecret())
-			.viewCount(postDTO.getViewCount())
+			.replyAuth(postDTO.isReplyAuth())
 			.build();
 
 		boardRepository.save(post);
@@ -108,21 +118,47 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	@Transactional
 	public void delete(Long postNo, String userId) {
+
 		// 로그인한 회원 정보 확인
-		User user = userRepository.findById(userId).orElseThrow();
+		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Board Service Delete Error : 401 Unauthorized"));
+
 		// 게시물 번호와 회원 아이디가 일치하는 게시물인지 확인
 		Optional<Post> post = boardRepository.findByPostNoAndUserId(postNo, user);
-		// 회원 아이디로 작성한 게시글이 맞으면 삭제
-		if (post.isPresent()) {
-			List<ImgBoard> images = uploadRepository.findByPostNo(post.get());
+
+		// 로그인한 회원이 관리자인지 확인
+		String auth = usersAuthRepository.findByUserId(userId).getAuthorities();
+
+		// 로그인한 회원이 작성한 게시글이 맞거나 로그인한 계정이 관리자면 삭제 가능
+		if (post.isPresent() || auth.equals("ROLE_ADMIN")) {
+
+			List<ImgBoard> images = uploadRepository.findByPostNo(postNo);
+
 			for (ImgBoard image : images) {
+
 				String fileName = image.getFileUuid() + image.getExtension();
 				String thumbFileName = "t_" + fileName;
 				log.info("S3 Delete FileName: {}", fileName);
 
-				s3Uploader.removeS3File(fileName, thumbFileName);
+				s3Uploader.deleteUploadedS3File(fileName, thumbFileName);
 			}
+
+			// 댓글 존재 확인
+			List<Reply> replies = replyRepository.findByPostNo(postNo);
+
+			for (Reply reply : replies) {
+				// 해당 댓글 신고 삭제
+				List<Long> reportLogIds = reportLogRepository.findByReplyNo(reply.getReplyNo());
+
+				for (Long reportLogId : reportLogIds) {
+
+					reportLogRepository.deleteReportLog(reportLogId);
+				}
+			}
+
 			boardRepository.deleteById(postNo);
+
+		} else {
+			log.error("Board Service Delete Error : 403 Forbidden");
 		}
 	}
 
@@ -130,13 +166,15 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public PostDTO readOne(Long postNo) {
 		// 게시물 번호 조회
-		Post post = boardRepository.findById(postNo).orElseThrow();
+		Post post = boardRepository.findById(postNo).orElseThrow(() -> new NoSuchElementException("Board Service ReadOne Error : 404 Not Found"));
+
 		return new PostDTO(post);
 	}
 
 	// 상세페이지 접속시 조회수 증가
 	@Override
 	public void updateViewCount(Long postNo) {
+
 		boardRepository.updateViewCount(postNo);
 	}
 
@@ -144,11 +182,12 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	@Transactional
 	public PostReadDTO readDetail(Long postNo, String userId) {
+
 		// 게시물 번호 조회 (게시물 정보 확인용)
-		Post post = boardRepository.findById(postNo).orElseThrow();
+		Post post = boardRepository.findById(postNo).orElseThrow(() -> new NoSuchElementException("Board Service ReadDetail Error : 404 Not Found"));
 
 		// 로그인한 회원정보를 받아 userId 조회
-		User user = userRepository.findById(userId).orElseThrow();
+		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Board Service ReadDetail Error : 401 Unauthorized"));
 
 		// 로그인한 회원의 스크랩 여부 확인
 		Optional<Scrap> scrap = scrapRepository.findByPostNoAndUserId(post, user);
@@ -156,40 +195,27 @@ public class BoardServiceImpl implements BoardService {
 		// 로그인한 회원의 좋아요/싫어요 여부 확인
 		Optional<PostLike> postLike = postLikeRepository.findByPostAndUser(post, user);
 
+		// 게시글 하나에 달린 댓글 수
+		Long replyCount = replyRepository.countRepliesByPost(post.getPostNo());
+
 		// 게시물 정보 설정
-		return PostReadDTO.builder()
-			.postNo(post.getPostNo())
-			.userId(post.getUserId().getUserId())
-			.nickname(post.getUserId().getNickname())
-			.exp(post.getUserId().getExp())
-			.userVet(post.getUserId().isUserVet())
-			.boardCode(post.getBoardCode())
-			.postTitle(post.getPostTitle())
-			.postContent(post.getPostContent())
-			.regDate(post.getRegDate())
-			.modDate(post.getModDate())
-			.postTag(post.getPostTag())
-			.secret(post.isSecret())
-			.likeCount(post.getLikeCount())
-			.dislikeCount(post.getDislikeCount())
-			.viewCount(post.getViewCount())
-			.replyAuth(post.isReplyAuth())
-			.replyCount(replyRepository.countRepliesByPostNo(post))
-			.scrapNo(scrap.map(Scrap::getScrapNo).orElseGet(() -> null))
-			.likeNo(postLike.map(PostLike::getLikeNo).orElseGet(() -> null))
-			.likeState(postLike.map(PostLike::isLikeState).orElseGet(() -> false))
-			.dislikeState(postLike.map(PostLike::isDislikeState).orElseGet(() -> false))
-			.imgBoards(post.getImages().stream().toList())
-			.build();
+		PostReadDTO postReadDTO = new PostReadDTO(post);
+		postReadDTO.setReplyCount(replyCount);
+		postReadDTO.setScrapNo(scrap.map(Scrap::getScrapNo).orElseGet(() -> null));
+		postReadDTO.setLikeNo(postLike.map(PostLike::getLikeNo).orElseGet(() -> null));
+		postReadDTO.setLikeState(postLike.map(PostLike::isLikeState).orElseGet(() -> false));
+		postReadDTO.setDislikeState(postLike.map(PostLike::isDislikeState).orElseGet(() -> false));
+
+		return postReadDTO;
 	}
 
-	// 게시판 존재 유무위해 - ys
+	// 게시글 존재 유무위해 - ys
 	@Override
 	public Post findPostByPostNo(Long postNo) {
 
 		Optional<Post> optionalPost = boardRepository.findById(postNo);
 
-		return optionalPost.get();
+		return optionalPost.orElseGet(()->null);
 	}
 
 	// 게시글 조회시 사진 찾기 - ys
@@ -197,6 +223,7 @@ public class BoardServiceImpl implements BoardService {
 	public List<String> getImages(Long postNo) {
 
 		Optional<Post> optionalPost = boardRepository.findById(postNo);
+
 		if (optionalPost.isPresent()) {
 
 			//Optional로 보내면 view에서 th:each 사용 불가 - ys
@@ -220,36 +247,69 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public Long modify(PostDTO postDTO) {
-		// 게시물 번호 조회
-		Post post = boardRepository.findById(postDTO.getPostNo()).orElseThrow();
-		log.info("modify / postNo: {}, postContent: {}", post.getPostNo(), post.getPostContent());
+	public Long modify(PostDTO postDTO, String userId) {
 
-		if (postDTO.getPostContent().contains(oldUrl)) {
-			postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
+		// 게시물 번호 조회
+		Post post = boardRepository.findById(postDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("Board Service Modify Error : 404 Not Found"));
+
+		// 게시물 작성자 확인
+		if (postDTO.getUserId().equals(userId)) {
+
+			if (postDTO.getPostContent().contains(oldUrl)) {
+				postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
+			}
+
+			// 수정시간 추가
+			postDTO.setModDate(Instant.now());
+
+			// 게시물 수정
+			post.modify(
+				postDTO.getBoardCode(),
+				postDTO.getPostTitle(),
+				postDTO.getPostContent(),
+				postDTO.getModDate(),
+				postDTO.getPostTag(),
+				postDTO.isSecret(),
+				postDTO.isReplyAuth());
+
+			boardRepository.save(post);
+
+		} else {
+			log.error("Board Service Modify Error : 403 Forbidden");
 		}
 
-		// 수정시간 추가
-		postDTO.setModDate(Instant.now());
-
-		// 게시물 수정
-		post.modify(
-			postDTO.getBoardCode(),
-			postDTO.getPostTitle(),
-			postDTO.getPostContent(),
-			postDTO.getModDate(),
-			postDTO.getPostTag(),
-			postDTO.isSecret(),
-			postDTO.isReplyAuth());
-
-		boardRepository.save(post);
 		return post.getPostNo();
 	}
 
-	// regDate(최신순), boarCode에 따라 정렬, 첨부파일 정보 추가
+	@Override
+	public Long completeQna(PostDTO postDTO, String userId) {
+
+		// 게시물 번호 조회
+		Post post = boardRepository.findById(postDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("Board Service CompleteQna Error : 404 Not Found"));
+
+		// 게시물 작성자 확인
+		if (postDTO.getUserId().equals(userId)) {
+
+			postDTO.setCompleteQna(true);
+			// 게시물 수정
+			post.completeQna(
+				postDTO.isCompleteQna());
+
+		} else {
+			log.error("Board Service completeQna Error : 403 Forbidden");
+		}
+
+		return post.getPostNo();
+	}
+
+	// regDate(최신순), boardCode에 따라 정렬, 첨부파일 정보 추가
 	@Override
 	public BoardPageResponseDTO<BoardListDTO> readList(BoardPageRequestDTO pageRequestDTO) {
-		Pageable pageable = pageRequestDTO.getPageable("postNo");
+
+		// boardCode에 따라 size설정 다르게
+		pageRequestDTO.setSizeByBoardCode(pageRequestDTO.getBoardCode());
+
+		Pageable pageable = pageRequestDTO.getPageable();
 		String boardCode = pageRequestDTO.getBoardCode();
 
 		Page<BoardListDTO> result = boardRepository.listWithBoard(pageable, boardCode);
@@ -264,12 +324,13 @@ public class BoardServiceImpl implements BoardService {
 	// regDate(최신순), boarCode에 따라 정렬, 첨부파일 정보 추가 + 정렬기준선택가능
 	@Override
 	public BoardPageResponseDTO<BoardListDTO> list(BoardPageRequestDTO pageRequestDTO) {
+
 		// boardCode에 따라 size설정 다르게
 		pageRequestDTO.setSizeByBoardCode(pageRequestDTO.getBoardCode());
 
 		String[] types = pageRequestDTO.getTypes();
 		String keyword = pageRequestDTO.getKeyword();
-		Pageable pageable = pageRequestDTO.getPageable("postNo");
+		Pageable pageable = pageRequestDTO.getPageable();
 		String boardCode = pageRequestDTO.getBoardCode();
 		String postTag = pageRequestDTO.getPostTag();
 		String order = pageRequestDTO.getOrder();
@@ -283,25 +344,4 @@ public class BoardServiceImpl implements BoardService {
 			.build();
 	}
 
-	// 예비용
-	// @Override
-	// public BoardPageResponseDTO<PostDTO> list(BoardPageRequestDTO pageRequestDTO) {
-	// 	String[] types = pageRequestDTO.getTypes();
-	// 	String keyword = pageRequestDTO.getKeyword();
-	// 	Pageable pageable = pageRequestDTO.getPageable("postNo");
-	// 	String boardCode = pageRequestDTO.getBoardCode();
-	//
-	// 	Page<Post> result = boardRepository.searchBoard(types, keyword, pageable, boardCode);
-	//
-	// 	List<PostDTO> dtoList = result.getContent().stream()
-	// 		.map(post -> new PostDTO(post))
-	// 		.collect(Collectors.toList());
-	//
-	// 	return BoardPageResponseDTO.<PostDTO>withAll()
-	// 		.pageRequestDTO(pageRequestDTO)
-	// 		.dtoList(dtoList)
-	// 		.total((int)result.getTotalElements())
-	// 		.build();
-	// }
 }
-

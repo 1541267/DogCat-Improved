@@ -6,96 +6,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/reportDetail.css}">
     <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
-    <title>Report Detail</title>
-    <style>
-        .container {
-            border: 1px solid #000;
-            padding: 20px;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .details, .content {
-            margin-bottom: 20px;
-        }
-
-        .details span {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .report-title, .report-content {
-            margin-bottom: 10px;
-        }
-
-        .delete-report {
-            text-align: right;
-            cursor: pointer;
-            color: red;
-            text-decoration: underline;
-        }
-
-        .delete-button-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-        }
-    </style>
-
+    <title>말랑발자국 - 신고 상세</title>
 </head>
 <body>
 
-<div class="container" th:each="reportDetail : ${reportDetail}">
-    <div class="header-top">
-        <h2>신고 상세</h2>
+<div class="report-detail" th:each="reportDetail : ${reportDetail}">
+    <div class="header-top d-flex flex-row justify-content-between">
+        <h1>신고 상세</h1>
         <button class="btn btn-danger square-button" onclick="closeWindow()">X</button>
     </div>
 
-    <div class="details">
-        <div>신고자:
-            <th:block th:text="${reportDetail.userName}"></th:block>
-            /
-            <th:block th:text="${reportDetail.userId.userId}"></th:block>
-            <!--이름 아이디-->
-        </div>
-        <span>신고일: <th:block th:text="${#dates.format(reportDetail.regDate, 'yyyy-MM-dd')}"></th:block></span>
-        <span>
+    <div>
+        <!--신고 관련정보-->
+        <div class="details">
+            <!--신고자정보-->
+            <div>
+                <span class="badge bg-secondary text-white m-1">신고자</span>
+                <th:block th:text="${reportDetail.nickname}"></th:block>
+                /
+                <th:block th:text="${reportDetail.userId.userId}"></th:block>
+            </div>
+
+            <!--신고내용-->
+            <div>
+                <span class="badge bg-secondary text-white m-1">신고일</span>
+                <th:block th:text="${#dates.format(reportDetail.regDate, 'yyyy-MM-dd')}"></th:block>
+            </div>
+            <div>
+
+                <!--게시글 신고-->
                 <th:block th:if="${reportDetail.postNo != null}">
-                    게시글 : <th:block th:text="${reportDetail.postNo.postTitle}"></th:block>
+                    <span class="badge bg-secondary text-white m-1">게시글</span>
+                    <a th:text="${reportDetail.postNo.postTitle}"
+                       th:href="@{/board/read/{postNo}(postNo=${reportDetail.postNo.postNo})}"
+                       onclick="openPopup(this.href); return false;">
+                    </a>
                 </th:block>
+
+                <!--댓글 신고-->
                 <th:block th:if="${reportDetail.replyNo != null}">
-                    댓 글 : <th:block th:text="${reportDetail.replyNo.replyContent}"></th:block>
+                    <span class="badge bg-secondary text-white m-1">댓 &nbsp;&nbsp;글</span>
+                    <a th:text="${reportDetail.replyNo.replyContent}"
+                       th:href="@{/board/read/{postNo}#reply(postNo=${reportDetail.replyNo.postNo.postNo})}"
+                       onclick="openPopup(this.href); return false;">
+                    </a>
                 </th:block>
-            </span>
-    </div>
 
-    <div class="delete-button-container">
-        <button class="btn btn-danger ml-2 btn-sm"
-                th:onclick="|deleteReportLog(${reportDetail.reportNo})|">삭제
-        </button>
-    </div>
+            </div>
+        </div>
 
-    <div class="report-title">
-        <label for="reportTitle" class="form-label">신고 제목</label>
-        <input type="text" id="reportTitle" class="form-control" readonly
-               th:value="${reportDetail.reportTitle}">
-    </div>
+        <!--신고제목-->
+        <div class="report-title">
+            <label for="reportTitle" class="form-label">신고 제목</label>
+            <input type="text" id="reportTitle" class="form-control" readonly
+                   th:value="${reportDetail.reportTitle}">
+        </div>
 
-    <div class="report-content">
-        <label for="reportContent" class="form-label">신고 내용</label>
-        <textarea id="reportContent" class="form-control" rows="4" readonly
-                  th:text="${reportDetail.reportContent}"></textarea>
-    </div>
+        <!--신고내용-->
+        <div class="report-content">
+            <label for="reportContent" class="form-label">신고 내용</label>
+            <textarea id="reportContent" class="form-control" rows="6" readonly
+                      th:text="${reportDetail.reportContent}"></textarea>
+        </div>
 
-    <div th:text="${reportDetail.reportNo}" style="display:none;"></div>
+        <!--삭제버튼-->
+        <div class="delete-button-container">
+            <button class="btn btn-danger ml-2"
+                    th:onclick="|deleteReportLog(${reportDetail.reportNo})|">내역삭제
+            </button>
+        </div>
+
+        <div th:text="${reportDetail.reportNo}" style="display:none;"></div>
+    </div>
 </div>
 
 <script>
@@ -103,8 +89,19 @@
         window.close();
     }
 
+    function openPopup(url) {
+        window.open(url, 'popupWindow', 'width=1200,height=900,scrollbars=yes,resizable=yes');
+    }
+
+    /*신고삭제*/
     async function deleteReportLog(reportNo) {
         try {
+            const isConfirmed = confirm(`신고를 삭제하시겠습니까?`);
+
+            if (!isConfirmed) {
+                return; // 사용자가 취소를 누르면 함수 종료
+            }
+
             const response = await fetch(`/admin/deleteReportLog/${reportNo}`, {
                 method: 'POST',
                 headers: {
@@ -122,7 +119,6 @@
         }
     }
 </script>
-
 
 </body>
 </html>

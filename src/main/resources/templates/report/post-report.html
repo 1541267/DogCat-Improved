@@ -3,143 +3,115 @@
 
 <head>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/report/createReport.css}">
     <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
-    <title>Report Detail</title>
-    <style>
-        .container {
-            border: 1px solid #000;
-            padding: 20px;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .details, .content {
-            margin-bottom: 20px;
-        }
-
-        .details div {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .report-title, .report-content {
-            margin-bottom: 10px;
-        }
-
-        .delete-report {
-            text-align: right;
-            cursor: pointer;
-            color: red;
-            text-decoration: underline;
-        }
-
-        .delete-button-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-        }
-    </style>
-
-
+    <title>말랑발자국 - 글 신고</title>
 </head>
 <body>
+    <div class="report-detail">
+        <div class="header-top">
+            <h1>게시물 신고</h1>
+            <button class="btn btn-danger square-button" onclick="closeWindow()">X</button>
+        </div>
+        <form onsubmit="createPostReportLog(); return false;">
+            <!--신고 관련정보-->
+            <div class="details">
+                <div>
+                    <span class="badge bg-secondary text-white m-1">신&nbsp; 고&nbsp; 자</span>
+                    <span id="nickname" th:text="${nickname}"></span>
+                    /
+                    <span id="userName" th:text="${username}"></span>
+                </div>
 
-<div class="container">
-    <div class="header-top">
-        <h2>신고</h2>
-        <button class="btn btn-danger square-button" onclick="closeWindow()">X</button>
+                <div>
+                    <span class="badge bg-secondary text-white m-1">신고 시간</span>
+                    <th:block th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">[신고시간]</th:block>
+                </div>
+                <div>
+                    <span class="badge bg-secondary text-white m-1">글&nbsp; 제&nbsp; 목</span>
+                    <th:block th:text="${postReport.postTitle}">[신고시간]</th:block>
+                </div>
+
+            </div>
+
+            <!--신고 제목, 내용-->
+            <div class="report-title">
+                <label for="reportTitle" class="form-label">신고 제목</label>
+                <input name="reportTitle" type="text" id="reportTitle" class="form-control" placeholder="최대 50자까지 작성 가능합니다" maxlength="50">
+            </div>
+
+            <div class="report-content">
+                <label for="reportContent" class="form-label">신고 내용</label>
+                <textarea name="reportContent" id="reportContent" class="form-control" rows="6" style="resize: none" maxlength="255"></textarea>
+            </div>
+
+            <!--신고버튼-->
+            <div class="report-button-container">
+                <button id="submitBtn" class="btn ml-2 btn-sm"
+                        style="background-color: #67cafe; color:white">전송
+                </button>
+            </div>
+
+            <!-- 숨겨진 필드 -->
+            <input type="hidden" id="postOwner" th:value="${postReport.userId.userId}">
+            <input type="hidden" id="reportUser" th:value="${username}">
+
+
+        </form>
     </div>
-
-
-    <!--    <h1 th:text="${User.userName}"></h1>-->
-    <!--    <h1 th:text="${Reply.replyContent}"></h1>-->
-    <!--    <h1 th:text="${postReport.postTitle}"></h1>-->
-
-
-    <form onsubmit="createReportLog(); return false;">
-        <div class="details">
-            <div>신고자:
-                <span id="nickname" th:text="${nickname}"></span>
-                /
-                <span id="userName" th:text="${username}"></span>
-            </div>
-
-            <div>신고시간:
-                <th:block th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}">[신고시간]</th:block>
-            </div>
-            <div>신고글 제목:
-                <th:block th:text="${postReport.postTitle}">[신고시간]</th:block>
-            </div>
-
-        </div>
-
-
-        <div class="report-title">
-            <label for="reportTitle" class="form-label">신고 제목</label>
-            <input name="reportTitle" type="text" id="reportTitle" class="form-control">
-        </div>
-
-        <div class="report-content">
-            <label for="reportContent" class="form-label">신고 내용</label>
-            <textarea name="reportContent" id="reportContent" class="form-control" rows="4"></textarea>
-        </div>
-
-        <!--신고버튼-->
-        <div class="report-button-container">
-            <button id="submitBtn" class="btn btn-primary ml-2 btn-sm">전송
-            </button>
-        </div>
-
-
-        <!--        <input type="hidden" name="postNo" id="postNo" th:value="${PostReport.postNo}"/> &lt;!&ndash; 게시물 번호 hidden 필드 &ndash;&gt;-->
-        <!--        <input type="hidden" name="replyNo" id="replyNo" th:value="${replyNo}"/> &lt;!&ndash; 댓글 번호 hidden 필드 &ndash;&gt;-->
-
-
-    </form>
-</div>
 
 <script>
 
-
-    function createReportLog() {
-        const isConfirmed = confirm("정말로 신고하시겠습니까?");
-        if (!isConfirmed) {
-            return; // 사용자가 취소를 클릭한 경우 함수 종료
-        }
+    // 신고 전송
+    function createPostReportLog() {
 
         const userId = document.getElementById("userName").textContent.trim();
-        // const replyNo = document.getElementById("replyNo").value;
         const reportTitle = document.getElementById("reportTitle").value;
         const reportContent = document.getElementById("reportContent").value;
+        const reportUser = document.getElementById('reportUser').value;
+        const postOwner = document.getElementById('postOwner').value;
 
-        console.log("Report UserId:", userId);
-        console.log("Report Title:", reportTitle);
-        console.log("Report Content:", reportContent);
+        // 자기 자신을 신고하는 경우 처리
+        if (reportUser === postOwner) {
+            alert("자기 자신을 신고할 수 없습니다.");
+            window.close();
+            return;
+        }
 
+        // 신고 제목, 내용이 없을 경우
+        if (!reportTitle) {
+            alert("신고 제목을 입력하세요.");
+            return;
+        }
+        if (!reportContent) {
+            alert("신고 내용을 입력하세요.");
+            return;
+        }
+
+        // 사용자가 취소를 클릭한 경우 종료
+        const isConfirmed = confirm("정말로 신고하시겠습니까?");
+        if (!isConfirmed) {
+            return;
+        }
+
+        // reportLogDTO생성
         const reportLogDTO = {
             userId: userId,
-            postNo: Number([[${postReport.postNo}]]),
-            // replyNo: Number(replyNo),
+            postNo: Number(`[[${postReport.postNo}]]`),
             reportTitle: reportTitle,
             reportContent: reportContent
         };
 
-        console.log(reportLogDTO);
-
         axios.post('/report/reportLog', reportLogDTO)
             .then(function (response) {
                 console.log("서버 응답:", response.data);
+                alert("신고가 완료되었습니다.");
                 closeWindow();
             })
             .catch(function (error) {

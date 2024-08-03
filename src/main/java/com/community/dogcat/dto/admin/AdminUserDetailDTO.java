@@ -17,4 +17,10 @@ public class AdminUserDetailDTO {
 
 	private String nickname;
 
+	private boolean userVet;
+
+	private String authorities;
+
+
+
 }

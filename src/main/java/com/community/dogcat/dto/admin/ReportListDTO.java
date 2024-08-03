@@ -15,7 +15,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class ReportListDTO {
 	//User에서 가져옴
-	private User userId;
+	private User user;
 
 	private String nickname;
 
@@ -23,14 +23,16 @@ public class ReportListDTO {
 
 	private Long reportNo;
 
+	private User reportedUser;
+
 	private String reportTitle;
 
 	private String reportContent;
 
 	private Instant regDate;
 
-	private Post postNo;
+	private Post post;
 
-	private Reply replyNo;
+	private Reply reply;
 
 }

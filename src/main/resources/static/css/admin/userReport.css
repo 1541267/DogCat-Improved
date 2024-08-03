@@ -1,0 +1,107 @@
+body {
+    width: 550px;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    display: flex;
+    align-items: flex-start;
+}
+
+a {
+    text-decoration: none;
+    color: #1a1e21;
+}
+
+.border-thick {
+    border-width: 3px; /* 원하는 두께로 설정 */
+}
+
+a:hover {
+    font-weight: bold;
+}
+
+header {
+    width: 500px;
+    height: 100px; /* 팝업창 높이에 맞게 조정 */
+}
+
+.popup {
+    padding: 20px;
+    margin-top: 0;
+    box-sizing: border-box; /* 패딩 포함 너비 계산 */
+}
+
+.header-top {
+    width: 500px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reportTitle {
+    color: #67cafe;
+}
+
+.border {
+    border: 1px solid #dee2e6;
+}
+
+.col-custom {
+    flex: 1;
+}
+
+.content {
+    height: calc(100% - 140px);
+    overflow-y: auto;
+    padding-top: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.d-flex {
+    margin: 0; /* 좌우 간격 제거 */
+}
+
+.no-data-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 300px;
+    min-width: 200px; /* 최소 너비 200px 설정 */
+}
+
+
+.no-data-image {
+    width: 15%;
+    height: auto;
+}
+
+.no-data-message {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.postBadge {
+    background-color: #e5ffee;
+    color: black;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.replyBadge {
+    background-color: gray;
+    color: white;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.reportDetail {
+    max-width: 220px;
+    cursor: pointer;
+}
+
+.regDate {
+    font-size: x-small;
+}

@@ -20,7 +20,7 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" th:href="@{/css/board/register.css}">
 
-    <title>Board Register</title>
+    <title>말랑발자국 - 글쓰기</title>
 </head>
 
 <body>
@@ -88,7 +88,7 @@
                 <div class="postTitle">
                     <div class="form-group">
                         <input type="text" name="postTitle" class="form-control" placeholder="글 제목을 작성해주세요."
-                               aria-label="게시글제목">
+                               aria-label="게시글제목" maxlength="30">
                     </div>
                 </div> <!--제목 입력-->
             </div> <!--제목/게시판/태그 선택-->
@@ -96,7 +96,7 @@
             <!--입력-->
             <div>
                 <!-- 서머노트 -->
-                <div th:include="/summernote/summernote :: summernote"></div>
+                <div th:include="summernote/summernote :: summernote"></div>
             </div> <!--글내용 입력-->
 
             <!--버튼-->
@@ -112,17 +112,6 @@
 </body>
 <div th:include="include/footer :: footer"></div>
 <script>
-    //cancel 버튼 클릭 이벤트
-    document.querySelector(".cancelBtn").addEventListener("click", function (e) {
-        e.preventDefault();
-    }, false);
-
-    //submit 버튼 클릭 이벤트, 게시글 먼저 등록 후 이미지 업로드 위해 기능 막음 - ys
-    document.querySelector(".submitBtn").addEventListener("click", function (e) {
-        e.preventDefault();
-
-    }, false);
-
     function checkForm() {
         let postTitle = document.querySelector('input[name="postTitle"]').value.trim();
         let boardCode = document.querySelector('select[name="boardCode"]').value;
@@ -142,7 +131,6 @@
         }
         return true;
     }
-
 </script>
 
 </html>

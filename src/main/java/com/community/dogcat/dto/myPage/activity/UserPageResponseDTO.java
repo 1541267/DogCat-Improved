@@ -41,9 +41,11 @@ public class UserPageResponseDTO<E> {
 	// 작성한 스크랩 수
 	private Long scrapCount;
 
+	private String userId;
+
 	@Builder(builderMethodName = "withAll")
 	public UserPageResponseDTO(UserPageRequestDTO pageRequestDTO, List<E> dtoList, int total, Long postCount,
-		Long replyCount, Long scrapCount) {
+		Long replyCount, Long scrapCount, String userId) {
 
 		this.page = pageRequestDTO.getPage();
 		this.size = pageRequestDTO.getSize();
@@ -54,6 +56,8 @@ public class UserPageResponseDTO<E> {
 		this.postCount = postCount;
 		this.replyCount = replyCount;
 		this.scrapCount = scrapCount;
+
+		this.userId = userId;
 
 		// 화면상 마지막번호
 		this.end = (int)(Math.ceil(this.page / 5.0)) * 5;

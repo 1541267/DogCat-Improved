@@ -1,7 +1,5 @@
-
 body {
     min-width: 1200px; /* 고정 최소 너비 설정 */
-
 }
 
 .container {
@@ -21,24 +19,6 @@ body {
     margin-bottom: 0;
 }
 
-.generalTitle {
-    color: #67cafe;
-    font-size: 35px;
-    margin-bottom: 0;
-}
-
-.tipTitle {
-    color: #fee567;
-    font-size: 35px;
-    margin-bottom: 0;
-}
-
-.qnaTitle {
-    color: #dd67fe;
-    font-size: 35px;
-    margin-bottom: 0;
-}
-
 .writeBtn {
     color: #000;
     background-color: #E8FFFF;
@@ -46,30 +26,24 @@ body {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
-.read {
-    margin-bottom: 0;
-}
-
-#list {
+#list, #showOffList {
     width: 1000px;
     height: 700px; /* 카드 크기 고정 */
+    box-shadow: 1px 1px 3px #dee2e6;
 }
 
 .list td {
     height: 70px;
 }
 
-#showOffList {
-    width: 1000px;
-    height: 700px; /* 카드 크기 고정 */
-}
-
 .showOffList td {
     height: 140px;
 }
-
 
 td > a {
     text-decoration: none;
@@ -78,6 +52,11 @@ td > a {
 
 .checkBox {
     width: 30px;
+    padding-right: 0;
+}
+
+.form-check-input {
+    margin-left: 0.75rem;
 }
 
 .boardImg {
@@ -99,6 +78,10 @@ td > a {
     width: auto;
 }
 
+.listPost {
+    padding-left: 10px;
+}
+
 .tag {
     height: 35px;
 }
@@ -114,6 +97,7 @@ td > a {
 
 .showOffTitle {
     font-size: 22px;
+    width: 600px;
 }
 
 .showOffTitle.sub {
@@ -136,6 +120,27 @@ td > a {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
+}
+
+.secret {
+    color: gray;
+}
+
+.secretPost {
+    font-size: 18px;
+    color: gray;
+    margin-bottom: 0;
+}
+
+.bi-file-lock {
+    font-size: 18px;
+}
+
+.bi-file-earmark-image {
+    font-size: 18px;
 }
 
 .noSearch {
@@ -150,7 +155,7 @@ td > a {
 }
 
 .noSearch img {
-    height: 500px;
+    height: 300px;
 }
 
 .noSearch > div {
@@ -159,16 +164,21 @@ td > a {
 
 .blank,
 .btnSection {
+    display: flex;
+    justify-content: flex-end;
     width: 180px;
 }
 
 .deleteBtn {
-    color: #000;
     background-color: #E8FFFF;
-    border: 1px solid #E8FFFF;
-    --bs-btn-hover-color: black;
+    border-color: white;
+    color: #000;
+    --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: red;
     --bs-btn-hover-bg: red;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: red;
+    --bs-btn-active-bg: red;
 }
 
 .page-item .page-link {
@@ -198,9 +208,7 @@ td > a {
 }
 
 .searchForm .form-select {
-    border-radius: 0;
-    border-top-left-radius: 15px;
-    border-bottom-left-radius: 15px;
+    border-radius: 15px 0 0 15px;
     border: 1px solid #67cafe;
     border-right: none;
 }
@@ -214,22 +222,21 @@ td > a {
 }
 
 .searchForm .searchBtn {
-    border-radius: 0;
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
+    border-radius: 0 15px 15px 0;
     border: 1px solid #67cafe;
     border-left: none;
     color: #000;
     background-color: #E8FFFF;
-    --bs-btn-hover-color: #000;
+    --bs-btn-hover-color: #fff;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 .searchForm .searchBtn:hover {
-    border-radius: 0;
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
+    border-radius: 0 15px 15px 0;
     border: 1px solid #67cafe;
     border-left: none;
     color: #000;
@@ -263,6 +270,9 @@ td > a {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 div.text-muted {
@@ -279,6 +289,9 @@ div.text-muted {
     --bs-btn-hover-color: #fff;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 .boardInfo {

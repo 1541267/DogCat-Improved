@@ -15,13 +15,13 @@ import com.community.dogcat.domain.User;
 import com.community.dogcat.oauth2.CustomOAuth2Exception;
 import com.community.dogcat.repository.user.UserRepository;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Component
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
-	private static final int MAX_ATTEMPTS = 5;
+	private static final int MAX_ATTEMPTS = 6;
 	private final UserRepository userRepository;
 	private final ConcurrentHashMap<String, Integer> loginAttempts = new ConcurrentHashMap<>();
 
@@ -54,6 +54,11 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 			userLockSet.setLoginLock(true);
 			userRepository.save(userLockSet);
 			loginAttempts.remove(userId); // 잠금 처리 후 실패 횟수 초기화
+
+			response.setContentType("text/plain;charset=UTF-8");
+			response.setStatus(HttpStatus.FORBIDDEN.value());
+			response.getWriter().write("LOGIN_LOCKED");
+			return;
 		}
 
 		response.setContentType("text/plain;charset=UTF-8");

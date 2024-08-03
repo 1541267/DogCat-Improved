@@ -22,9 +22,9 @@ import com.community.dogcat.dto.uploadImage.UploadPostImageResultDTO;
 import com.community.dogcat.repository.upload.UploadRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class S3LocalUploader {
@@ -55,7 +55,6 @@ public class S3LocalUploader {
 				File thumbFile = new File(uploadPath, "t_" + saveFileName);
 
 				String thumbnailPath = thumbFile.getAbsolutePath();
-				log.info("---------------- thumbnailPath: " + thumbnailPath);
 				savePathList.add(uploadPath + "t_" + saveFileName);
 				Thumbnailator.createThumbnail(savePath.toFile(), thumbFile, 200, 200);
 
@@ -69,11 +68,9 @@ public class S3LocalUploader {
 			}
 
 		} catch (Exception e) {
-			log.error("ERROR: " + e.getMessage());
+			log.error("S3 UploadLocal: {}", e.getMessage());
 			e.printStackTrace();
 		}
-		log.info("--------------------UploadPostImage: {}", Collections.singletonList(uuid + saveFileName));
-
 		return null;
 	}
 

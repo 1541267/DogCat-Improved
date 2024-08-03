@@ -26,11 +26,11 @@ import com.community.dogcat.service.board.reply.ReplyService;
 import com.community.dogcat.service.user.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/replies")
-@Log4j2
 public class ReplyController extends BaseController {
 
 	private final ReplyService replyService;
@@ -43,25 +43,16 @@ public class ReplyController extends BaseController {
 
 	@Operation(summary = "Reply Register", description = "댓글 등록")
 	@PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, Long> register(@Valid @RequestBody ReplyDTO replyDTO, BindingResult bindingResult,
-		Model model) throws
+	public Map<String, Long> register(@Valid @RequestBody ReplyDTO replyDTO, BindingResult bindingResult) throws
 		BindException {
-
-		log.warn(replyDTO);
-
 		if (bindingResult.hasErrors()) {
 			throw new BindException(bindingResult);
 		}
 
-		// 모델에서 사용자 정보를 가져옴
-		String userId = (String)model.getAttribute("username");
-
-		replyDTO.setUserId(userId);
-
 		Map<String, Long> resultMap = new HashMap<>();
 		Long replyNo = replyService.register(replyDTO);
 
-		resultMap.put("replyNo", 1L);
+		resultMap.put("replyNo", replyNo);
 
 		return resultMap;
 	}
@@ -69,16 +60,18 @@ public class ReplyController extends BaseController {
 	@Operation(summary = "Replies of Post", description = "특정 게시물의 댓글 목록")
 	@GetMapping("/{postNo}")
 	public List<ReplyDTO> getList(@PathVariable("postNo") Long postNo, Model model) {
+
 		List<ReplyDTO> list = replyService.getListOfReply(postNo);
 
 		model.addAttribute("replies", list);
-		log.info(list);
+
 		return list;
 	}
 
 	@Operation(summary = "Delete Reply", description = "특정 댓글 삭제")
 	@DeleteMapping("/{replyNo}")
 	public Map<String, Long> delete(@PathVariable("replyNo") Long replyNo, Model model) {
+
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 

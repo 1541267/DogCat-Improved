@@ -25,9 +25,7 @@ body {
 }
 
 .searchForm .form-select {
-    border-radius: 0;
-    border-top-left-radius: 15px;
-    border-bottom-left-radius: 15px;
+    border-radius: 15px 0 0 15px;
     border: 1px solid #67cafe;
     border-right: none;
 }
@@ -41,22 +39,21 @@ body {
 }
 
 .searchForm .searchBtn {
-    border-radius: 0;
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
+    border-radius: 0 15px 15px 0;
     border: 1px solid #67cafe;
     border-left: none;
     color: #000;
     background-color: #E8FFFF;
-    --bs-btn-hover-color: #000;
+    --bs-btn-hover-color: #fff;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 .searchForm .searchBtn:hover {
-    border-radius: 0;
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
+    border-radius: 0 15px 15px 0;
     border: 1px solid #67cafe;
     border-left: none;
     color: #000;
@@ -68,7 +65,7 @@ body {
     margin-top: 30px;
 }
 
-.countPost1 {
+.myPost {
     background-color: #90E4FF;
     border: 1px solid #d5d5d5;
     border-bottom: white;
@@ -77,7 +74,7 @@ body {
     padding: 10px;
 }
 
-.countPost2 {
+.myReply {
     background-color: #E8FFFF;
     border: 1px solid #d5d5d5;
     border-left: white;
@@ -86,7 +83,7 @@ body {
     padding: 10px;
 }
 
-.countPost3 {
+.myScrap {
     background-color: #E8FFFF;
     border: 1px solid #d5d5d5;
     border-left: white;
@@ -96,20 +93,13 @@ body {
     padding: 10px;
 }
 
-.countPost1 > a,
-.countPost2 > a,
-.countPost3 > a {
-    text-decoration: none;
-    color: #000;
-}
-
-.countPost1:hover,
-.countPost2:hover,
-.countPost3:hover {
+.myPost:hover,
+.myReply:hover,
+.myScrap:hover {
     background-color: #90E4FF;
 }
 
-.countScrap1 {
+.myPostScr {
     background-color: #E8FFFF;
     border: 1px solid #d5d5d5;
     border-bottom: white;
@@ -118,7 +108,7 @@ body {
     padding: 10px;
 }
 
-.countScrap2 {
+.myReplyScr {
     background-color: #E8FFFF;
     border: 1px solid #d5d5d5;
     border-left: white;
@@ -127,7 +117,7 @@ body {
     padding: 10px;
 }
 
-.countScrap3 {
+.myScrapScr {
     background-color: #90E4FF;
     border: 1px solid #d5d5d5;
     border-left: white;
@@ -137,16 +127,9 @@ body {
     padding: 10px;
 }
 
-.countScrap1 > a,
-.countScrap2 > a,
-.countScrap3 > a {
-    text-decoration: none;
-    color: #000;
-}
-
-.countScrap1:hover,
-.countScrap2:hover,
-.countScrap3:hover {
+.myPostScr:hover,
+.myReplyScr:hover,
+.myScrapScr:hover {
     background-color: #90E4FF;
 }
 
@@ -159,7 +142,7 @@ body {
     margin-bottom: 0;
 }
 
-td {
+td, tr {
     height: 70px;
 }
 
@@ -216,6 +199,9 @@ td > a {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 .noSearch {
@@ -230,7 +216,7 @@ td > a {
 }
 
 .noSearch img {
-    height: 500px;
+    height: 300px;
 }
 
 .noSearch > div {
@@ -292,10 +278,6 @@ td > a {
     background-color: #E8FFFF;
 }
 
-.sideLetterbox {
-    width: 120px;
-}
-
 .sideMyInfo {
     width: 120px;
 }
@@ -308,11 +290,12 @@ div a {
 .myPage {
     color: #67cafe;
     margin-top: 30px;
-    font-weight: lighter;
+    font-size: 15px;
 }
 
 .myTitle {
     color: #67cafe;
+    font-size: 30px;
 }
 
 .myList {

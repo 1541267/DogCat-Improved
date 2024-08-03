@@ -1,5 +1,6 @@
 package com.community.dogcat.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,13 +10,19 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 @Configuration
-public class AwsConfiguration {
+public class
+AwsConfiguration {
+
+	@Value("${cloud.aws.credentials.access-key}")
+	private String accessKey;
+	@Value("${cloud.aws.credentials.secret-key}")
+	private String secretKey;
 
 	// AmazonS3Client는 deprecated됨 -> AmazonS3로 사용
 	@Bean
 	public AmazonS3 amazonS3() {
 		BasicAWSCredentials awsCredentials = new BasicAWSCredentials
-			("AKIAXYKJRGBHYYY6NUKK", "h2okAqQtVZxuZDJvPWyAZs8mfLDMyLiP2bgcQ6Yn");
+			(accessKey, secretKey);
 
 		return AmazonS3ClientBuilder.standard()
 			.withRegion("ap-northeast-2")

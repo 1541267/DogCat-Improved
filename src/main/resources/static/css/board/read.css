@@ -27,8 +27,16 @@ body {
 }
 
 .readTitle {
+    width: 700px;
     font-size: 25px;
 }
+
+/*.readTitleIn {*/
+/*    max-width: 600px;*/
+/*    white-space: nowrap;*/
+/*    overflow: hidden;*/
+/*    text-overflow: ellipsis;*/
+/*}*/
 
 .readTitle.sub {
     font-size: 17px;
@@ -39,8 +47,31 @@ body {
     height: 20px;
 }
 
+.completeBtn {
+    color: #67cafe;
+    background-color: #fff;
+    border: 1px solid #67cafe;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-border-color: #67cafe;
+    --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
+}
+
 .postContent {
+    min-height: 250px   ;
     max-width: 100%;
+    margin-top: 60px;
+    margin-bottom: 100px;
+    overflow-x: hidden;
+}
+
+.postContentQ {
+    min-height: 250px   ;
+    max-width: 100%;
+    margin-top: 20px;
+    margin-bottom: 100px;
     overflow-x: hidden;
 }
 
@@ -112,7 +143,13 @@ body {
 
 .blank,
 .btnSection {
+    display: flex;
+    justify-content: flex-end;
     width: 157px;
+}
+
+.listBtnSection {
+    width: 100px;
 }
 
 .listBtn {
@@ -122,6 +159,9 @@ body {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 .modify_qBtn, .modifyBtn {
@@ -131,25 +171,45 @@ body {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #ffc107;
     --bs-btn-hover-bg: #ffc107;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #ffc107;
+    --bs-btn-active-bg: #ffc107;
 }
 
 .deletePostBtn {
     color: #fff;
     background-color: #67cafe;
     border: 1px solid #67cafe;
-    --bs-btn-hover-color: black;
+    --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: red;
     --bs-btn-hover-bg: red;
-}
-
-.deleteReplyBtn {
-    color: #fff;
-    --bs-btn-hover-color: #000;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: red;
+    --bs-btn-active-bg: red;
 }
 
 .reportReplyBtn {
     color: #fff;
+    background-color: #67cafe;
+    border: 1px solid #67cafe;
     --bs-btn-hover-color: #000;
+    --bs-btn-hover-border-color: #ffc107;
+    --bs-btn-hover-bg: #ffc107;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #ffc107;
+    --bs-btn-active-bg: #ffc107;
+}
+
+.deleteReplyBtn {
+    color: #fff;
+    background-color: #67cafe;
+    border: 1px solid #67cafe;
+    --bs-btn-hover-color: #000;
+    --bs-btn-hover-border-color: red;
+    --bs-btn-hover-bg: red;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: red;
+    --bs-btn-active-bg: red;
 }
 
 table.replyRegister {
@@ -189,11 +249,15 @@ tr.replyBody > td.align-middle {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
 
 #readList {
     width: 975.27px;
     height: 700px; /* 카드 크기 고정 */
+    box-shadow: 1px 1px 3px #dee2e6;
 }
 
 .read {
@@ -211,6 +275,24 @@ td > a {
 
 .listOne {
     width: auto;
+}
+
+.listSecret {
+    color: gray;
+}
+
+.secretPost {
+    font-size: 18px;
+    color: gray;
+    margin-bottom: 0;
+}
+
+.bi-file-lock {
+    font-size: 20px;
+}
+
+.bi-file-earmark-image {
+    font-size: 18px;
 }
 
 .listTag {
@@ -238,6 +320,32 @@ td > a {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
+}
+
+.showOffList td {
+    height: 140px;
+}
+
+.boardImg {
+    display: block;
+    width: 120px;
+    height: 120px;
+}
+
+.showOffTitle {
+    font-size: 22px;
+}
+
+.showOffTitle.sub {
+    font-size: 18px;
+    color: gray;
+}
+
+.listPost {
+    padding-left: 10px;
 }
 
 .page-item .page-link {
@@ -262,5 +370,7 @@ td > a {
     --bs-btn-hover-color: #000;
     --bs-btn-hover-border-color: #67cafe;
     --bs-btn-hover-bg: #67cafe;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-border-color: #67cafe;
+    --bs-btn-active-bg: #67cafe;
 }
-

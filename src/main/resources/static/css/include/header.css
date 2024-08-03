@@ -1,42 +1,45 @@
-body {
-    font-family: Arial, sans-serif;
-}
-
 header {
     border-bottom: 1px solid #ccc;
     padding-bottom: 10px;
 }
 
+.header {
+    max-width: 1500px;
+    margin: 0 auto; /* 중앙 정렬 */
+}
+
 .header-top {
     width: 100%;
     display: flex;
-    justify-content: space-between;
-    padding: 20px 20px;
-    background-color: #f8f9fa;
-    margin-bottom: 40px;
+    justify-content: space-evenly;
+    padding: 30px 20px 0 20px;
+    background-color: #fff;
+    margin-bottom: 0;
 }
 
-.header-top-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-
-
-.search-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin: 10px 0 40px;
-}
-
-.log {
+.logo {
     font-weight: bold;
+    width: 310px;
+}
+
+.logo > a > img {
+    width: 120px;
+    height: 120px;
+}
+
+.title > a > img {
+    width: 400px;
+    height: 150px;
+}
+
+.headerImg {
+    width: 50px;
+    transform: rotate(20deg);
 }
 
 .auth {
     font-size: 0.9em;
+    width: 310px;
 }
 
 .auth a {
@@ -46,8 +49,15 @@ header {
 }
 
 .search-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
     text-align: center;
     margin: 20px 0;
+}
+
+.search-container > form {
+    width: 33%;
 }
 
 .search-container input[type="text"] {
@@ -59,12 +69,66 @@ header {
 nav {
     text-align: center;
     margin-top: 10px;
+    height: 66px;
+    margin-bottom: 20px;
 }
 
-nav a {
+nav button {
+    /*margin-top: 20px;*/
+    /*height: 30px;*/
+    height: 65px;
+    width: 130px;
+    margin: 0 20px;
+    border: none;
+    background-color: #67cafe;
+}
+
+.nowNav {
+    border-bottom: 2px solid white;
+}
+
+nav button,
+nav button:hover{
     margin: 0 10px;
     text-decoration: none;
-    color: #333;
+    color: #fff;
     font-size: 1.1em;
 }
 
+.navBar{
+    background-color: #67cafe;
+}
+
+.header-fs {
+    width: 100px;
+    border: 3px solid #67cafe;
+    border-radius: 0;
+    border-right:0;
+}
+
+.header-fc {
+    width: 247px;
+    border: 3px solid #67cafe;
+    border-left: white;
+    border-radius: 0
+}
+
+.header-sb {
+    width: 50px;
+    border: 3px solid #67cafe;
+    border-radius: 0;
+    background-color: #67cafe
+}
+
+.header-sb:hover {
+    background-color: #67cafe;
+}
+
+.header-sb > i {
+    color: #fff;
+}
+
+.form-select:focus, .form-control:focus, .searchBtn:focus {
+    outline: none;
+    box-shadow: none;
+}

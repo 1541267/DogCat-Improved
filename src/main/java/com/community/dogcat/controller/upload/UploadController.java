@@ -29,9 +29,9 @@ import com.community.dogcat.util.uploader.S3Uploader;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/upload")
@@ -44,11 +44,10 @@ public class UploadController {
 	@PostMapping(value = "/s3", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<List<String>> cloudUpload(
 		@RequestParam("files") List<MultipartFile> multipartFile,
-		@RequestParam("postNo") Long postNo,
+		@RequestParam("postNo") Post postNo,
 		@RequestParam("uuids") List<String> uuid) {
 
-		Post imgPostNo = Post.builder().postNo(postNo).build();
-		return uploadImageService.uploadS3Image(multipartFile, imgPostNo, uuid);
+		return uploadImageService.uploadS3Image(multipartFile, postNo, uuid);
 	}
 
 	// 게시글 등록 전 썸머노트로 이미지를 임시폴더에 저장
@@ -57,28 +56,30 @@ public class UploadController {
 	public String uploadSummerNoteImage(@RequestParam("files") List<MultipartFile> multipartFile,
 		HttpServletRequest request) throws IOException {
 
-		String localUpload = uploadImageService.uploadSummerNoteImage(multipartFile, request);
-
-		log.info("summernote upload: {}", localUpload);
-
-		return localUpload;
+		return uploadImageService.uploadSummerNoteImage(multipartFile, request);
 	}
 
 	// 게시글 취소, 브라우저 종료시 업로드된 임시파일 삭제
 	@PostMapping("/delete-temp")
 	public void deleteSummernoteTempFile(@RequestParam("uuid") List<String> uuids,
 		@RequestParam("extension") List<String> extensions) {
+
 		uploadImageService.deleteSummernoteImage(uuids, extensions);
 	}
 
 	// summernote 본문의 이미지를 제거시 임시파일 삭제
 	@PostMapping("/delete-backspace")
 	public void deleteSummernoteTempFileWithBackspace(
-		@RequestParam("deletedImageUrl") List<String> deletedImageUrl) {
+		@RequestParam("deletedImageUrls") List<String> deletedImageUrls) {
 
-		log.info("deleteSummernoteTempFileWithBackspace: {}", deletedImageUrl);
+		uploadImageService.deleteSummernoteImageWithBackspace(deletedImageUrls);
 
-		uploadImageService.deleteSummernoteImageWithBackspace(deletedImageUrl);
+	}
+
+	@PostMapping("/delete-s3file")
+	public void deleteS3FileWithBucket(@RequestParam("deletedS3ImageUrls") List<String> deletedImageUrls) {
+
+		uploadImageService.deleteUploadedS3Image(deletedImageUrls);
 
 	}
 }

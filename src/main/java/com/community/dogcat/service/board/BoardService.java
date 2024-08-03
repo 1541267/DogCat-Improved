@@ -24,16 +24,16 @@ public interface BoardService {
 	// 게시글 상세보기
 	PostReadDTO readDetail(Long postNo, String userId);
 
-	Long modify(PostDTO postDTO);
+	Long modify(PostDTO postDTO, String userId);
+
+	// 수의사 답변글 답변 완료
+	Long completeQna(PostDTO postDTO, String userId);
 
 	// readDetail 하단 list
 	BoardPageResponseDTO<BoardListDTO> readList(BoardPageRequestDTO pageRequestDTO);
 
 	// regDate(최신순), boarCode에 따라 정렬, 첨부파일 정보 추가 + 정렬기준선택가능
 	BoardPageResponseDTO<BoardListDTO> list(BoardPageRequestDTO pageRequestDTO);
-
-	// 예비용
-	// BoardPageResponseDTO<PostDTO> list(BoardPageRequestDTO pageRequestDTO);
 
 	Post findPostByPostNo(Long postNo);
 

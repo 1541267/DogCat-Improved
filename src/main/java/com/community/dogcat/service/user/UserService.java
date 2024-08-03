@@ -4,6 +4,7 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.mail.internet.MimeMessage;
@@ -17,27 +18,40 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.community.dogcat.domain.Post;
+import com.community.dogcat.domain.PostLike;
+import com.community.dogcat.domain.Reply;
 import com.community.dogcat.domain.User;
 import com.community.dogcat.domain.UsersAuth;
 import com.community.dogcat.dto.user.JoinDTO;
 import com.community.dogcat.dto.user.UserDetailDTO;
+import com.community.dogcat.repository.board.BoardRepository;
+import com.community.dogcat.repository.board.postLike.PostLikeRepository;
+import com.community.dogcat.repository.board.reply.ReplyRepository;
+import com.community.dogcat.repository.board.scrap.ScrapRepository;
+import com.community.dogcat.repository.report.ReportLogRepository;
 import com.community.dogcat.repository.user.RefreshRepository;
 import com.community.dogcat.repository.user.UserRepository;
 import com.community.dogcat.repository.user.UsersAuthRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
 	private final UserRepository userRepository;
-	private final BCryptPasswordEncoder bCryptPasswordEncoder;
-	private final UsersAuthRepository usersAuthRepository;
-	private final RefreshRepository refreshRepository;
+	private final ReplyRepository replyRepository;
+	private final ScrapRepository scrapRepository;
+	private final BoardRepository boardRepository;
 	private final JavaMailSender javaMailSenderImpl;
+	private final RefreshRepository refreshRepository;
+	private final PostLikeRepository postLikeRepository;
+	private final UsersAuthRepository usersAuthRepository;
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final ReportLogRepository reportLogRepository;
 
 	public Boolean isNicknameExists(String nickname) {
 
@@ -56,34 +70,71 @@ public class UserService {
 
 	@Transactional
 	public void deleteUserById(HttpServletResponse response, String userId) {
-		usersAuthRepository.deleteById(userId);
-		userRepository.deleteById(userId);
-		refreshRepository.deleteAllByUsername(userId);
 
-		//Refresh 토큰 Cookie 값 0
-		Cookie refreshCookie = new Cookie("refresh", null);
-		refreshCookie.setMaxAge(0);
-		refreshCookie.setPath("/");
+		User deleteUser = userRepository.findByUserId(userId);
 
-		//access 토큰 Cookie 값 0
-		Cookie accessCookie = new Cookie("access", null);
-		accessCookie.setMaxAge(0);
-		accessCookie.setPath("/");
+		if (deleteUser != null) {
 
-		//JSESSIONID 토큰 Cookie 값 0
-		Cookie userIdCookie = new Cookie("userId", null);
-		userIdCookie.setMaxAge(0);
-		userIdCookie.setPath("/");
 
-		//JSESSIONID 토큰 Cookie 값 0
-		Cookie sessionCookie = new Cookie("JSESSIONID", null);
-		sessionCookie.setMaxAge(0);
-		sessionCookie.setPath("/");
+			List<PostLike> postLikes = postLikeRepository.findAllByUserId(deleteUser);
 
-		response.addCookie(refreshCookie);
-		response.addCookie(accessCookie);
-		response.addCookie(userIdCookie);
-		response.addCookie(sessionCookie);
+			for (PostLike postLike : postLikes) {
+
+				Post post = postLike.getPostNo();
+				if (postLike.isLikeState()) {
+					post.count(post.getLikeCount() - 1, post.getDislikeCount());
+				}
+				if (postLike.isDislikeState()) {
+					post.count(post.getLikeCount(), post.getDislikeCount() - 1);
+				}
+
+				boardRepository.save(post); // 게시물 업데이트
+
+			}
+
+			// 사용자가 작성한 글과 댓글에 대해 접수된 신고 삭제
+			List<Post> userPosts = boardRepository.findAllByUserId(deleteUser);
+			for (Post post : userPosts) {
+				reportLogRepository.deleteByPostNo(post);
+			}
+
+			List<Reply> userReplies = replyRepository.findAllByUserId(deleteUser);
+			for (Reply reply : userReplies) {
+				reportLogRepository.deleteByReplyNo(reply);
+			}
+
+			postLikeRepository.deleteAllByUserId(deleteUser);
+			scrapRepository.deleteAllByUserId(deleteUser);
+			replyRepository.deleteAllByUserId(deleteUser);
+			boardRepository.deleteAllByUserId(deleteUser);
+			usersAuthRepository.deleteById(userId);
+			userRepository.deleteById(userId);
+			refreshRepository.deleteAllByUsername(userId);
+
+			// Refresh 토큰, access 토큰, JSESSIONID 삭제
+			Cookie refreshCookie = new Cookie("refresh", null);
+			refreshCookie.setMaxAge(0);
+			refreshCookie.setPath("/");
+
+			Cookie accessCookie = new Cookie("access", null);
+			accessCookie.setMaxAge(0);
+			accessCookie.setPath("/");
+
+			Cookie userIdCookie = new Cookie("userId", null);
+			userIdCookie.setMaxAge(0);
+			userIdCookie.setPath("/");
+
+			Cookie sessionCookie = new Cookie("JSESSIONID", null);
+			sessionCookie.setMaxAge(0);
+			sessionCookie.setPath("/");
+
+			response.addCookie(refreshCookie);
+			response.addCookie(accessCookie);
+			response.addCookie(userIdCookie);
+			response.addCookie(sessionCookie);
+		} else {
+			throw new RuntimeException("User not found with userId: " + userId);
+		}
 	}
 
 	public UserDetailDTO findByUserId(String userId) {
@@ -95,6 +146,7 @@ public class UserService {
 			.userName(user.getUserName())
 			.nickname(user.getNickname())
 			.tel(user.getTel())
+			.userVet(user.isUserVet())
 			.social(user.isSocial())
 			.regDate(user.getRegDate())
 			.build();
@@ -102,32 +154,61 @@ public class UserService {
 		return userDetailDTO;
 	}
 
-	public void userModify(UserDetailDTO userDetailDTO) {
+	public boolean userModify(UserDetailDTO userDetailDTO) {
 
 		User existingUser = userRepository.findById(userDetailDTO.getUserId())
 			.orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+		String userPw = userDetailDTO.getUserPw();
+		String encodedPassword = (userPw == null || userPw.isEmpty()) ?
+			existingUser.getUserPw() : bCryptPasswordEncoder.encode(userPw);
 
 		User updatedUser = User.builder()
 			.userId(existingUser.getUserId())
 			.userName(existingUser.getUserName())
 			.nickname(userDetailDTO.getNickname())
 			.tel(userDetailDTO.getTel())
-			.userPw(userDetailDTO.getPassword() != null ? bCryptPasswordEncoder.encode(userDetailDTO.getPassword()) :
-				existingUser.getUserPw()) // 비밀번호가 null 이 아닌 경우에만 업데이트
+			.social(userDetailDTO.isSocial())
+			.userVet(userDetailDTO.isUserVet())
+			.userPw(encodedPassword)
 			.exp(existingUser.getExp())
 			.build();
 
 		userRepository.save(updatedUser);
+
+		boolean needsLogout = false;
+
+		UsersAuth usersAuth = usersAuthRepository.findByUserId(existingUser.getUserId());
+
+		//ROLE_USER 상태에서 수의사인증을 한 사용자의 경우 JWT 토큰값에 ROLE 정보를 지우기 위해 LOGOUT 처리
+		if (updatedUser.isUserVet() && usersAuth.getAuthorities().equals("ROLE_USER")) {
+
+			usersAuth = UsersAuth.builder()
+				.userId(updatedUser.getUserId())
+				.authorities("ROLE_VET")
+				.build();
+
+			usersAuthRepository.save(usersAuth);
+			needsLogout = true;
+
+		}
+
+		return needsLogout;
 
 	}
 
 	public String getNickname(String userName) {
 
 		User user = userRepository.findByUserId(userName);
+
 		if (user != null) {
+
 			return user.getNickname();
+
 		}
+
 		return null;
+
 	}
 
 	public void joinProcess(JoinDTO joinDTO) {
@@ -150,21 +231,29 @@ public class UserService {
 		userRepository.save(user);
 
 		if (user.isUserVet()) {
+
 			UsersAuth usersAuth = UsersAuth.builder()
 				.userId(user.getUserId())
 				.authorities("ROLE_VET")
 				.build();
+
 			usersAuthRepository.save(usersAuth);
+
 			return;
+
 		}
+
 		UsersAuth usersAuth = UsersAuth.builder()
 			.userId(user.getUserId())
 			.build();
+
 		usersAuthRepository.save(usersAuth);
 	}
 
 	public User findUserByNameAndTel(String name, String tel) {
+
 		return userRepository.findByUserNameAndTel(name, tel).orElse(null);
+
 	}
 
 	public User findPw(String name, String userId) {
@@ -182,8 +271,11 @@ public class UserService {
 			sendNewPasswordByMail(userId, newPassword);
 
 			return user;
+
 		}
+
 		return null;
+
 	}
 
 	public String getRole(String userId) {
@@ -200,8 +292,10 @@ public class UserService {
 	}
 
 	public boolean checkPassword(String userId, String inputPassword) {
+
 		String storedPasswordHash = userRepository.findPasswordHashByUsername(userId);
 		return bCryptPasswordEncoder.matches(inputPassword, storedPasswordHash);
+
 	}
 
 	private String createNewPassword() {
@@ -235,24 +329,19 @@ public class UserService {
 
 	private void sendNewPasswordByMail(String toMailAddr, String newPassword) {
 
-		final MimeMessagePreparator mimeMessagePreparator = new MimeMessagePreparator() {
+		final MimeMessagePreparator mimeMessagePreparator = mimeMessage -> {
 
-			@Override
-			public void prepare(MimeMessage mimeMessage) throws Exception {
-
-				final MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-				mimeMessageHelper.setTo(toMailAddr);    // 수신 가능한 개인 메일 주소
-				mimeMessageHelper.setSubject("[말랑발자국] 새 비밀번호 안내입니다.");
-				mimeMessageHelper.setText("새 비밀번호 : " + newPassword, true);
-
-			}
+			final MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+			mimeMessageHelper.setTo(toMailAddr);
+			mimeMessageHelper.setSubject("[말랑발자국] 새 비밀번호 안내입니다.");
+			mimeMessageHelper.setText("새 비밀번호 : " + newPassword, true);
 
 		};
+
 		javaMailSenderImpl.send(mimeMessagePreparator);
 
 	}
 
-	// 유저 레벨 반환
 	public Map<String, Object> checkUserLevel(long userExp) {
 		long userLevel = 1;
 		long expForNextLevel = 750;

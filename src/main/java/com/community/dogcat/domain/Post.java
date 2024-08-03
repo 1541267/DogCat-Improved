@@ -95,6 +95,10 @@ public class Post {
 	@Column(name = "reply_auth", nullable = false)
 	private boolean replyAuth;
 
+	@ColumnDefault("false")
+	@Column(name = "complete_qna")
+	private boolean completeQna;
+
 	// 게시판 등록시 이미지도 참조
 	@OneToMany(mappedBy = "postNo", cascade = CascadeType.ALL,
 		orphanRemoval = true, fetch = FetchType.LAZY)
@@ -113,6 +117,10 @@ public class Post {
 		orphanRemoval = true)
 	private Set<PostLike> postLikes;
 
+	@OneToMany(mappedBy = "postNo", cascade = CascadeType.ALL,
+		orphanRemoval = true)
+	private Set<ReportLog> reports;
+
 	// 게시글 수정
 	public void modify(String boardCode, String postTitle, String postContent,
 		Instant modDate, String postTag, Boolean secret, Boolean replyAuth) {
@@ -130,4 +138,10 @@ public class Post {
 		this.likeCount = likeCount;
 		this.dislikeCount = disLikeCount;
 	}
+
+	// QnA 답변 여부 변화
+	public void completeQna(boolean completeQna) {
+		this.completeQna = completeQna;
+	}
+
 }

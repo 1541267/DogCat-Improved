@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.dogcat'
-version = '0.0.1-SNAPSHOT'
+version = ''
 
 java {
     toolchain {
@@ -17,9 +17,6 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
-    // 기본 log4j2 기능 제외
-    all*.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-    all*.exclude group: 'org.springframework.boot', module: 'logback-classic'
 }
 
 repositories {
@@ -53,6 +50,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // slf4j
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
 
     // swagger ui
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
@@ -92,36 +92,32 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    // 파일 업로드
-    implementation 'commons-io:commons-io:2.11.0'
-
-    // 로그 파일 저장을 위해 log4j2
-    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
-
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
 }
-// 테스트 빌드 최적화
 
-tasks.withType(Test) {
-    maxParallelForks = 4
-}
+//processResources.dependsOn('copyYml')
+//
+//tasks.register('copyYml', Copy) {
+//    from './Secret-DogCat/Dev'
+//    include "*.yml"  // 복사할 파일들
+//    into 'src/main/resources'  // 복사 위치
+//}
 
-tasks.withType(JavaCompile) {
-    options.fork = true
-}
+//  TODO 배포시 활성화
+processResources.dependsOn('copySecret')
 
-tasks.withType(JavaCompile) {
-    options.incremental = true
-}
-
-tasks.withType(Test) {
-    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+tasks.register('copySecret', Copy) {
+    from './Secret-DogCat/EC2'
+    include "application.yml"  // 복사할 파일들
+    into 'src/main/resources'  // 복사 위치
 }

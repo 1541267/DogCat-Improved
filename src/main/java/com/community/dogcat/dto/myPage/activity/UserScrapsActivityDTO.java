@@ -18,19 +18,14 @@ public class UserScrapsActivityDTO {
 
 	private Long scrapNo;
 
-	// 해당 게시글 번호
 	private Long postNo;
 
-	// 게시글 작성자 아이디
 	private String userId;
 
-	// 게시글 작성자 닉네임
 	private String nickname;
 
-	// 게시글 작성자 경험지
 	private Long exp;
 
-	// 게시글 작성자 면허 정보
 	private boolean userVet;
 
 	private String boardCode;
@@ -47,18 +42,14 @@ public class UserScrapsActivityDTO {
 
 	private boolean secret;
 
-	private Long likeCount;
-
-	private Long dislikeCount;
-
 	private Long viewCount;
 
 	private boolean replyAuth;
 
-	// 게시물의 첨부파일 정보
+	private boolean completeQna;
+
 	private List<ImgBoard> imgBoards;
 
-	// 게시글 하나에 달린 댓글 수
 	private Long postReplyCount;
 
 }

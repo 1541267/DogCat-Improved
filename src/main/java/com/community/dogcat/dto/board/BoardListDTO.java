@@ -44,13 +44,11 @@ public class BoardListDTO {
 
 	private boolean secret;
 
-	private Long likeCount;
-
-	private Long dislikeCount;
-
 	private Long viewCount;
 
 	private boolean replyAuth;
+
+	private boolean completeQna;
 
 	// 게시물의 첨부파일 정보
 	private List<ImgBoard> imgBoards;

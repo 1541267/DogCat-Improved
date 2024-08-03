@@ -19,7 +19,7 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" th:href="@{/css//board/register.css}">
 
-    <title>Board modify</title>
+    <title>말랑발자국 - 글 수정</title>
 </head>
 
 <body>
@@ -28,6 +28,8 @@
 <div class="container">
 
     <div class="content">
+
+        <h2 class="modifyTitle mb-4">글 수정</h2>
 
         <form th:action="@{/board/modify}" method="post">
             <!--숨겨서 전송할 정보들-->
@@ -58,13 +60,7 @@
             </div>
             <!--제목/게시판/태그 선택-->
             <div class="d-flex justify-content-start mb-3">
-                <div class="me-3 postTitle">
-                    <div class="form-group">
-                        <input type="text" name="postTitle" class="form-control" th:value="${postDTO.postTitle}"
-                               aria-label="게시글제목">
-                    </div>
-                </div> <!--제목입력-->
-                <div class="me-3 boardCode">
+                <div class="boardCodeM">
                     <div class="form-group">
                         <!--게시판코드에 따라 선택되어있음-->
                         <select class="form-select" name="boardCode" aria-label="게시판선택">
@@ -85,12 +81,18 @@
                         </select>
                     </div>
                 </div> <!--태그 선택-->
+                <div class="postTitle">
+                    <div class="form-group">
+                        <input type="text" name="postTitle" class="form-control" th:value="${postDTO.postTitle}"
+                               aria-label="게시글제목" maxlength="30">
+                    </div>
+                </div> <!--제목입력-->
             </div> <!--제목/게시판/태그 선택-->
 
             <!--글내용 입력-->
             <div>
                 <!-- 서머노트 -->
-                <div th:include="/summernote/summernote :: summernote"></div>
+                <div th:include="summernote/summernote :: summernote"></div>
             </div> <!--글내용 입력-->
 
             <!--버튼-->
@@ -106,16 +108,6 @@
 </body>
 <div th:include="include/footer :: footer"></div>
 <script>
-    //cancel 버튼 클릭 이벤트
-    document.querySelector(".modifyCancelBtn").addEventListener("click", function (e) {
-        e.preventDefault();
-    }, false);
-
-    //modifyBtn 버튼 클릭 이벤트
-    document.querySelector(".modifyBtn").addEventListener("click", function (e) {
-        e.preventDefault();
-    }, false);
-
     function checkForm() {
         let postTitle = document.querySelector('input[name="postTitle"]').value.trim();
         let boardCode = document.querySelector('select[name="boardCode"]').value;
@@ -135,6 +127,5 @@
         }
         return true;
     }
-
 </script>
 </html>

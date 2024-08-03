@@ -19,7 +19,7 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" th:href="@{/css/board/register.css}">
 
-    <title>Board Register</title>
+    <title>말랑발자국 - QnA 글쓰기</title>
 </head>
 
 <body>
@@ -49,8 +49,13 @@
             <!--글 작성 안내 -->
             <div>
                 <small class="text-muted">
-                    * 전문적인 답변을 원하시면 '답변자선택'에서 '수의사<img src="/img/tag/vetScope.png" alt="수의사태그" style="width: 20px">'를
+                    * 전문적인 답변을 원하시면 '답변자선택'에서 '수의사<img src="/img/tag/vetScope.png" alt="수의사태그" width="20">'를
                     선택해주세요.
+                </small>
+            </div>
+            <div>
+                <small class="text-muted">
+                    * 수의사를 답변자로 선택한 글에 답변이 달릴 경우, '답변완료'를 클릭하면 답변완료 '<img src="/img/tag/completeQna.png" alt="답변완료" width="20">' 아이콘으로 변경됩니다.
                 </small>
             </div>
             <div class="mb-2">
@@ -94,7 +99,7 @@
                 <!--글 제목 입력-->
                 <div class="postTitleQ">
                     <div class="form-group">
-                        <input type="text" name="postTitle" class="form-control" placeholder="글 제목을 작성해주세요.">
+                        <input type="text" name="postTitle" class="form-control" placeholder="글 제목을 작성해주세요." maxlength="30">
                     </div>
                 </div> <!--글 제목 입력-->
             </div> <!--태그/답변자/비밀글/글 제목 입력-->
@@ -102,7 +107,7 @@
             <!--글내용 입력-->
             <div>
                 <!-- 서머노트 -->
-                <div th:include="/summernote/summernote :: summernote"></div>
+                <div th:include="summernote/summernote :: summernote"></div>
             </div> <!--글내용 입력-->
 
             <!--버튼-->
@@ -118,16 +123,6 @@
 </body>
 <div th:include="include/footer :: footer"></div>
 <script>
-    //cancel 버튼 클릭 이벤트
-    document.querySelector(".cancelBtn").addEventListener("click", function (e) {
-        e.preventDefault();
-    }, false);
-
-    //submit 버튼 클릭 이벤트
-    document.querySelector(".submitBtn").addEventListener("click", function (e) {
-        e.preventDefault();
-    }, false);
-
     function checkForm() {
         let postTitle = document.querySelector('input[name="postTitle"]').value.trim();
         let replyAuth = document.querySelector('select[name="replyAuth"]').value;
@@ -147,6 +142,5 @@
         }
         return true;
     }
-
 </script>
 </html>

@@ -59,7 +59,7 @@ public class ImgBoard {
 	private String extension;
 
 	// 섬네일 경로 저장
-	@Column(name = "thumbnailPath")
+	@Column(name = "thumbnail_Path")
 	private String thumbnailPath;
 
 	public void setPostNo(Post post) {

@@ -1,3 +1,43 @@
+body {
+    min-width: 1200px;
+}
+
+.container,
+.container > div {
+    height: 960px;
+}
+
+.container > div > div {
+    height: 800px;
+    width: 700px;
+}
+
+.loginTitle {
+    height: 100px;
+    width: 700px;
+}
+
+h1 {
+    font-size: 40px;
+    color: #67cafe;
+}
+
+.loginForm {
+    height: 300px;
+}
+
+.loginOption {
+    height: 65px;
+}
+
+.joinFind {
+    height: 50px;"
+}
+
+.loginSocial {
+    height: 300px;
+}
+
 a {
     color: black;
     text-decoration: none;

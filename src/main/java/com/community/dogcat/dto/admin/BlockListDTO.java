@@ -19,4 +19,9 @@ public class BlockListDTO {
 
 	private boolean block;
 
+	private String nickname;
+
+	private boolean userVet;
+
+
 }

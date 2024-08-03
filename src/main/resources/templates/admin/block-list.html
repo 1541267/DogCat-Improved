@@ -6,153 +6,155 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-
     <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <title>Admin</title>
-    <style>
-        a:hover {
-            font-weight: bold;
-        }
-
-    </style>
+    <link rel="stylesheet" th:href="@{/css/admin/adminList.css}">
+    <title>말랑발자국 - 차단 목록</title>
 </head>
 <body>
 <div th:include="include/header :: header"></div>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-3">
-            <!-- 좌측 aside -->
-            <aside>
-                <!-- 좌측 공간 -->
-            </aside>
-        </div>
-        <div class="col-md-7">
-            <!-- 가운데 content 영역 -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="mt-5" style="margin-bottom: 4rem">
-                        <h2><b>관리자 페이지</b></h2>
-                    </div>
-                    <div class="row g-0 overflow-hidden flex-md-row mb-4 position-relative">
-                        <div class="col p-4 d-flex flex-column position-relative">
-                            <div class="d-flex justify-content-between">
-                                <div class="d-flex flex-row justify-content-around" style="width: 65%">
-
-                                    <a href="user-list" class="btn btn-outline-secondary align-items-center"
-                                       type="button" style="width: 40%">
-                                        전체 회원
-                                    </a>
-
-                                    <a href="report-list" class="btn btn-outline-secondary align-items-center"
-                                       type="button" style="width: 40%">
-                                        신고 목록
-                                    </a>
-
-                                    <a href="block-list" class="btn btn-primary align-items-center" type="button"
-                                       style="width: 40%">
-                                        차단 회원
-                                    </a>
-
-                                </div>
-
-                                <!-- 검색 폼 추가 -->
-                                <form class="d-flex input-group justify-content-end" style="width: 30%;" method="get"
-                                      action="/admin/block-list">
-                                    <input type="text" class="form-control" name="keyword" placeholder="검색"
-                                           th:value="${searchKeyword}">
-                                    <button class="btn btn-outline-secondary searchBtn" type="submit">검색</button>
-                                </form>
-
+    <div class="container d-flex flex-row justify-content-center">
+        <div>
+            <div class="d-flex flex-column">
+                <div class="my-4">
+                    <h6 class="adminPage">관리자페이지</h6>
+                    <h2 class="adminUserTitle">차단 회원</h2>
+                </div>
+                <div class="overflow-hidden flex-md-row mb-4 position-relative">
+                    <div class="d-flex flex-column position-relative">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-row justify-content-around userMenu">
+                                <a th:href="@{/admin/user-list}"
+                                   class="text-center user-list"
+                                   type="button">
+                                    전체 회원
+                                </a>
+                                <a th:href="@{/admin/report-list}"
+                                   class="text-center report-list"
+                                   type="button">
+                                    신고 목록
+                                </a>
+                                <a th:href="@{/admin/block-list}"
+                                   class="text-center block-list-active"
+                                   type="button">
+                                    차단 회원
+                                </a>
                             </div>
-                            <div class="d-flex flex-column py-md-2">
-                                <div class="list-group">
-                                    <div th:each="user : ${blockList}" class="list-group-item d-inline gap-3 py-3"
-                                         aria-current="true">
-                                        <div class="d-flex gap-2 w-100 justify-content-between">
+                        </div>
+                        <!--차단 목록-->
+                        <div class="d-flex flex-column py-md-2">
+                            <div class="list-group">
+                                <div th:each="user : ${blockList}" class="list-group-item d-inline py-3"
+                                     aria-current="true">
+                                    <div class="d-flex gap-2 w-100 justify-content-between">
 
-                                            <!--본문 내용-->
-                                            <div>
-                                                <h5 class="my-2" th:text="${user.userName}"><b></b></h5>
+                                        <!--회원 정보-->
+                                        <div class="justify-content-center align-content-center">
+                                            <!--내 활동으로 연결, 이름 표시-->
+                                            <a th:href="@{/my/userActivity/{userId}/posts(userId=${user.userId})}"
+                                                  onclick="openMyActivityPopup(this.href); return false;"
+                                                  class="my-2" th:text="${user.nickname}"
+                                                  style="font-size: x-large; text-decoration: none; color: #131314">
+                                            </a>
 
-                                                <div class="d-flex justify-content-around h11">
+                                            <!--수의사면 표시-->
+                                            <span th:if="${user.userVet}">
+                                                <img class="replyAuthImg" src="/img/tag/vetScope.png"
+                                                     alt="수의사만 답변 가능">
+                                            </span>
 
-                                                    <p class="m-1 pr-2 opacity-75" th:text="${user.userId}"></p>
-                                                    <p class="m-1 px-2 opacity-75"
-                                                       th:text="${#dates.format(user.regDate, 'yyyy-MM-dd')}"></p>
+                                            <!--유저아이디, 등록일-->
+                                            <div class="d-flex justify-content-around h11">
+                                                <p class="m-1 pr-2 opacity-75" th:text="${user.userId}"></p>
+                                                <p class="m-1 pr-2 opacity-75"
+                                                   th:text="${user.userName}"></p>
+                                                <p class="m-1 px-2 opacity-75"
+                                                   th:text="${#dates.format(user.regDate, 'yyyy-MM-dd')}"></p>
 
-                                                </div>
                                             </div>
-                                            <div class="d-flex flex-column justify-content-between gap-3">
-                                                <small class="opacity-75 text-nowrap">작성 글 / 댓글</small>
-                                                <button class="btn btn-warning fw-bold"
-                                                        th:onclick="restoreUser([[${user.userId}]])">복구
-                                                </button>
-                                            </div>
-
-
                                         </div>
+
+                                        <!--차단해제-->
+                                        <div class="justify-content-between align-content-center">
+                                            <button class="unblockUserBtn"
+                                                    th:onclick="restoreUser([[${user.userId}]])">차단 해제
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="noSearch" th:if="${blockList == null} or ${blockList.isEmpty()}">
+                                <div class="noSearchContent">
+                                    <img class="mx-auto d-block" src="/img/board/no_search.png" alt="해당 게시판에 게시물이 존재하지 않습니다">
+                                    <div class="text-center mt-3 mb-3">
+                                        차단된 회원이 없습니다.
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <!-- 페이지네이션 -->
-                    <!-- 페이징 처리를 감싸는 컨테이너를 추가하여 가운데 정렬 -->
                     <div class="d-flex justify-content-center">
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination">
-                                <!-- 이전 버튼 -->
-                                <li class="page-item" th:class="${!pageResponse.prev} ? 'disabled' : ''">
+                        <nav aria-label="Page navigation" class="mb-0">
+                            <ul class="pagination justify-content-center">
+
+                                <!-- 이전 -->
+                                <li class="page-item" th:if="${pageResponse.prev}">
                                     <a class="page-link"
-                                       th:href="@{/admin/block-list(page=${pageResponse.page - 1}, size=${pageResponse.size})}"
+                                       th:href="@{/admin/block-list(page=${pageResponse.page - 1}, size=${pageResponse.size}, keyword=${searchKeyword})}"
                                        aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
+                                        <i class="bi bi-caret-left-fill" aria-hidden="true"></i>
                                     </a>
                                 </li>
-
-                                <!-- 페이지 번호 반복 -->
-                                <li class="page-item"
-                                    th:each="pageNumber : ${#numbers.sequence(pageResponse.start, pageResponse.end)}">
+                                <!-- 페이지 번호 -->
+                                <th:block class="page-item"
+                                          th:each="pageNumber : ${#numbers.sequence(pageResponse.start, pageResponse.end)}">
+                                    <li th:class="${pageResponse.page == pageNumber} ? 'page-item active' : 'page-item'">
+                                        <a class="page-link"
+                                           th:data-num="${pageNumber}"
+                                           th:href="@{/admin/block-list(page=${pageNumber}, size=${pageResponse.size}, keyword=${searchKeyword})}">
+                                            [[${pageNumber}]]
+                                        </a>
+                                    </li>
+                                </th:block>
+                                <!-- 다음 -->
+                                <li class="page-item" th:if="${pageResponse.next}">
                                     <a class="page-link"
-                                       th:href="@{/admin/block-list(page=${pageNumber}, size=${pageResponse.size})}"
-                                       th:text="${pageNumber}"></a>
-                                </li>
-
-                                <!-- 다음 버튼 -->
-                                <li class="page-item" th:class="${!pageResponse.next} ? 'disabled' : ''">
-                                    <a class="page-link"
-                                       th:href="@{/admin/block-list(page=${pageResponse.page + 1}, size=${pageResponse.size})}"
+                                       th:href="@{/admin/blcok-list(page=${pageResponse.page + 1}, size=${pageResponse.size}, keyword=${searchKeyword})}"
                                        aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
+                                        <i class="bi bi-caret-right-fill" aria-hidden="true"></i>
                                     </a>
                                 </li>
                             </ul>
                         </nav>
+                    </div><!--페이지네이션-->
+                    <!--검색기능-->
+                    <div class="d-flex flex-row justify-content-center">
+                        <form class="d-flex input-group searchUser" method="get" action="/admin/report-list">
+                            <input type="text" class="form-control searchUserInput" name="keyword"
+                                   th:value="${searchKeyword}">
+                            <button class="searchBtn"  type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </form>
                     </div>
-
-
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-2">
-        <!-- 우측 aside -->
-        <aside>
-            <!-- 우측 공간 -->
-        </aside>
-    </div>
-</div>
-
-<hr>
 <div th:include="include/footer :: footer"></div>
 
 <script>
 
-
+    /*차단해제*/
     async function restoreUser(userId) {
         try {
+            const isConfirmed = confirm(`차단을 해제하시겠습니까?`);
+
+            if (!isConfirmed) {
+                return; // 사용자가 취소를 누르면 함수 종료
+            }
+
             const response = await fetch(`/admin/restoreUser/${userId}`, {
                 method: 'POST',
                 headers: {
@@ -160,7 +162,7 @@
                 }
             });
             if (response.ok) {
-                alert(`유저아이디 : ${userId} 복구 되었습니다.`);
+                alert(`유저아이디 : ${userId} 차단 해제 되었습니다.`);
                 location.reload(); // 페이지 새로 고침
             } else {
                 alert('Failed to restore user.');
@@ -168,6 +170,10 @@
         } catch (error) {
             alert('Error restoring user: ' + error);
         }
+    }
+    /*내활동으로 연결*/
+    function openMyActivityPopup(url) {
+        window.open(url, '_blank');
     }
 </script>
 
