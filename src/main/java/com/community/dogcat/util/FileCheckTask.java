@@ -42,8 +42,11 @@ public class FileCheckTask {
 	private String smolLogLine = "-------------------------------------------";
 
 	//TODO 꼭 배포 전에 활성화 시키기
-	// 매월 1일 자정에 요일무시 파일 정리 실행
+	// 매월 1일 자정에 요일 무시 파일 정리 실행
 	// @Scheduled(cron = "0 0 0 1 * ?")
+	
+	// 배포 전 매일 자정에 파일 정리
+	// @Scheduled(cron = "0 0 0 * * *")
 	@Transactional
 	public void checkFiles() throws Exception {
 		log.info(bigLogLine);
