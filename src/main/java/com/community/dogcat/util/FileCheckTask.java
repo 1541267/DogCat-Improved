@@ -46,7 +46,7 @@ public class FileCheckTask {
 	// @Scheduled(cron = "0 0 0 1 * ?")
 	
 	// 배포 전 매일 자정에 파일 정리
-	// @Scheduled(cron = "0 0 0 * * *")
+	@Scheduled(cron = "0 0 0 * * *")
 	@Transactional
 	public void checkFiles() throws Exception {
 		log.info(bigLogLine);
