@@ -14,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.web.context.request.RequestContextListener;
 
 import com.community.dogcat.jwt.CustomAuthenticationFailureHandler;
@@ -117,7 +119,7 @@ public class CustomSecurityConfig {
     @Bean
     public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
         StrictHttpFirewall firewall = new StrictHttpFirewall();
-        firewall.setAllowUrlEncodedDoubleSlash(true); // //를 허용하도록 설정
+        firewall.setAllowUrlEncodedDoubleSlash(true);
         return firewall;
     }
 }
