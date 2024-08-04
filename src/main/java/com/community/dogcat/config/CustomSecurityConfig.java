@@ -112,7 +112,13 @@ public class CustomSecurityConfig {
 	public RequestContextListener requestContextListener() {
 
 		return new RequestContextListener();
-
 	}
+
+    @Bean
+    public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
+        StrictHttpFirewall firewall = new StrictHttpFirewall();
+        firewall.setAllowUrlEncodedDoubleSlash(true); // //를 허용하도록 설정
+        return firewall;
+    }
 }
 
