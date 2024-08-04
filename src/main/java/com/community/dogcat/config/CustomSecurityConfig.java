@@ -14,8 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.security.web.firewall.HttpFirewall;
-import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.web.context.request.RequestContextListener;
 
 import com.community.dogcat.jwt.CustomAuthenticationFailureHandler;
@@ -33,6 +31,7 @@ import com.community.dogcat.service.user.ReissueService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+
 @Slf4j
 @Configuration
 @EnableMethodSecurity
@@ -49,6 +48,7 @@ public class CustomSecurityConfig {
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 	private final CustomAccessDeniedHandler accessDeniedHandler;
+
 
 	@Bean
 	public BCryptPasswordEncoder cryptPasswordEncoder() {
@@ -73,7 +73,7 @@ public class CustomSecurityConfig {
 			.antMatchers("/admin/**").hasRole("ADMIN")
 			.antMatchers("/user/**", "/", "/check/**", "/login/**", "/oauth2/**","/error/**").permitAll()
 			.antMatchers("/css/**","/fonts/**", "/js/**", "/img/**", "/static/**", "/home/home").permitAll()
-			.anyRequest().authenticated().and();
+			.anyRequest().authenticated();
 
 		http.formLogin()
 			.loginPage("/user/login")
@@ -103,19 +103,16 @@ public class CustomSecurityConfig {
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
-		return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-			.and().httpFirewall(allowUrlEncodedSlashHttpFirewall());
+
+		return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+
 	}
 
 	@Bean
 	public RequestContextListener requestContextListener() {
-		return new RequestContextListener();
-	}
 
-	@Bean
-	public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
-		StrictHttpFirewall firewall = new StrictHttpFirewall();
-		firewall.setAllowUrlEncodedDoubleSlash(true);
-		return firewall;
+		return new RequestContextListener();
+
 	}
 }
+
