@@ -186,7 +186,7 @@ public class BoardController extends BaseController {
 		// 게시글 조회
 		Post post = boardService.findPostByPostNo(postDTO.getPostNo());
 		if (post == null) {
-			log.error("BoardController completeQna Error : 404 Not Found");
+			log.error("BoardController Modify Post Error : 404 Not Found");
 			return ResponseEntity.status(NOT_FOUND).build(); // 게시글이 존재하지 않는 경우 404 오류
 		}
 
@@ -220,7 +220,7 @@ public class BoardController extends BaseController {
 		// 게시글 조회
 		Post post = boardService.findPostByPostNo(postDTO.getPostNo());
 		if (post == null) {
-			log.error("BoardController completeQna Error : 404 Not Found");
+			log.error("BoardController Modify_q Post Error : 404 Not Found");
 			return ResponseEntity.status(NOT_FOUND).build(); // 게시글이 존재하지 않는 경우 404 오류
 		}
 
