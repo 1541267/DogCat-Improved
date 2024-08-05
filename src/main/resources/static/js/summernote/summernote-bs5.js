@@ -10332,7 +10332,8 @@
                     dialogsInBody: false,
                     dialogsFade: false,
                     maximumImageFileSize: null,
-                    acceptImageFileTypes: "image/*",
+                    acceptImageFileTypes: "image/gif,image/jpeg,image/jpg,image/png",
+                    // acceptImageFileTypes: "image/*",
                     callbacks: {
                         onBeforeCommand: null,
                         onBlur: null,
