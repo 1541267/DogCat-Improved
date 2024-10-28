@@ -70,7 +70,7 @@ Github Flow
 
 <h2>3. 역할 분담</h2>
 
-- 팀장: 김윤섭 (<a href="https://github.com/1541267">@a1541267</a>)
+- 팀장, 파일 업로드 처리: 김윤섭 (<a href="https://github.com/1541267">@a1541267</a>)
 - 게시판 담당: 김주희(<a href="https://github.com/ongdanul">@ongdanul</a>) | 김현석(<a href="https://github.com/hyunseok-goo">@hyunseok-goo</a>)<br>
 - 시큐리티, 신고 담당: 김슬기(<a href="https://github.com/seulbaong">@seulbaong</a>) | 박민우(<a href="https://github.com/parkminwoo0802">@parkminwoo0802</a>)<br><br>
 <h2>4. 페이지별 기능</h2>
