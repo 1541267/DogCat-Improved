@@ -40,17 +40,17 @@
         <appender-ref ref="FILE"/>
     </root>
 
-    <logger name="org.apache.coyote.http11.Http11Processor" level="DEBUG" additivity="false">
+    <logger name="org.apache.coyote.http11.Http11Processor" level="WARN" additivity="false">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </logger>
 
-    <logger name="org.springframework.boot.web.embedded.tomcat.TomcatWebServer" level="DEBUG" additivity="false">
+    <logger name="org.springframework.boot.web.embedded.tomcat.TomcatWebServer" level="WARN" additivity="false">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </logger>
 
-    <logger name="com.zaxxer.hikari.HikariDataSource" level="DEBUG" additivity="false">
+    <logger name="com.zaxxer.hikari.HikariDataSource" level="WARN" additivity="false">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </logger>

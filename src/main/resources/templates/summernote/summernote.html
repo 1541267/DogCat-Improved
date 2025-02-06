@@ -171,7 +171,7 @@
                         if (deletedImagesUrls.length > 0) {
 
                             deleteUploadImages(deletedImagesUrls, deletedImagesUuids)
-                            deleteS3File(deletedS3ImageUrls);
+                            // deleteS3File(deletedS3ImageUrls);
                             previousContents = contents;
                         }
                     }
@@ -252,19 +252,21 @@
                 contentType: false,
                 processData: false,
                 success: function (response) {
-
                     let postNo = response.postNo;
 
                     // 게시글 먼저 등록 후 이미지 업로드시 엑박 방지를 위해 딜레이
                     if (uploadedImages.length !== 0) {
-                        uploadS3Image(uploadedImages, postNo, imageUUIDs);
+                        // uploadS3Image(uploadedImages, postNo, imageUUIDs);
+                        uploadFinalImage(uploadedImages, postNo, imageUUIDs);
                         setTimeout(() => {
                             location.href = '/board/read/' + postNo;
                         }, 3000);
                     } else {
                         location.href = '/board/read/' + postNo;
                     }
-                },
+                },error: function(response) {
+                   console.log(response)
+                }
             });
         }
 
@@ -313,7 +315,8 @@
                 success: function () {
                     // 게시글 먼저 등록 후 이미지 업로드시 엑박 방지를 위해
                     if (uploadedImages.length !== 0) {
-                        uploadS3Image(uploadedImages, postNo, imageUUIDs);
+                        // uploadS3Image(uploadedImages, postNo, imageUUIDs);
+                        uploadFinalImage(uploadedImages, postNo, imageUUIDs);
                         setTimeout(() => {
                             location.href = '/board/read/' + postNo;
                         }, 3000);
@@ -326,6 +329,31 @@
         }
 
         /* ---------------------------------------------------------------------------- */
+
+        // 25/02/06 로컬 전용 추가
+        function uploadFinalImage(files, postNo, uuids) {
+            let formData = new FormData();
+
+            files.forEach((file, uuid) => {
+                formData.append('files', file);
+                formData.append('uuids', uuids[uuid]);
+            });
+
+            formData.append('postNo', postNo);
+
+            $.ajax({
+                url: '/api/upload/finalImageUpload',
+                data: formData,
+                method: 'POST',
+                contentType: false,
+                processData: false,
+                enctype: 'multipart/form-data',
+                error: function (error) {
+                    console.error('Error Uploading Image: ', error);
+                }
+            });
+        }
+
 
         // S3에 이미지 업로드 함수
         function uploadS3Image(files, postNo, uuids) {
@@ -460,7 +488,7 @@
         // 브라우저가 종료될 시 임시파일이 존재하면 삭제 (취소버튼, F5, alt+F4, 브라우저 종료 등등)
         window.addEventListener('beforeunload', function () {
             if (uploadedImages.length !== 0) {
-                removeTempFileWithCancelButton(imageUUIDs, extensions);
+                // removeTempFileWithCancelButton(imageUUIDs, extensions);
             }
         });
     });

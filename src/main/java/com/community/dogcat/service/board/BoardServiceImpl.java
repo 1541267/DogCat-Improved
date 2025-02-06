@@ -133,15 +133,15 @@ public class BoardServiceImpl implements BoardService {
 
 			List<ImgBoard> images = uploadRepository.findByPostNo(postNo);
 
-			for (ImgBoard image : images) {
-
-				String fileName = image.getFileUuid() + image.getExtension();
-				String thumbFileName = "t_" + fileName;
-				log.info("S3 Delete FileName: {}", fileName);
-
-				s3Uploader.deleteUploadedS3File(fileName, thumbFileName);
-			}
-
+			// for (ImgBoard image : images) {
+			//
+			// 	String fileName = image.getFileUuid() + image.getExtension();
+			// 	String thumbFileName = "t_" + fileName;
+			// 	log.info("S3 Delete FileName: {}", fileName);
+			//
+			// 	s3Uploader.deleteUploadedS3File(fileName, thumbFileName);
+			// }
+			//
 			// 댓글 존재 확인
 			List<Reply> replies = replyRepository.findByPostNo(postNo);
 
