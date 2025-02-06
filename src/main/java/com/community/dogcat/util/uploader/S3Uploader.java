@@ -59,6 +59,7 @@ public class S3Uploader {
 		}
 
 		String fileName = multipartFile.getOriginalFilename();
+		assert fileName != null;
 		String extension = fileName.substring(fileName.lastIndexOf("."));
 
 		//S3에 업로드될 이름 저장

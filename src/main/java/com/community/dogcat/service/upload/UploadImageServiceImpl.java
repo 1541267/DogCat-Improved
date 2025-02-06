@@ -90,7 +90,9 @@ public class UploadImageServiceImpl implements UploadImageService {
 				FileUtils.copyInputStreamToFile(fileStream, targetFile);
 
 				// 이미지의 URL 생성
-				String imageUrl = baseUrl + "/temp/" + saveFileName;
+				// String imageUrl = baseUrl + "/temp/" + saveFileName;
+				// 아래는 로컬용
+				String imageUrl = baseUrl + saveFileName;
 				JsonObject fileJsonObject = new JsonObject();
 
 				// 생성된 파일의 uuid 와 이미지링크 summernote 에 전달

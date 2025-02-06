@@ -117,7 +117,7 @@ test {
 processResources.dependsOn('copySecret')
 
 tasks.register('copySecret', Copy) {
-    from './Secret-DogCat/EC2'
+    from './Secret-DogCat/LocalYml'
     include "application.yml"  // 복사할 파일들
     into 'src/main/resources'  // 복사 위치
 }
