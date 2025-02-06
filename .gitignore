@@ -262,3 +262,5 @@ src/main/generated/
 .gradletasknamecache
 
 src/main/resources/*.yml
+
+*.sql
