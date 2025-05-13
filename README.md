@@ -1,8 +1,19 @@
 ![header](https://capsule-render.vercel.app/api?type=waving&color=67cafe&height=250&fontColor=ffffff&fontSize=50&fontAlignY=30&animation=fadeIn&desc=반려동물%20커뮤니티%20프로젝트&descAlignY=55&descFontSize=60&descAlign=50&&text=Goott%20Arcademy&textAlign=50)
 <div align=center>
 	<h3>🐈말랑 발자국🐕</h3>
-	<h4> 기존 프로젝트의 개선판 </h4>
+	
 <hr>
+<h4> 기존 프로젝트의 개선판 </h4>
+
+
+<h3>작업 내용</h3>
+
+- 기존의 CRUD 성능 개선
+<hr>
+
+
+</>
+ <h1> 아래로는 프로젝트 완성 했을 때의 ReadMe</h1>
 	<h3>📚 Tech Stack 📚</h3>
 </>
 </><br>
@@ -51,7 +62,7 @@
 	
 <h2>1. 개발 및 배포 환경</h2>
 
-- Window10/11<br>
+
 - IntelliJ <br> 
 - JpaRepository <br>
 - Naver Java Coding Convention + CheckStyle
