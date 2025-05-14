@@ -87,7 +87,6 @@
 
                                         // 업로드 성공 시 summernote 에 이미지 추가
                                         filesInfo.forEach(file => {
-
                                             let imageUrl = file.imageUrl;
                                             let fileUuid = file.uuid;
                                             let fileExtension = file.extension;
@@ -171,7 +170,7 @@
                         if (deletedImagesUrls.length > 0) {
 
                             deleteUploadImages(deletedImagesUrls, deletedImagesUuids)
-                            deleteS3File(deletedS3ImageUrls);
+                            // deleteS3File(deletedS3ImageUrls);
                             previousContents = contents;
                         }
                     }
@@ -198,7 +197,7 @@
                 cache: false,
                 success: function (response) {
 
-                    // console.log("이미지 삭제 성공:", response);
+                    console.log("이미지 삭제 성공:", response);
 
                     deletedImagesUuids.forEach(uuid => {
                         const index = imageUUIDs.indexOf(uuid);
@@ -252,19 +251,21 @@
                 contentType: false,
                 processData: false,
                 success: function (response) {
-
                     let postNo = response.postNo;
 
                     // 게시글 먼저 등록 후 이미지 업로드시 엑박 방지를 위해 딜레이
                     if (uploadedImages.length !== 0) {
-                        uploadS3Image(uploadedImages, postNo, imageUUIDs);
+                        // uploadS3Image(uploadedImages, postNo, imageUUIDs);
+                        uploadFinalImage(uploadedImages, postNo, imageUUIDs);
                         setTimeout(() => {
                             location.href = '/board/read/' + postNo;
                         }, 3000);
                     } else {
                         location.href = '/board/read/' + postNo;
                     }
-                },
+                },error: function(response) {
+                   console.log(response)
+                }
             });
         }
 
@@ -313,7 +314,8 @@
                 success: function () {
                     // 게시글 먼저 등록 후 이미지 업로드시 엑박 방지를 위해
                     if (uploadedImages.length !== 0) {
-                        uploadS3Image(uploadedImages, postNo, imageUUIDs);
+                        // uploadS3Image(uploadedImages, postNo, imageUUIDs);
+                        uploadFinalImage(uploadedImages, postNo, imageUUIDs);
                         setTimeout(() => {
                             location.href = '/board/read/' + postNo;
                         }, 3000);
@@ -326,6 +328,30 @@
         }
 
         /* ---------------------------------------------------------------------------- */
+
+        // 25/02/06 로컬 전용 추가
+        function uploadFinalImage(files, postNo, uuids) {
+            let formData = new FormData();
+            files.forEach((file, idx) => {
+                formData.append('files', file);
+                formData.append('uuids', uuids[idx]);
+            });
+
+            formData.append('postNo', postNo);
+
+            $.ajax({
+                url: '/api/upload/finalImageUpload',
+                data: formData,
+                method: 'POST',
+                contentType: false,
+                processData: false,
+                enctype: 'multipart/form-data',
+                error: function (error) {
+                    console.error('Error Uploading Image: ', error);
+                }
+            });
+        }
+
 
         // S3에 이미지 업로드 함수
         function uploadS3Image(files, postNo, uuids) {
@@ -460,7 +486,7 @@
         // 브라우저가 종료될 시 임시파일이 존재하면 삭제 (취소버튼, F5, alt+F4, 브라우저 종료 등등)
         window.addEventListener('beforeunload', function () {
             if (uploadedImages.length !== 0) {
-                removeTempFileWithCancelButton(imageUUIDs, extensions);
+                // removeTempFileWithCancelButton(imageUUIDs, extensions);
             }
         });
     });

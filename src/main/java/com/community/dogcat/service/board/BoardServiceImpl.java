@@ -73,8 +73,9 @@ public class BoardServiceImpl implements BoardService {
 	@Value("${oldUrl}")
 	private String oldUrl;
 
-	@Value("${newUrl}")
-	private String newUrl;
+	// 임시 이미지 링크를 s3링크로 변경, 로컬로 전환해서 사용 x
+	// @Value("${newUrl}")
+	// private String newUrl;
 
 	//게시물을 작성한 회원 정보 조회
 	@Override
@@ -94,9 +95,10 @@ public class BoardServiceImpl implements BoardService {
 
 		// 게시글 등록시 이미지가 summernote 링크로 먼저 등록되기 때문에 x 박스가 뜸
 		// 고쳐주기 위해 업로드때 수행하던 작업을 게시판 등록할때 적용 - ys
-		if (postDTO.getPostContent().contains(oldUrl)) {
-			postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
-		}
+		// s3 사용 x 로컬로 전환
+		// if (postDTO.getPostContent().contains(oldUrl)) {
+		// 	postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
+		// }
 
 		// 게시물 작성
 		Post post = Post.builder()
@@ -133,15 +135,15 @@ public class BoardServiceImpl implements BoardService {
 
 			List<ImgBoard> images = uploadRepository.findByPostNo(postNo);
 
-			for (ImgBoard image : images) {
-
-				String fileName = image.getFileUuid() + image.getExtension();
-				String thumbFileName = "t_" + fileName;
-				log.info("S3 Delete FileName: {}", fileName);
-
-				s3Uploader.deleteUploadedS3File(fileName, thumbFileName);
-			}
-
+			// for (ImgBoard image : images) {
+			//
+			// 	String fileName = image.getFileUuid() + image.getExtension();
+			// 	String thumbFileName = "t_" + fileName;
+			// 	log.info("S3 Delete FileName: {}", fileName);
+			//
+			// 	s3Uploader.deleteUploadedS3File(fileName, thumbFileName);
+			// }
+			//
 			// 댓글 존재 확인
 			List<Reply> replies = replyRepository.findByPostNo(postNo);
 
@@ -255,9 +257,10 @@ public class BoardServiceImpl implements BoardService {
 		// 게시물 작성자 확인
 		if (postDTO.getUserId().equals(userId)) {
 
-			if (postDTO.getPostContent().contains(oldUrl)) {
-				postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
-			}
+			// s3 사용 x, 로컬로 전환
+			// if (postDTO.getPostContent().contains(oldUrl)) {
+			// 	postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
+			// }
 
 			// 수정시간 추가
 			postDTO.setModDate(Instant.now());

@@ -1,7 +1,9 @@
 plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.18'
-    id 'io.spring.dependency-management' version '1.1.5'
+    id 'io.spring.dependency-management' version '1.1.7'
+    // 개틀링 부하 테스트
+    id 'io.gatling.gradle' version '3.13.5'
 }
 
 group = 'com.dogcat'
@@ -9,7 +11,7 @@ version = ''
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -25,7 +27,6 @@ repositories {
 
 dependencies {
 
-
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
@@ -39,6 +40,10 @@ dependencies {
 
     //JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.batch:spring-batch-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client' // MariaDB
 
     //OAuth2
@@ -59,7 +64,7 @@ dependencies {
     implementation 'net.coobird:thumbnailator:0.4.16'
 
     // 파일 업로드
-    implementation 'commons-io:commons-io:2.11.0'
+    implementation 'commons-io:commons-io:2.17.0'
 
     //ModelMapper
     implementation('org.modelmapper:modelmapper:3.1.0')
@@ -86,7 +91,7 @@ dependencies {
 
     //AWS S3, 섬네일
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-//    implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.2'
+    // implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.2'
     implementation 'net.coobird:thumbnailator:0.4.16'
     // mockMultipartFile
     implementation 'org.springframework.boot:spring-boot-starter-test'
@@ -99,25 +104,35 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
+    // 부하테스트
+    implementation 'org.scala-lang:scala3-library_sjs1_3:3.5.2'
+    // Gatling
+    gatling 'io.gatling:gatling-core'
+    gatling 'io.gatling:gatling-http'
+    testImplementation 'io.gatling.highcharts:gatling-charts-highcharts:3.13.5'
+    testImplementation 'io.gatling:gatling-test-framework:3.12.0'
+
+
 }
 
 test {
     useJUnitPlatform()
 }
 
-//processResources.dependsOn('copyYml')
-//
-//tasks.register('copyYml', Copy) {
-//    from './Secret-DogCat/Dev'
-//    include "*.yml"  // 복사할 파일들
-//    into 'src/main/resources'  // 복사 위치
-//}
+processResources.dependsOn('copyYml')
+
+tasks.register('copyYml', Copy) {
+    from './Secret-DogCat/Dev'
+    include "*-improve.yml"  // 복사할 파일들
+    into 'src/main/resources'  // 복사 위치
+    rename('application-improve.yml', 'application.yml')
+}
 
 //  TODO 배포시 활성화
-processResources.dependsOn('copySecret')
-
-tasks.register('copySecret', Copy) {
-    from './Secret-DogCat/EC2'
-    include "application.yml"  // 복사할 파일들
-    into 'src/main/resources'  // 복사 위치
-}
+//processResources.dependsOn('copySecret')
+//
+//tasks.register('copySecret', Copy) {
+//    from './Secret-DogCat/EC2'
+//    include "application.yml"  // 복사할 파일들
+//    into 'src/main/resources'  // 복사 위치
+//}

@@ -53,12 +53,13 @@ public class S3Uploader {
 		IOException {
 
 		// 임시 저장 폴더가 없을경우 생성
-		File directory = new File(s3UploadPath);
-		if (!directory.exists()) {
-			directory.mkdirs();
-		}
+		// File directory = new File(s3UploadPath);
+		// if (!directory.exists()) {
+		// 	directory.mkdirs();
+		// }
 
 		String fileName = multipartFile.getOriginalFilename();
+		assert fileName != null;
 		String extension = fileName.substring(fileName.lastIndexOf("."));
 
 		//S3에 업로드될 이름 저장
@@ -97,7 +98,7 @@ public class S3Uploader {
 		uploadResult.add(fileName);
 
 		// 업로드 후 로컬에 저장된 원본 파일 삭제
-		removeOriginalFile(multipartFile, saveFileName);
+		// removeOriginalFile(multipartFile, saveFileName);
 
 		return uploadResult;
 	}

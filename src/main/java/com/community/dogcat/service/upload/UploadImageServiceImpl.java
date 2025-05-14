@@ -58,9 +58,12 @@ public class UploadImageServiceImpl implements UploadImageService {
 
 		// 이미지 저장 경로 설정
 		String contextRoot = tempUploadPath;
-
+		System.out.println("contextRoot = " + contextRoot);
+		
 		// 디렉토리가 없을경우 생성
-		File directory = new File(tempUploadPath);
+		// File directory = new File(tempUploadPath);
+		// 로컬 전용
+		File directory = new File(contextRoot);
 		if (!directory.exists()) {
 			directory.mkdirs();
 		}
@@ -90,8 +93,11 @@ public class UploadImageServiceImpl implements UploadImageService {
 				FileUtils.copyInputStreamToFile(fileStream, targetFile);
 
 				// 이미지의 URL 생성
+				// String imageUrl = baseUrl + "/temp/" + saveFileName;
+				// 아래는 로컬용
 				String imageUrl = baseUrl + "/temp/" + saveFileName;
 				JsonObject fileJsonObject = new JsonObject();
+				System.out.println("imageUrl = " + imageUrl);
 
 				// 생성된 파일의 uuid 와 이미지링크 summernote 에 전달
 				fileJsonObject.addProperty("imageUrl", imageUrl);
@@ -141,7 +147,6 @@ public class UploadImageServiceImpl implements UploadImageService {
 	// summernote 취소버튼 누를 때 임시파일 제거
 	@Override
 	public void deleteSummernoteImage(List<String> uuids, List<String> extensions) {
-		List<String> fileNames = new ArrayList<>();
 
 		for (int i = 0; i < uuids.size(); i++) {
 			String fileName = uuids.get(i) + extensions.get(i);

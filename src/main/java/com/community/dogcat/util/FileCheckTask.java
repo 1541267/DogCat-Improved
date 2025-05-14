@@ -61,8 +61,8 @@ public class FileCheckTask {
 		}
 		log.info(smolLogLine);
 		// S3 버킷과 DB의 이미지 테이블과 비교해 S3에 없는 파일 제거
-		List<String> uploadedFiles = fileListInBucket();
-		deleteUploadedFiles(uploadedFiles);
+		// List<String> uploadedFiles = fileListInBucket();
+		// deleteUploadedFiles(uploadedFiles);
 
 	}
 
