@@ -16,6 +16,9 @@ public class CustomServletConfig implements WebMvcConfigurer {
 	@Value("${s3Resource}")
 	private String  s3Resource;
 
+	@Value("${finalResource}")
+	private String finalResource;
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
@@ -28,6 +31,7 @@ public class CustomServletConfig implements WebMvcConfigurer {
 
 		// registry.addResourceHandler("/temp/**").addResourceLocations(s3Resource);
 		registry.addResourceHandler("/temp/**").addResourceLocations(tempResource);
+		registry.addResourceHandler("/uploaded/**").addResourceLocations(finalResource);
 	}
 
 }

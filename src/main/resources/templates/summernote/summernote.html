@@ -122,7 +122,6 @@
 
                 },
 
-
                 // 에디터 본문의 변경사항이 있을시 불러와지는 callback 함수
                 onChange: function (contents) {
 
@@ -263,8 +262,8 @@
                     } else {
                         location.href = '/board/read/' + postNo;
                     }
-                },error: function(response) {
-                   console.log(response)
+                }, error: function (response) {
+                    console.log(response)
                 }
             });
         }

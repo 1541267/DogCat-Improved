@@ -50,16 +50,14 @@ public class UploadImageServiceImpl implements UploadImageService {
 	// jsonArray
 	// 썸머노트 업로드후 본문에 insert 하기위해 정보 반환
 	@Override
-	public String uploadSummerNoteImage(List<MultipartFile> multipartFiles, HttpServletRequest request) throws
-		IOException {
+	public String uploadSummerNoteImage(List<MultipartFile> multipartFiles, HttpServletRequest request) {
 
 		JsonObject jsonObject = new JsonObject();
 		JsonArray jsonArray = new JsonArray();
 
 		// 이미지 저장 경로 설정
 		String contextRoot = tempUploadPath;
-		System.out.println("contextRoot = " + contextRoot);
-		
+
 		// 디렉토리가 없을경우 생성
 		// File directory = new File(tempUploadPath);
 		// 로컬 전용
@@ -165,56 +163,56 @@ public class UploadImageServiceImpl implements UploadImageService {
 	}
 
 	// summernote 로 임시파일 업로드 후 게시글 등록하면 자동 s3 업로드
-	@Override
-	public ResponseEntity<List<String>> uploadS3Image(List<MultipartFile> multipartFile, Post postNo,
-		List<String> uuids) {
-
-		List<String> error = new ArrayList<>();
-		List<String> uploadResult = new ArrayList<>();
-
-		if (multipartFile == null || multipartFile.isEmpty()) {
-
-			log.error("업로드된 파일 없음!");
-
-			error.add("업로드된 파일이 없음!");
-			error.add(String.valueOf(postNo));
-			error.add(String.valueOf(System.currentTimeMillis()));
-
-			return ResponseEntity.badRequest().body(error);
-		}
-
-		for (int i = 0; i < uuids.size(); i++) {
-
-			MultipartFile file = multipartFile.get(i);
-
-			String originalFileName = file.getOriginalFilename();
-			String fileUuid = uuids.get(i);
-
-			try {
-				// s3업로드 실행 전에 게시글 등록 로직 먼저 실행 후 반환 되는 postNo
-				uploadResult = s3Uploader.upload(file, postNo, fileUuid);
-
-			} catch (Exception e) {
-				log.error("S3 업로드 에러", e);
-				error.add("S3 업로드 에러: " + e.getMessage());
-				error.add(String.valueOf(postNo));
-				error.add(originalFileName);
-				error.add(fileUuid);
-				error.add(String.valueOf(System.currentTimeMillis()));
-				return ResponseEntity.status(500).body(error);
-			}
-		}
-
-		return ResponseEntity.ok(uploadResult);
-	}
-
-	@Override
-	@Transactional
-	public void deleteUploadedS3Image(List<String> deletedImageUrls) {
-		// 버킷의 업로드된 파일 제거
-		for(String imageUrl : deletedImageUrls) {
-			s3Uploader.deleteS3BucketFile(imageUrl);
-			uploadRepository.deleteByUploadPath(imageUrl);
-		}
-	}
+	// @Override
+	// public ResponseEntity<List<String>> uploadS3Image(List<MultipartFile> multipartFile, Post postNo,
+	// 	List<String> uuids) {
+	//
+	// 	List<String> error = new ArrayList<>();
+	// 	List<String> uploadResult = new ArrayList<>();
+	//
+	// 	if (multipartFile == null || multipartFile.isEmpty()) {
+	//
+	// 		log.error("업로드된 파일 없음!");
+	//
+	// 		error.add("업로드된 파일이 없음!");
+	// 		error.add(String.valueOf(postNo));
+	// 		error.add(String.valueOf(System.currentTimeMillis()));
+	//
+	// 		return ResponseEntity.badRequest().body(error);
+	// 	}
+	//
+	// 	for (int i = 0; i < uuids.size(); i++) {
+	//
+	// 		MultipartFile file = multipartFile.get(i);
+	//
+	// 		String originalFileName = file.getOriginalFilename();
+	// 		String fileUuid = uuids.get(i);
+	//
+	// 		try {
+	// 			// s3업로드 실행 전에 게시글 등록 로직 먼저 실행 후 반환 되는 postNo
+	// 			uploadResult = s3Uploader.upload(file, postNo, fileUuid);
+	//
+	// 		} catch (Exception e) {
+	// 			log.error("S3 업로드 에러", e);
+	// 			error.add("S3 업로드 에러: " + e.getMessage());
+	// 			error.add(String.valueOf(postNo));
+	// 			error.add(originalFileName);
+	// 			error.add(fileUuid);
+	// 			error.add(String.valueOf(System.currentTimeMillis()));
+	// 			return ResponseEntity.status(500).body(error);
+	// 		}
+	// 	}
+	//
+	// 	return ResponseEntity.ok(uploadResult);
+	// }
+	//
+	// @Override
+	// @Transactional
+	// public void deleteUploadedS3Image(List<String> deletedImageUrls) {
+	// 	// 버킷의 업로드된 파일 제거
+	// 	for (String imageUrl : deletedImageUrls) {
+	// 		s3Uploader.deleteS3BucketFile(imageUrl);
+	// 		uploadRepository.deleteByUploadPath(imageUrl);
+	// 	}
+	// }
 }

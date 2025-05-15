@@ -2,9 +2,13 @@ package com.community.dogcat.service.board;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -37,6 +41,8 @@ import com.community.dogcat.repository.report.ReportLogRepository;
 import com.community.dogcat.repository.upload.UploadRepository;
 import com.community.dogcat.repository.user.UserRepository;
 import com.community.dogcat.repository.user.UsersAuthRepository;
+import com.community.dogcat.service.upload.UploadImageServiceImpl;
+import com.community.dogcat.util.uploader.DeleteTempFiles;
 import com.community.dogcat.util.uploader.S3Uploader;
 
 import lombok.RequiredArgsConstructor;
@@ -66,6 +72,10 @@ public class BoardServiceImpl implements BoardService {
 
 	private final ReportLogRepository reportLogRepository;
 
+	private final UploadImageServiceImpl uploadImageService;
+
+	private final DeleteTempFiles deleteTempFiles;
+
 	// 업로드된 이미지 정보 얻기 - ys
 	private final UploadResultMappingImgBoard uploadResultMappingImgBoard;
 
@@ -73,9 +83,10 @@ public class BoardServiceImpl implements BoardService {
 	@Value("${oldUrl}")
 	private String oldUrl;
 
-	// 임시 이미지 링크를 s3링크로 변경, 로컬로 전환해서 사용 x
-	// @Value("${newUrl}")
-	// private String newUrl;
+	// 임시 이미지 링크를 s3링크로 변경, 로컬로 전환해서 사용 
+	// 로컬용으로 s3에서 uploaded/ 로 변경
+	@Value("${newUrl}")
+	private String newUrl;
 
 	//게시물을 작성한 회원 정보 조회
 	@Override
@@ -83,7 +94,8 @@ public class BoardServiceImpl implements BoardService {
 
 		// 로그인한 회원정보를 받아 userId 조회
 		String userId = postDTO.getUserId();
-		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Board Service Register Error : 401 Unauthorized"));
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new NoSuchElementException("Board Service Register Error : 401 Unauthorized"));
 
 		// 조회한 회원정보 DTO에 추가
 		postDTO.setNickname(user.getNickname());
@@ -96,9 +108,9 @@ public class BoardServiceImpl implements BoardService {
 		// 게시글 등록시 이미지가 summernote 링크로 먼저 등록되기 때문에 x 박스가 뜸
 		// 고쳐주기 위해 업로드때 수행하던 작업을 게시판 등록할때 적용 - ys
 		// s3 사용 x 로컬로 전환
-		// if (postDTO.getPostContent().contains(oldUrl)) {
-		// 	postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
-		// }
+		if (postDTO.getPostContent().contains(oldUrl)) {
+			postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
+		}
 
 		// 게시물 작성
 		Post post = Post.builder()
@@ -122,7 +134,8 @@ public class BoardServiceImpl implements BoardService {
 	public void delete(Long postNo, String userId) {
 
 		// 로그인한 회원 정보 확인
-		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Board Service Delete Error : 401 Unauthorized"));
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new NoSuchElementException("Board Service Delete Error : 401 Unauthorized"));
 
 		// 게시물 번호와 회원 아이디가 일치하는 게시물인지 확인
 		Optional<Post> post = boardRepository.findByPostNoAndUserId(postNo, user);
@@ -135,15 +148,19 @@ public class BoardServiceImpl implements BoardService {
 
 			List<ImgBoard> images = uploadRepository.findByPostNo(postNo);
 
+			deleteTempFiles.deleteUploadedFiles(images);
+			// 위의 deleteUploadedFiles 로 변경, 로컬화
 			// for (ImgBoard image : images) {
 			//
 			// 	String fileName = image.getFileUuid() + image.getExtension();
 			// 	String thumbFileName = "t_" + fileName;
-			// 	log.info("S3 Delete FileName: {}", fileName);
 			//
-			// 	s3Uploader.deleteUploadedS3File(fileName, thumbFileName);
-			// }
-			//
+			// 	deleteTempFiles.deleteFile(thumbFileName);
+			// 	deleteTempFiles.deleteFile(fileName);
+
+			// log.info("S3 Delete FileName: {}", fileName);
+			// s3Uploader.deleteUploadedS3File(fileName, thumbFileName);
+
 			// 댓글 존재 확인
 			List<Reply> replies = replyRepository.findByPostNo(postNo);
 
@@ -152,23 +169,23 @@ public class BoardServiceImpl implements BoardService {
 				List<Long> reportLogIds = reportLogRepository.findByReplyNo(reply.getReplyNo());
 
 				for (Long reportLogId : reportLogIds) {
-
 					reportLogRepository.deleteReportLog(reportLogId);
 				}
 			}
 
 			boardRepository.deleteById(postNo);
-
 		} else {
 			log.error("Board Service Delete Error : 403 Forbidden");
 		}
+
 	}
 
 	// 게시글 수정용, 수정에 필요한 내용 보기
 	@Override
 	public PostDTO readOne(Long postNo) {
 		// 게시물 번호 조회
-		Post post = boardRepository.findById(postNo).orElseThrow(() -> new NoSuchElementException("Board Service ReadOne Error : 404 Not Found"));
+		Post post = boardRepository.findById(postNo)
+			.orElseThrow(() -> new NoSuchElementException("Board Service ReadOne Error : 404 Not Found"));
 
 		return new PostDTO(post);
 	}
@@ -186,10 +203,12 @@ public class BoardServiceImpl implements BoardService {
 	public PostReadDTO readDetail(Long postNo, String userId) {
 
 		// 게시물 번호 조회 (게시물 정보 확인용)
-		Post post = boardRepository.findById(postNo).orElseThrow(() -> new NoSuchElementException("Board Service ReadDetail Error : 404 Not Found"));
+		Post post = boardRepository.findById(postNo)
+			.orElseThrow(() -> new NoSuchElementException("Board Service ReadDetail Error : 404 Not Found"));
 
 		// 로그인한 회원정보를 받아 userId 조회
-		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Board Service ReadDetail Error : 401 Unauthorized"));
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new NoSuchElementException("Board Service ReadDetail Error : 401 Unauthorized"));
 
 		// 로그인한 회원의 스크랩 여부 확인
 		Optional<Scrap> scrap = scrapRepository.findByPostNoAndUserId(post, user);
@@ -217,7 +236,7 @@ public class BoardServiceImpl implements BoardService {
 
 		Optional<Post> optionalPost = boardRepository.findById(postNo);
 
-		return optionalPost.orElseGet(()->null);
+		return optionalPost.orElseGet(() -> null);
 	}
 
 	// 게시글 조회시 사진 찾기 - ys
@@ -252,28 +271,45 @@ public class BoardServiceImpl implements BoardService {
 	public Long modify(PostDTO postDTO, String userId) {
 
 		// 게시물 번호 조회
-		Post post = boardRepository.findById(postDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("Board Service Modify Error : 404 Not Found"));
+		Post post = boardRepository.findById(postDTO.getPostNo())
+			.orElseThrow(() -> new NoSuchElementException("Board Service Modify Error : 404 Not Found"));
 
 		// 게시물 작성자 확인
 		if (postDTO.getUserId().equals(userId)) {
 
+			// 로컬 사용시 이미지 제거시 비교후 파일을 제거하기 위해
+			// 2025/05/15
+			// 수정 전의 이미지 정보들
+			List<ImgBoard> imgBoards = post.getImages();
+
+			// 수정된 postContents에서 남은 uuid 추출
+			Set<String> uuids = new HashSet<>();
+			Pattern p = Pattern.compile("data-uuid\\s*=\\s*\"([^\"]+)\"");
+			Matcher m = p.matcher(postDTO.getPostContent());
+
+			while (m.find()) {
+				uuids.add(m.group(1));
+			}
+
+			List<ImgBoard> deletedImages = new ArrayList<>();
+			for (ImgBoard img : imgBoards) {
+				if (!uuids.contains(img.getFileUuid())) {
+					deletedImages.add(img);
+				}
+			}
+			deleteTempFiles.deleteUploadedFiles(deletedImages);
+
 			// s3 사용 x, 로컬로 전환
-			// if (postDTO.getPostContent().contains(oldUrl)) {
-			// 	postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
-			// }
+			if (postDTO.getPostContent().contains(oldUrl)) {
+				postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
+			}
 
 			// 수정시간 추가
 			postDTO.setModDate(Instant.now());
 
 			// 게시물 수정
-			post.modify(
-				postDTO.getBoardCode(),
-				postDTO.getPostTitle(),
-				postDTO.getPostContent(),
-				postDTO.getModDate(),
-				postDTO.getPostTag(),
-				postDTO.isSecret(),
-				postDTO.isReplyAuth());
+			post.modify(postDTO.getBoardCode(), postDTO.getPostTitle(), postDTO.getPostContent(), postDTO.getModDate(),
+				postDTO.getPostTag(), postDTO.isSecret(), postDTO.isReplyAuth());
 
 			boardRepository.save(post);
 
@@ -288,15 +324,15 @@ public class BoardServiceImpl implements BoardService {
 	public Long completeQna(PostDTO postDTO, String userId) {
 
 		// 게시물 번호 조회
-		Post post = boardRepository.findById(postDTO.getPostNo()).orElseThrow(() -> new NoSuchElementException("Board Service CompleteQna Error : 404 Not Found"));
+		Post post = boardRepository.findById(postDTO.getPostNo())
+			.orElseThrow(() -> new NoSuchElementException("Board Service CompleteQna Error : 404 Not Found"));
 
 		// 게시물 작성자 확인
 		if (postDTO.getUserId().equals(userId)) {
 
 			postDTO.setCompleteQna(true);
 			// 게시물 수정
-			post.completeQna(
-				postDTO.isCompleteQna());
+			post.completeQna(postDTO.isCompleteQna());
 
 		} else {
 			log.error("Board Service completeQna Error : 403 Forbidden");

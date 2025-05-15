@@ -2,11 +2,13 @@ package com.community.dogcat.controller.upload;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,6 +27,7 @@ import com.community.dogcat.domain.ImgBoard;
 import com.community.dogcat.domain.Post;
 import com.community.dogcat.repository.upload.UploadRepository;
 import com.community.dogcat.service.upload.UploadImageService;
+import com.community.dogcat.util.uploader.DeleteTempFiles;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -40,104 +43,102 @@ public class UploadController {
 
 	// 로컬 전용 위한 summernoteUpload 25/02/06 추가
 	private final UploadRepository uploadRepository;
+	// 로컬 전용, 섬네일+이미지의 url
+	@Value("${baseUrl}")
+	private String baseUrl;
+
+	// 최종 업로드 링크
+	@Value("${newUrl}")
+	private String finalUrl;
+	// 최종 업로드 경로
+	@Value("${finalUploadPath}")
+	private String finalUploadPath;
+
+	// 업로드 완료 후 임시파일 제거
+	private final DeleteTempFiles deleteTempFiles;
 
 	@Value("${tempUploadPath}")
 	private String tempUploadPath;
 
-	// @Value("${uploadPath}")
-	private String finalUploadPath = "http://localhost:10000/temp/thumbnail/";
-
 	@Operation(summary = "SummerNote Final Image Upload", description = "썸머노트 이미지 업로드")
 	@PostMapping(value = "/finalImageUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-
-	// 로컬 전용 업로드, s3 사용 안하고 이것만 사용
-	public ResponseEntity<List<String>> finalImageUpload(String uploadPath,
-		String thumbnailPath, boolean isImg, String extension, String fileName,
-		@RequestParam("files") List<MultipartFile> multipartFile,
+	// 로컬 전용 게시글 등록시 업로드 완료,
+	// s3 사용 안하고 이것만 사용, 정리 필요, 임시로 서비스 이동 x 컨트롤러에서 사용
+	public ResponseEntity<List<String>> finalImageUpload(
+		@RequestParam("files") List<MultipartFile> files,
 		@RequestParam("postNo") Post postNo,
-		@RequestParam("uuids") List<String> uuids) throws IOException {
+		@RequestParam("uuids") List<String> uuids
+	) throws IOException {
 
-		for (int i = 0; i < multipartFile.size(); i++) {
+		System.out.println("==========================================================");
+		System.out.println("final upload debug");
+		System.out.println("multipartFile.size() = " + files.size());
 
-			System.out.println("multipartFile = " + multipartFile);
-			System.out.println("uuids = " + uuids);
+		List<String> errors = new ArrayList<>();
+		List<String> fileNames = new ArrayList<>();
 
-			fileName = multipartFile.get(i).getOriginalFilename();
+		for (int i = 0; i < files.size(); i++) {
+			MultipartFile mf = files.get(i);
 			String uuid = uuids.get(i);
 
-			assert fileName != null;
-			extension = fileName.substring(fileName.lastIndexOf("."));
-
-			uploadPath = finalUploadPath + uuid + extension;
-			String thumbnailFile = tempUploadPath + "t_" + uuid + extension;
-
-			if (extension.equals(".png") || extension.equals(".jpg") || extension.equals(".jpeg") || extension.equals(
-				".gif")) {
-				isImg = true;
-			}
-
-			Path finalUploadPath = Paths.get(tempUploadPath, uuid + extension);
-
-			System.out.println("finalUploadPath = " + finalUploadPath);
-			System.out.println("finalUploadPath thumbnail = " + thumbnailPath);
-
-			File thumbFile = new File(thumbnailPath);
-
-			if (!thumbFile.exists()) {
-				thumbFile.mkdirs();
-			}
-
-			Thumbnailator.createThumbnail(finalUploadPath.toFile(), thumbFile, 200, 200);
-
-			System.out.println("uploadPath = " + uploadPath);
-			System.out.println("thumbnailPath = " + thumbnailPath);
-			System.out.println("isImg = " + isImg);
-			System.out.println("extension = " + extension);
-			System.out.println("fileName = " + fileName);
-			System.out.println("uuid = " + uuid);
-			System.out.println("postNo = " + postNo.getPostNo());
-			System.out.println("postTitle = " + postNo.getPostTitle());
-
-			ImgBoard result = ImgBoard.builder()
-				.uploadPath(uploadPath)
-				.thumbnailPath(thumbnailPath)
-				.img(isImg)
-				.uploadTime(Instant.now())
-				.extension(extension)
-				.fileName(fileName)
-				.fileUuid(uuid)
-				.postNo(postNo)
-				.build();
-			List<String> error = new ArrayList<>();
-
 			try {
-				uploadRepository.save(result);
+				String fileName = Objects.requireNonNull(mf.getOriginalFilename());
+				String extension = fileName.substring(fileName.lastIndexOf("."));
+				boolean isImg = List.of(".png", ".jpg", ".jpeg", ".gif")
+					.contains(extension.toLowerCase());
+
+				Path savePath = Paths.get(finalUploadPath, uuid + extension);
+				Path thumbnailDir = Paths.get(finalUploadPath + "thumbnail/");
+
+				createDirs(savePath);
+				createDirs(thumbnailDir);
+
+				System.out.println(
+					"finalUpload savePath : " + savePath + ", fileName : " + fileName + ", thumbnailDir :"
+						+ thumbnailDir + "/t_"
+						+ uuid + extension);
+
+				// 파일 저장
+				mf.transferTo(savePath.toFile());
+
+				// 썸네일 생성
+				File thumbFile = thumbnailDir.resolve("t_" + uuid + extension).toFile();
+				Thumbnailator.createThumbnail(savePath.toFile(), thumbFile, 200, 200);
+
+				// DB 저장
+				ImgBoard img = ImgBoard.builder()
+					.uploadPath(finalUrl + uuid + extension)
+					.thumbnailPath(finalUrl + "thumbnail/t_" + uuid + extension)
+					// .thumbnailPath(thumbnailDir + uuid + extension)
+					.img(isImg)
+					.uploadTime(Instant.now())
+					.extension(extension)
+					.fileName(fileName)
+					.fileUuid(uuid)
+					.postNo(postNo)
+					.build();
+
+				uploadRepository.save(img);
+
+				fileNames.add(uuid + extension);
 
 			} catch (Exception e) {
-
-				log.error("업로드 에러", e);
-				error.add("업로드 에러: " + e.getMessage());
-				error.add(String.valueOf(postNo));
-				error.add(fileName);
-				error.add(uuid);
-				error.add(String.valueOf(System.currentTimeMillis()));
-				return ResponseEntity.status(500).body(error);
+				log.error("업로드 에러 (idx={}, uuid={}): {}", i, uuid, e.getMessage(), e);
+				errors.add(String.format("idx=%d, uuid=%s, err=%s", i, uuid, e.getMessage()));
 			}
-			return ResponseEntity.ok(error);
-		}
-		return null;
 
+			// 로컬 전환으로 인한 임시파일 제거
+			deleteTempFiles.deleteFileAfterUpload(fileNames);
+		}
+
+		// 모든 파일 처리 후 한 번만 리턴
+		return ResponseEntity.ok(errors);
 	}
 
-	// S3 업로드
-	@Operation(summary = "Upload S3", description = "S3 업로드")
-	@PostMapping(value = "/s3", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<List<String>> cloudUpload(
-		@RequestParam("files") List<MultipartFile> multipartFile,
-		@RequestParam("postNo") Post postNo,
-		@RequestParam("uuids") List<String> uuid) {
-
-		return uploadImageService.uploadS3Image(multipartFile, postNo, uuid);
+	private void createDirs(Path dir) throws IOException {
+		if (Files.notExists(dir)) {
+			Files.createDirectories(dir);
+		}
 	}
 
 	// 게시글 등록 전 썸머노트로 이미지를 임시폴더에 저장
@@ -166,10 +167,21 @@ public class UploadController {
 
 	}
 
-	@PostMapping("/delete-s3file")
-	public void deleteS3FileWithBucket(@RequestParam("deletedS3ImageUrls") List<String> deletedImageUrls) {
-
-		uploadImageService.deleteUploadedS3Image(deletedImageUrls);
-
-	}
+	// S3 업로드
+	// @Operation(summary = "Upload S3", description = "S3 업로드")
+	// @PostMapping(value = "/s3", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	// public ResponseEntity<List<String>> cloudUpload(
+	// 	@RequestParam("files") List<MultipartFile> multipartFile,
+	// 	@RequestParam("postNo") Post postNo,
+	// 	@RequestParam("uuids") List<String> uuid) {
+	//
+	// 	return uploadImageService.uploadS3Image(multipartFile, postNo, uuid);
+	// }
+	//
+	// @PostMapping("/delete-s3file")
+	// public void deleteS3FileWithBucket(@RequestParam("deletedS3ImageUrls") List<String> deletedImageUrls) {
+	//
+	// 	uploadImageService.deleteUploadedS3Image(deletedImageUrls);
+	//
+	// }
 }

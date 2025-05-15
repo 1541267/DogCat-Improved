@@ -15,14 +15,14 @@ import com.community.dogcat.domain.Post;
 @Service
 public interface UploadImageService {
 
-	ResponseEntity<List<String>> uploadS3Image(List<MultipartFile> multipartFile, Post postNo,
-		List<String> uuid);
+
 
 	String uploadSummerNoteImage(List<MultipartFile> multipartFile, HttpServletRequest request) throws IOException;
+	void deleteSummernoteImageWithBackspace(List<String> deletedImageUrls);
 
 	void deleteSummernoteImage(List<String> uuids, List<String> extensions);
 
-	void deleteSummernoteImageWithBackspace(List<String> deletedImageUrls);
-
-	void deleteUploadedS3Image(List<String> deletedImageUrls);
+	// void deleteUploadedS3Image(List<String> deletedImageUrls);
+	// ResponseEntity<List<String>> uploadS3Image(List<MultipartFile> multipartFile, Post postNo,
+	// 	List<String> uuid);
 }
