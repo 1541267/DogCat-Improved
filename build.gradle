@@ -107,11 +107,16 @@ dependencies {
     // 부하테스트
     implementation 'org.scala-lang:scala3-library_sjs1_3:3.5.2'
     // Gatling
-    gatling 'io.gatling:gatling-core'
-    gatling 'io.gatling:gatling-http'
+    gatlingRuntimeOnly 'io.gatling:gatling-core'
+    gatlingRuntimeOnly 'io.gatling:gatling-http'
+    gatlingImplementation 'io.netty:netty-codec-http:4.1.119.Final'
+    gatlingImplementation 'io.netty:netty-handler:4.1.119.Final'
     testImplementation 'io.gatling.highcharts:gatling-charts-highcharts:3.13.5'
     testImplementation 'io.gatling:gatling-test-framework:3.12.0'
-
+    gatlingRuntimeOnly platform('com.fasterxml.jackson:jackson-bom:2.18.3')
+    gatlingRuntimeOnly 'com.fasterxml.jackson.core:jackson-core:2.18.3'
+    gatlingRuntimeOnly 'com.fasterxml.jackson.core:jackson-databind:2.18.3'
+    gatlingRuntimeOnly 'com.fasterxml.jackson.core:jackson-annotations:2.18.3'
 
 }
 
