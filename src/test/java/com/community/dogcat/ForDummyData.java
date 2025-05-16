@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.community.dogcat.domain.User;
 import com.community.dogcat.domain.UsersAuth;
 import com.community.dogcat.domain.UsersVet;
+import com.community.dogcat.repository.board.BoardRepository;
+import com.community.dogcat.repository.upload.UploadRepository;
 import com.community.dogcat.repository.user.UserRepository;
 import com.community.dogcat.repository.user.UsersAuthRepository;
 import com.community.dogcat.repository.user.VetRepository;
@@ -31,6 +33,12 @@ class ForDummyData {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private BoardRepository boardRepository;
+
+	@Autowired
+	private UploadRepository uploadRepository;
 
 	@Test
 	public void ForDummyData() {
@@ -102,5 +110,14 @@ class ForDummyData {
 			UsersAuth auth = UsersAuth.builder().userId(user.getUserId()).authorities("ROLE_USER").build();
 			usersAuthRepository.save(auth);
 		// }
+	}
+
+	@Test
+	public void deleteDummyPost() {
+
+		uploadRepository.deleteAllByPostNoMore1000(1000L);
+		boardRepository.deleteAllByPostNoMore1000(1000L);
+
+
 	}
 }

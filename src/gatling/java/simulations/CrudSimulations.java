@@ -15,108 +15,207 @@ public class CrudSimulations extends Simulation {
 	// HTTP 프로토콜 설정
 	HttpProtocolBuilder httpProtocol = http
 		.baseUrl("http://localhost:10000")
-		.acceptHeader("application/json")
-		.contentTypeHeader("application/json");
+		.acceptHeader("application/json");
 
-	// 시나리오 정의
-	ScenarioBuilder scn = scenario("말랑발자국 CRUD 부하 테스트")
-		//feeder 더미 계정들
+	// 1) 쓰기(Write) 시나리오: 로그인 → 페이지 로드 → 이미지 업로드 → 게시글 등록 → 최종 이미지 처리 → 수정(파일 포함)
+	ScenarioBuilder writeScn = scenario("Write Scenario with Full Summernote Flow")
 		.feed(csv("accounts.csv").circular())
-		// 1) 로그인
+
+		// 로그인
 		.exec(http("User Login")
 			.post("/user/loginProc")
 			.header("Content-Type", "application/x-www-form-urlencoded")
 			.formParam("username", "#{username}")
 			.formParam("password", "#{password}")
-			.formParam("autoLogin", "false")
-			.formParam("rememberMe", "false")
 			.check(status().is(200))
 			.check(header("Set-Cookie").find().saveAs("rawCookies"))
 		)
+		.pause(Duration.ofMillis(100))
 
-		// 2) JWT만 추출해서 세션에 저장
+		// JWT 추출
 		.exec(session -> {
 			String raw = session.getString("rawCookies");
 			String jwt = Arrays.stream(raw.split(";"))
 				.map(String::trim)
 				.filter(s -> s.startsWith("access="))
 				.map(s -> s.substring("access=".length()))
-				.findFirst()
-				.orElse("");
+				.findFirst().orElse("");
 			return session.set("jwt", jwt);
 		})
+		.pause(Duration.ofMillis(100))
 
-		// 3) 인증된 상태에서 메인 페이지 호출
-		.exec(http("After Login")
-			.get("/")
+		// 페이지 로드 (GET /board/register)
+		.exec(http("Load Register Page")
+			.get("/board/register")
 			.header("Cookie", session -> "access=" + session.getString("jwt"))
 			.check(status().is(200))
 		)
-		.pause(Duration.ofMillis(100))
+		.pause(Duration.ofSeconds(1))
 
-		// 4) 게시글 생성
-		.exec(http("CreatePost")
-			.post("/board/register/")
-			.header("Content-Type", "application/x-www-form-urlencoded")
+		// 2) Summernote 이미지 업로드 (비동기)
+		.exec(http("Upload Summernote Image")
+			.post("/api/upload/summernote-upload")
+			.header("Cookie", session -> "access=" + session.getString("jwt"))
+			.bodyPart(RawFileBodyPart("files", "img/삽입 이미지.PNG")
+				.fileName("삽입 이미지.PNG")
+				.contentType("image/png")
+			)
+			.asMultipartForm()
+			.check(status().is(200))
+			.check(jsonPath("$.files[0].imageUrl").saveAs("imageUrl"))
+			.check(jsonPath("$.files[0].uuid").saveAs("imageUuid"))
+		)
+		.pause(Duration.ofSeconds(1))
+
+		// 3) 게시글 등록 (본문에 <img> 태그 포함)
+		.exec(session -> {
+			String url = session.getString("imageUrl");
+			String uuid = session.getString("imageUuid");
+			String imgTag = String.format(
+				"<img src=\"%s\" data-uuid=\"%s\" data-filename=\"삽입 이미지.PNG\" data-extension=\"png\" style=\"width:75%%;\"/>",
+				url, uuid
+			);
+			String content = "<p>자동 삽입된 이미지:</p>" + imgTag;
+			return session
+				.set("postTitle", "Summernote 전체 플로우 테스트")
+				.set("postContent", content);
+		})
+		.exec(http("Create Post with Embedded Image")
+			.post("/board/register")
 			.header("Cookie", session -> "access=" + session.getString("jwt"))
 			.formParam("boardCode", "general")
-			.formParam("postTitle", "성능테스트")
-			.formParam("postContent", "x".repeat(1000))
+			.formParam("postTitle", session -> session.getString("postTitle"))
+			.formParam("postContent", session -> session.getString("postContent"))
 			.check(status().is(200), jsonPath("$.postNo").saveAs("postNo"))
 		)
-		.pause(Duration.ofMillis(100))
+		// 4) 최종 이미지 처리 (uploadFinalImage)
+		.exec(http("Final Image Upload")
+			.post("/api/upload/finalImageUpload")
+			.header("Cookie", session -> "access=" + session.getString("jwt"))
+			.bodyPart(RawFileBodyPart("files", "img/삽입 이미지.PNG")
+				.fileName("삽입 이미지.PNG")
+				.contentType("image/png")
+			)
+			.bodyPart(StringBodyPart("postNo", session -> session.getString("postNo")))
+			.bodyPart(StringBodyPart("uuids", session -> session.getString("imageUuid")))
+			.asMultipartForm()
+			.check(status().is(200))
+		)
+		.pause(Duration.ofSeconds(3))
 
-		// 5) 게시글 수정
-		.exec(http("UpdatePost")
+		.exec(http("Upload Edit Image")
+			.post("/api/upload/summernote-upload")
+			.header("Cookie", session -> "access=" + session.getString("jwt"))
+			.bodyPart(RawFileBodyPart("files", "img/수정 이미지.png")
+				.fileName("수정 이미지.png")
+				.contentType("image/png")
+			)
+			.asMultipartForm()
+			.check(status().is(200))
+			.check(jsonPath("$.files[0].imageUrl").saveAs("editImageUrl"))
+			.check(jsonPath("$.files[0].uuid").saveAs("editImageUuid"))
+		)
+		.pause(Duration.ofSeconds(1))
+		.exec(session -> {
+			String url = session.getString("editImageUrl");
+			String uuid = session.getString("editImageUuid");
+			String imgTag = String.format(
+				"<img src=\"%s\" data-uuid=\"%s\" data-filename=\"수정 이미지.png\" data-extension=\"png\" style=\"width:75%%;\"/>",
+				url, uuid
+			);
+			String content = "<p>수정된 이미지 삽입:</p>" + imgTag;
+			return session.set("editContent", content);
+		})
+		.exec(http("Modify Post with Embedded Image")
 			.post("/board/modify")
 			.header("Cookie", session -> "access=" + session.getString("jwt"))
-			.header("Content-Type", "application/x-www-form-urlencoded")
 			.formParam("postNo", session -> session.getString("postNo"))
 			.formParam("userId", "#{username}")
 			.formParam("boardCode", "general")
-			.formParam("postTitle", "수정 성능 테스트")
-			.formParam("postContent", "x".repeat(1000))
+			.formParam("postTitle", "수정 이미지 테스트")
+			.formParam("postContent", session -> session.getString("editContent"))
 			.check(status().is(200))
 		)
+		.pause(Duration.ofSeconds(3))
+		.exec(http("Final Edit Image Upload")
+			.post("/api/upload/finalImageUpload")
+			.header("Cookie", session -> "access=" + session.getString("jwt"))
+			.bodyPart(RawFileBodyPart("files", "img/수정 이미지.png")
+				.fileName("수정 이미지.png")
+				.contentType("image/png")
+			)
+			.bodyPart(StringBodyPart("postNo", session -> session.getString("postNo")))
+			.bodyPart(StringBodyPart("uuids", session -> session.getString("editImageUuid")))
+			.asMultipartForm()
+			.check(status().is(200))
+		)
+		.pause(Duration.ofMillis(50))
 
-		// 6) 삭제
+		// 게시글 삭제
 		.exec(http("DeletePost")
 			.get(session -> "/board/delete/" + session.getString("postNo"))
 			.header("Cookie", session -> "access=" + session.getString("jwt"))
 			.check(status().is(200))
 		);
 
+	// 2) 읽기(Read) 시나리오: 로그인 → 목록 조회 → 상세 조회
+	ScenarioBuilder readScn = scenario("Read Scenario")
+		.feed(csv("accounts.csv").circular())
+		// 로그인
+		.exec(http("User Login")
+			.post("/user/loginProc")
+			.header("Content-Type", "application/x-www-form-urlencoded")
+			.formParam("username", "#{username}")
+			.formParam("password", "#{password}")
+			.check(status().is(200))
+			.check(header("Set-Cookie").find().saveAs("rawCookies"))
+		)
+		.exec(session -> {
+			String raw = session.getString("rawCookies");
+			String jwt = Arrays.stream(raw.split(";"))
+				.map(String::trim)
+				.filter(s -> s.startsWith("access="))
+				.map(s -> s.substring("access=".length()))
+				.findFirst().orElse("");
+			return session.set("jwt", jwt);
+		})
+		.pause(Duration.ofMillis(20))
+		// 게시판 목록 조회
+		.exec(http("ListPosts")
+			.get("/board/general")
+			.header("Cookie", session -> "access=" + session.getString("jwt"))
+			.check(status().is(200))
+		)
+		.pause(Duration.ofMillis(20))
+		// 게시글 상세 조회
+		.exec(http("GetPostDetail")
+			.get("/board/read/5")
+			.header("Cookie", session -> "access=" + session.getString("jwt"))
+			.check(status().is(200))
+		);
+
+	// 시나리오 병렬 실행
+	// {
+	//  setUp(
+	//      writeScn.injectOpen(
+	//          atOnceUsers(1)
+	//      ),
+	//      readScn.injectOpen(
+	//          atOnceUsers(1)
+	//      )
+	//  ).protocols(httpProtocol);
+	// }
+
 	{
-		// 가상 유저 1명으로 테스트 실행
-		// setUp(
-		// 	scn.injectOpen(atOnceUsers(1))
-		// ).protocols(httpProtocol);
-
-		// setUp(
-		// 	scn.injectOpen(
-		// 		// 1분 동안 0 → 500명으로 램핑
-		// 		rampUsers(500).during(Duration.ofMinutes(1)),
-		// 		// 그 뒤 4분간 초당 평균 20명 수준으로 유지 (랜덤 분산)
-		// 		constantUsersPerSec(20).during(Duration.ofMinutes(3)).randomized(),
-		// 		// 마지막으로 30초 동안 급격히 1000명까지 올리고
-		// 		rampUsers(900).during(Duration.ofSeconds(30))
-		// 	)
-		// ).protocols(httpProtocol);
-
-		{
-			setUp(
-				scn.injectOpen(
-					// 1분 동안 0 → 150명 램핑 (총 150)
-					rampUsers(1000).during(Duration.ofMinutes(1)),
-					// 3분 동안 초당 10명 유지 (총 10 × 210 = 2,100)
-					constantUsersPerSec(30).during(Duration.ofMinutes(4)).randomized(),
-					// 1분 동안 0 → 2,750명 램핑 (총 2,750)
-					rampUsers(1800).during(Duration.ofMinutes(1))
-				)
-			).protocols(httpProtocol);
-		}
-
-
-
+		setUp(
+			// 쓰기 시나리오: 초당 10명, 3분간 지속
+			writeScn.injectOpen(
+				constantUsersPerSec(10).during(Duration.ofMinutes(4)).randomized()
+			),
+			// 읽기 시나리오: 초당 20명, 3분간 지속
+			readScn.injectOpen(
+				constantUsersPerSec(20).during(Duration.ofMinutes(4)).randomized()
+			)
+		).protocols(httpProtocol);
 	}
 }
