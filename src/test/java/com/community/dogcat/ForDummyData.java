@@ -43,8 +43,7 @@ class ForDummyData {
 			.exp(0L)
 			.tel("010-0000-0000")
 			.build();
-		UsersAuth adminAuth =UsersAuth.builder().userId("admin@admin.aa").authorities("ROLE_ADMIN").build();
-
+		UsersAuth adminAuth = UsersAuth.builder().userId("admin@admin.aa").authorities("ROLE_ADMIN").build();
 
 		User admin1 = User.builder()
 			.userId("admin1@admin.aa")
@@ -55,8 +54,7 @@ class ForDummyData {
 			.tel("010-0000-0000")
 			.build();
 
-		UsersAuth adminAuth1 =UsersAuth.builder().userId("admin1@admin.aa").authorities("ROLE_ADMIN").build();
-
+		UsersAuth adminAuth1 = UsersAuth.builder().userId("admin1@admin.aa").authorities("ROLE_ADMIN").build();
 
 		userRepository.save(admin);
 		userRepository.save(admin1);
@@ -88,5 +86,21 @@ class ForDummyData {
 		List<UsersVet> vets = vetRepository.findAll();
 		assertEquals(10, vets.size());
 
+	}
+
+	@Test
+	public void dummyUser() {
+		// for (int i = 0; i < 10_000; i++) {
+			User user = User.builder()
+				.userId(10_000 + "@stress.com")
+				.userName("스트레스 테스트 계정 " + 10_000)
+				.nickname("스트레스 테스트 계정 " + 10_000)
+				.tel("010-0000-0000")
+				.userPw(passwordEncoder.encode("11111111"))
+				.build();
+			userRepository.save(user);
+			UsersAuth auth = UsersAuth.builder().userId(user.getUserId()).authorities("ROLE_USER").build();
+			usersAuthRepository.save(auth);
+		// }
 	}
 }

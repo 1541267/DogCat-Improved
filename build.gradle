@@ -118,6 +118,13 @@ dependencies {
     gatlingRuntimeOnly 'com.fasterxml.jackson.core:jackson-databind:2.18.3'
     gatlingRuntimeOnly 'com.fasterxml.jackson.core:jackson-annotations:2.18.3'
 
+    // redis 적용
+//    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+//    implementation 'org.springframework.session:spring-session-data-redis' // 세션 관리용
+}
+
+gatling {
+    jvmArgs = ['-Xms4g', '-Xmx8g', '-XX:+HeapDumpOnOutOfMemoryError']
 }
 
 test {

@@ -26,11 +26,11 @@ import com.community.dogcat.repository.user.RefreshRepository;
 import com.community.dogcat.repository.user.UserRepository;
 import com.community.dogcat.repository.user.UsersAuthRepository;
 import com.community.dogcat.service.user.CustomOAuth2UserService;
+import com.community.dogcat.service.user.RefreshTokenService;
 import com.community.dogcat.service.user.ReissueService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 
 @Slf4j
 @Configuration
@@ -49,6 +49,8 @@ public class CustomSecurityConfig {
 	private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 	private final CustomAccessDeniedHandler accessDeniedHandler;
 
+	// 개선
+	private final RefreshTokenService refreshTokenService;
 
 	@Bean
 	public BCryptPasswordEncoder cryptPasswordEncoder() {
@@ -71,8 +73,8 @@ public class CustomSecurityConfig {
 
 		http.authorizeRequests()
 			.antMatchers("/admin/**").hasRole("ADMIN")
-			.antMatchers("/user/**", "/", "/check/**", "/login/**", "/oauth2/**","/error/**").permitAll()
-			.antMatchers("/css/**","/fonts/**", "/js/**", "/img/**", "/static/**", "/home/home").permitAll()
+			.antMatchers("/user/**", "/", "/check/**", "/login/**", "/oauth2/**", "/error/**").permitAll()
+			.antMatchers("/css/**", "/fonts/**", "/js/**", "/img/**", "/static/**", "/home/home").permitAll()
 			.anyRequest().authenticated();
 
 		http.formLogin()

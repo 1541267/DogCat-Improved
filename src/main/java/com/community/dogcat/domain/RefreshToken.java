@@ -24,4 +24,6 @@ public class RefreshToken {
 	private String username;
 	private String refresh;
 	private String expiration;
+
+
 }
