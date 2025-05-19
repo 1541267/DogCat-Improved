@@ -62,7 +62,8 @@ public class ImgBoard {
 	@Column(name = "thumbnail_Path")
 	private String thumbnailPath;
 
-	public void setPostNo(Post post) {
-
-	}
+	// 개선, 파일 삭제 가능 여부, true = 스케쥴로 한꺼번에 제거
+	@ColumnDefault("FALSE")
+	@Column(name = "delete_possible")
+	private boolean deletePossible;
 }

@@ -4,6 +4,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -13,16 +18,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import net.coobird.thumbnailator.Thumbnailator;
+
 import com.amazonaws.services.s3.AmazonS3;
+import com.community.dogcat.domain.ImgBoard;
 import com.community.dogcat.domain.Post;
 import com.community.dogcat.repository.upload.UploadRepository;
 import com.community.dogcat.util.uploader.DeleteTempFiles;
-import com.community.dogcat.util.uploader.S3Uploader;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -42,9 +48,18 @@ public class UploadImageServiceImpl implements UploadImageService {
 	@Value("${tempUploadPath}")
 	private String tempUploadPath;
 
-	private final S3Uploader s3Uploader;
+	@Value("${finalUploadPath}")
+	private String finalUploadPath;
+
+	// 최종 업로드 링크
+	@Value("${newUrl}")
+	private String finalUrl;
+	// 최종 업로드 경로
+
+	// private final S3Uploader s3Uploader;
 
 	// s3업로드 or 게시글 등록 취소 or 백스페이스 summernote 임시 업로드 이미지 파일 삭제
+	// 개선, 놔두고 매일 새벽에 한꺼번에 정리 -> I/O 부담 제거
 	private final DeleteTempFiles deleteTempFiles;
 
 	// jsonArray
@@ -61,10 +76,10 @@ public class UploadImageServiceImpl implements UploadImageService {
 		// 디렉토리가 없을경우 생성
 		// File directory = new File(tempUploadPath);
 		// 로컬 전용
-		File directory = new File(contextRoot);
-		if (!directory.exists()) {
-			directory.mkdirs();
-		}
+		// File directory = new File(contextRoot);
+		// if (!directory.exists()) {
+		// 	directory.mkdirs();
+		// }
 
 		for (MultipartFile multipartFile : multipartFiles) {
 			String originalFileName = multipartFile.getOriginalFilename();
@@ -121,6 +136,46 @@ public class UploadImageServiceImpl implements UploadImageService {
 		jsonObject.add("files", jsonArray);
 
 		return jsonObject.toString();
+	}
+
+	@Override
+	@Transactional
+	public void moveAndSaveImages(List<String> uuids, List<String> extensions, Post postNo) throws IOException {
+		// final 디렉터리 및 썸네일 디렉터리 보장
+
+		Path finalDir = Paths.get(finalUploadPath);
+		Path thumbDir = finalDir.resolve("thumbnail");
+
+		for (int i = 0; i < uuids.size(); i++) {
+			String uuid = uuids.get(i);
+			String ext = extensions.get(i);
+
+			// 임시 파일 경로
+			Path tempFile = Paths.get(tempUploadPath, uuid + ext);
+			// 최종 파일 경로
+			Path finalFile = finalDir.resolve(uuid + ext);
+
+			// 파일 이동 (복사 후 원본 삭제)
+			Files.move(tempFile, finalFile, StandardCopyOption.REPLACE_EXISTING);
+
+			// 썸네일 생성
+			Path thumbFile = thumbDir.resolve("t_" + uuid + ext);
+			Thumbnailator.createThumbnail(finalFile.toFile(), thumbFile.toFile(), 200, 200);
+
+			// DB 엔티티 저장
+			ImgBoard img = ImgBoard.builder()
+				.uploadPath(finalUrl + uuid + ext)
+				.thumbnailPath(finalUrl + "thumbnail/t_" + uuid + ext)
+				.img(true)
+				.uploadTime(Instant.now())
+				.extension(ext)
+				.fileName(uuid + ext)
+				.fileUuid(uuid)
+				.postNo(postNo)
+				.build();
+
+			uploadRepository.save(img);
+		}
 	}
 
 	// 업로드된 이미지의 가로세로 정보 추출

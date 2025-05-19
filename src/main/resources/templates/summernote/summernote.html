@@ -334,6 +334,7 @@
             files.forEach((file, idx) => {
                 formData.append('files', file);
                 formData.append('uuids', uuids[idx]);
+                formData.append('extensions', extensions[idx]);
             });
 
             formData.append('postNo', postNo);
@@ -350,54 +351,6 @@
                 }
             });
         }
-
-
-        // S3에 이미지 업로드 함수
-        function uploadS3Image(files, postNo, uuids) {
-
-            let formData = new FormData();
-
-            files.forEach((file, uuid) => {
-                formData.append('files', file);
-                formData.append('uuids', uuids[uuid]);
-            });
-
-            formData.append('postNo', postNo);
-
-            $.ajax({
-                url: '/api/upload/s3',
-                data: formData,
-                method: 'POST',
-                contentType: false,
-                processData: false,
-                enctype: 'multipart/form-data',
-                error: function (error) {
-                    console.error('Error Uploading Image: ', error);
-                }
-            })
-        }
-
-        /* ---------------------------------------------------------------------- */
-
-        function deleteS3File(fileUrls) {
-
-            let formData = new FormData();
-
-            formData.append('deletedS3ImageUrls', fileUrls);
-
-            $.ajax({
-                url: '/api/upload/delete-s3file',
-                data: formData,
-                type: 'POST',
-                contentType: false,
-                processData: false,
-                error: function (error) {
-                    console.error('업로드된 S3 파일 삭제 실패: ', error);
-                },
-            });
-
-        }
-
 
         function removeTempFileWithCancelButton(uuids, extensions) {
             let formData = new FormData();
@@ -485,9 +438,54 @@
         // 브라우저가 종료될 시 임시파일이 존재하면 삭제 (취소버튼, F5, alt+F4, 브라우저 종료 등등)
         window.addEventListener('beforeunload', function () {
             if (uploadedImages.length !== 0) {
-                // removeTempFileWithCancelButton(imageUUIDs, extensions);
+                removeTempFileWithCancelButton(imageUUIDs, extensions);
             }
         });
+
+        // S3에 이미지 업로드 함수
+        // function uploadS3Image(files, postNo, uuids) {
+        //
+        //     let formData = new FormData();
+        //
+        //     files.forEach((file, uuid) => {
+        //         formData.append('files', file);
+        //         formData.append('uuids', uuids[uuid]);
+        //     });
+        //
+        //     formData.append('postNo', postNo);
+        //
+        //     $.ajax({
+        //         url: '/api/upload/s3',
+        //         data: formData,
+        //         method: 'POST',
+        //         contentType: false,
+        //         processData: false,
+        //         enctype: 'multipart/form-data',
+        //         error: function (error) {
+        //             console.error('Error Uploading Image: ', error);
+        //         }
+        //     })
+        // }
+        //
+        //
+        // function deleteS3File(fileUrls) {
+        //
+        //     let formData = new FormData();
+        //
+        //     formData.append('deletedS3ImageUrls', fileUrls);
+        //
+        //     $.ajax({
+        //         url: '/api/upload/delete-s3file',
+        //         data: formData,
+        //         type: 'POST',
+        //         contentType: false,
+        //         processData: false,
+        //         error: function (error) {
+        //             console.error('업로드된 S3 파일 삭제 실패: ', error);
+        //         },
+        //     });
+        //
+        // }
     });
 
 

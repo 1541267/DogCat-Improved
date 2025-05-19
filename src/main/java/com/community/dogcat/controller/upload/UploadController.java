@@ -62,83 +62,82 @@ public class UploadController {
 
 	@Operation(summary = "SummerNote Final Image Upload", description = "썸머노트 이미지 업로드")
 	@PostMapping(value = "/finalImageUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	// 로컬 전용 게시글 등록시 업로드 완료,
-	// s3 사용 안하고 이것만 사용, 정리 필요, 임시로 서비스 이동 x 컨트롤러에서 사용
+	// 로컬 전용 게시글 등록시 임시 파일을 이동해서 업로드 완료,
+	// s3 사용 안하고 이것만 사용
 	public ResponseEntity<List<String>> finalImageUpload(
-		@RequestParam("files") List<MultipartFile> files,
+		// @RequestParam("files") List<MultipartFile> files,
 		@RequestParam("postNo") Post postNo,
-		@RequestParam("uuids") List<String> uuids
+		@RequestParam("uuids") List<String> uuids,
+		@RequestParam("extensions") List<String> extensions
 	) throws IOException {
 
 		System.out.println("==========================================================");
 		System.out.println("final upload debug");
-		System.out.println("multipartFile.size() = " + files.size());
+
+		System.out.println("extensions = " + extensions);
 
 		List<String> errors = new ArrayList<>();
 		List<String> fileNames = new ArrayList<>();
 
-		for (int i = 0; i < files.size(); i++) {
-			MultipartFile mf = files.get(i);
-			String uuid = uuids.get(i);
+		uploadImageService.moveAndSaveImages(uuids, extensions, postNo);
 
-			try {
-				String fileName = Objects.requireNonNull(mf.getOriginalFilename());
-				String extension = fileName.substring(fileName.lastIndexOf("."));
-				boolean isImg = List.of(".png", ".jpg", ".jpeg", ".gif")
-					.contains(extension.toLowerCase());
+		// for (int i = 0; i < files.size(); i++) {
+		// 	MultipartFile mf = files.get(i);
+		// 	String uuid = uuids.get(i);
+		//
+		// 	try {
+		// 		String fileName = Objects.requireNonNull(mf.getOriginalFilename());
+		// 		String extension = fileName.substring(fileName.lastIndexOf("."));
+		// 		boolean isImg = List.of(".png", ".jpg", ".jpeg", ".gif")
+		// 			.contains(extension.toLowerCase());
+		//
+		// 		Path savePath = Paths.get(finalUploadPath, uuid + extension);
+		// 		Path thumbnailDir = Paths.get(finalUploadPath + "thumbnail/");
+		//
+		// 		// 개선, 파일 업로드 매 용청 마다 호출로 인한 성능 저하
+		// 		// createDirs(savePath);
+		// 		// createDirs(thumbnailDir);
+		//
+		// 		System.out.println(
+		// 			"finalUpload savePath : " + savePath + ", fileName : " + fileName + ", thumbnailDir :"
+		// 				+ thumbnailDir + "/t_"
+		// 				+ uuid + extension);
+		//
+		// 		// 파일 저장
+		// 		mf.transferTo(savePath.toFile());
+		//
+		// 		// 썸네일 생성
+		// 		File thumbFile = thumbnailDir.resolve("t_" + uuid + extension).toFile();
+		// 		Thumbnailator.createThumbnail(savePath.toFile(), thumbFile, 200, 200);
+		//
+		// 		// DB 저장
+		// 		ImgBoard img = ImgBoard.builder()
+		// 			.uploadPath(finalUrl + uuid + extension)
+		// 			.thumbnailPath(finalUrl + "thumbnail/t_" + uuid + extension)
+		// 			// .thumbnailPath(thumbnailDir + uuid + extension)
+		// 			.img(isImg)
+		// 			.uploadTime(Instant.now())
+		// 			.extension(extension)
+		// 			.fileName(fileName)
+		// 			.fileUuid(uuid)
+		// 			.postNo(postNo)
+		// 			.build();
+		//
+		// 		uploadRepository.save(img);
+		//
+		// 		fileNames.add(uuid + extension);
+		//
+		// 	} catch (Exception e) {
+		// 		log.error("업로드 에러 (idx={}, uuid={}): {}", i, uuid, e.getMessage(), e);
+		// 		errors.add(String.format("idx=%d, uuid=%s, err=%s", i, uuid, e.getMessage()));
+		// 	}
 
-				Path savePath = Paths.get(finalUploadPath, uuid + extension);
-				Path thumbnailDir = Paths.get(finalUploadPath + "thumbnail/");
-
-				createDirs(savePath);
-				createDirs(thumbnailDir);
-
-				System.out.println(
-					"finalUpload savePath : " + savePath + ", fileName : " + fileName + ", thumbnailDir :"
-						+ thumbnailDir + "/t_"
-						+ uuid + extension);
-
-				// 파일 저장
-				mf.transferTo(savePath.toFile());
-
-				// 썸네일 생성
-				File thumbFile = thumbnailDir.resolve("t_" + uuid + extension).toFile();
-				Thumbnailator.createThumbnail(savePath.toFile(), thumbFile, 200, 200);
-
-				// DB 저장
-				ImgBoard img = ImgBoard.builder()
-					.uploadPath(finalUrl + uuid + extension)
-					.thumbnailPath(finalUrl + "thumbnail/t_" + uuid + extension)
-					// .thumbnailPath(thumbnailDir + uuid + extension)
-					.img(isImg)
-					.uploadTime(Instant.now())
-					.extension(extension)
-					.fileName(fileName)
-					.fileUuid(uuid)
-					.postNo(postNo)
-					.build();
-
-				uploadRepository.save(img);
-
-				fileNames.add(uuid + extension);
-
-			} catch (Exception e) {
-				log.error("업로드 에러 (idx={}, uuid={}): {}", i, uuid, e.getMessage(), e);
-				errors.add(String.format("idx=%d, uuid=%s, err=%s", i, uuid, e.getMessage()));
-			}
-
-			// 로컬 전환으로 인한 임시파일 제거
-			deleteTempFiles.deleteFileAfterUpload(fileNames);
-		}
+		//  // 로컬 전환으로 인한 임시파일 제거
+		//	// deleteTempFiles.deleteFileAfterUpload(fileNames);
+		// }
 
 		// 모든 파일 처리 후 한 번만 리턴
 		return ResponseEntity.ok(errors);
-	}
-
-	private void createDirs(Path dir) throws IOException {
-		if (Files.notExists(dir)) {
-			Files.createDirectories(dir);
-		}
 	}
 
 	// 게시글 등록 전 썸머노트로 이미지를 임시폴더에 저장
@@ -166,6 +165,13 @@ public class UploadController {
 		uploadImageService.deleteSummernoteImageWithBackspace(deletedImageUrls);
 
 	}
+
+	// 개선, 파일 업로드 매 용청 마다 호출로 인한 성능 저하
+	// private void createDirs(Path dir) throws IOException {
+	// 	if (Files.notExists(dir)) {
+	// 		Files.createDirectories(dir);
+	// 	}
+	// }
 
 	// S3 업로드
 	// @Operation(summary = "Upload S3", description = "S3 업로드")

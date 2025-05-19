@@ -46,8 +46,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/board")
 public class BoardController extends BaseController {
 
-	@Value("${s3UploadedUrl}")
-	private String s3UploadedUrl;
+	// @Value("${s3UploadedUrl}")
+	// private String s3UploadedUrl;
 
 	private final BoardService boardService;
 
@@ -167,7 +167,7 @@ public class BoardController extends BaseController {
 			return "redirect:/error"; // 권한이 없는 경우 403 오류
 		}
 
-		model.addAttribute("s3UploadedUrl", s3UploadedUrl);
+		// model.addAttribute("s3UploadedUrl", s3UploadedUrl);
 		model.addAttribute("postDTO", postDTO);
 
 		if (request.getRequestURI().contains("/modify_q")) {

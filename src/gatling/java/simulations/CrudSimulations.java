@@ -151,7 +151,7 @@ public class CrudSimulations extends Simulation {
 		)
 		.pause(Duration.ofMillis(50))
 
-		// 게시글 삭제
+		// // 게시글 삭제
 		.exec(http("DeletePost")
 			.get(session -> "/board/delete/" + session.getString("postNo"))
 			.header("Cookie", session -> "access=" + session.getString("jwt"))
@@ -208,11 +208,11 @@ public class CrudSimulations extends Simulation {
 
 	{
 		setUp(
-			// 쓰기 시나리오: 초당 10명, 3분간 지속
+			// 쓰기 시나리오: 초당 10명, 4분간 지속
 			writeScn.injectOpen(
 				constantUsersPerSec(10).during(Duration.ofMinutes(4)).randomized()
 			),
-			// 읽기 시나리오: 초당 20명, 3분간 지속
+			// 읽기 시나리오: 초당 20명, 4분간 지속
 			readScn.injectOpen(
 				constantUsersPerSec(20).during(Duration.ofMinutes(4)).randomized()
 			)

@@ -1,12 +1,20 @@
 package com.community.dogcat.util.uploader;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,10 +34,11 @@ public class DeleteTempFiles {
 	@Value("${baseUrl}")
 	private String baseUrl;
 
-	@Value("${finalUploadPath}")
-	private String finalUploadPath;
+	public DeleteTempFiles(UploadRepository uploadRepository) {
+		this.uploadRepository = uploadRepository;
+	}
 
-	private UploadRepository uploadRepository;
+	private final UploadRepository uploadRepository;
 
 	public void deleteFile(String fileName) {
 
@@ -54,25 +63,28 @@ public class DeleteTempFiles {
 		}
 	}
 
-	public void deleteFileAfterUpload(List<String> files) {
+	// 개선, 파일 정기 체크시 삭제 가능한 이미지 체크 & 제거
+	public void cleanUpOrphanFiles() throws IOException {
 
-		for (String fileName : files) {
-			File file = new File(tempUploadPath, fileName);
-			file.delete();
-		}
-	}
-
-	public void deleteUploadedFiles(List<ImgBoard> files) {
-
-		for (ImgBoard imgBoard : files) {
-			File thumb = new File(finalUploadPath + "thumbnail/",
-				"t_" + imgBoard.getFileUuid() + imgBoard.getExtension());
-			File file = new File(finalUploadPath, imgBoard.getFileUuid() + imgBoard.getExtension());
-			log.info("업로드된 파일 삭제 (uuid={}, {})", file.getName(), thumb.getName());
-			thumb.delete();
-			file.delete();
-
-		}
 
 	}
+
+	// public void deleteFileAfterUpload(List<String> files) {
+	//
+	// 	for (String fileName : files) {
+	// 		File file = new File(tempUploadPath, fileName);
+	// 		file.delete();
+	// 	}
+	// }
+
+	// public void deleteUploadedFiles(List<ImgBoard> files) {
+	// 	for (ImgBoard imgBoard : files) {
+	// 		File thumb = new File(finalUploadPath + "thumbnail/",
+	// 			"t_" + imgBoard.getFileUuid() + imgBoard.getExtension());
+	// 		File file = new File(finalUploadPath, imgBoard.getFileUuid() + imgBoard.getExtension());
+	// 		log.info("업로드된 파일 삭제 (uuid={}, {})", file.getName(), thumb.getName());
+	// 		thumb.delete();
+	// 		file.delete();
+	// 	}
+	// }
 }

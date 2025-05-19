@@ -54,7 +54,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService {
 
-	private final S3Uploader s3Uploader;
+	// private final S3Uploader s3Uploader;
 
 	private final UserRepository userRepository;
 
@@ -72,9 +72,9 @@ public class BoardServiceImpl implements BoardService {
 
 	private final ReportLogRepository reportLogRepository;
 
-	private final UploadImageServiceImpl uploadImageService;
+	// private final UploadImageServiceImpl uploadImageService;
 
-	private final DeleteTempFiles deleteTempFiles;
+	// private final DeleteTempFiles deleteTempFiles;
 
 	// 업로드된 이미지 정보 얻기 - ys
 	private final UploadResultMappingImgBoard uploadResultMappingImgBoard;
@@ -148,7 +148,7 @@ public class BoardServiceImpl implements BoardService {
 
 			List<ImgBoard> images = uploadRepository.findByPostNo(postNo);
 
-			deleteTempFiles.deleteUploadedFiles(images);
+			// deleteTempFiles.deleteUploadedFiles(images);
 			// 위의 deleteUploadedFiles 로 변경, 로컬화
 			// for (ImgBoard image : images) {
 			//
@@ -277,7 +277,7 @@ public class BoardServiceImpl implements BoardService {
 		// 게시물 작성자 확인
 		if (postDTO.getUserId().equals(userId)) {
 
-			// 로컬 사용시 이미지 제거시 비교후 파일을 제거하기 위해
+			// 개선, 로컬 사용시 이미지 제거시 비교후 파일을 제거하기 위해
 			// 2025/05/15
 			// 수정 전의 이미지 정보들
 			List<ImgBoard> imgBoards = post.getImages();
@@ -291,13 +291,20 @@ public class BoardServiceImpl implements BoardService {
 				uuids.add(m.group(1));
 			}
 
-			List<ImgBoard> deletedImages = new ArrayList<>();
-			for (ImgBoard img : imgBoards) {
-				if (!uuids.contains(img.getFileUuid())) {
-					deletedImages.add(img);
+			List<String> deletedImages = new ArrayList<>();
+			if (!imgBoards.isEmpty()) {
+				for (ImgBoard img : imgBoards) {
+					String uuid = img.getFileUuid();
+					if (!uuids.contains(uuid)) {
+						deletedImages.add(uuid);
+					}
 				}
 			}
-			deleteTempFiles.deleteUploadedFiles(deletedImages);
+
+			// 개선, 수정하면서 제거된 파일은 바로 삭제 했으나 I/O 부담 줄이기 위해 
+			// mark만 해두고 나중에 스케쥴로 한꺼번에 삭제
+			// deleteTempFiles.deleteUploadedFiles(deletedImages);
+			log.info("수정 된 이미지 개수: {}", uploadRepository.updateAllDeletePossibleTrueByFileUuid(deletedImages));
 
 			// s3 사용 x, 로컬로 전환
 			if (postDTO.getPostContent().contains(oldUrl)) {
