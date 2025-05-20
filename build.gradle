@@ -4,6 +4,8 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
     // 개틀링 부하 테스트
     id 'io.gatling.gradle' version '3.13.5'
+    // docker-compose 플러그인 (빌드시 자동 실행)
+    id 'com.avast.gradle.docker-compose' version '0.17.5'
 }
 
 group = 'com.dogcat'
@@ -123,8 +125,9 @@ dependencies {
     implementation 'io.gatling:gatling-http-java:3.13.5'
 
     // redis 적용
-//    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-//    implementation 'org.springframework.session:spring-session-data-redis' // 세션 관리용
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.session:spring-session-data-redis' // 세션 관리용
+
 }
 
 gatling {
@@ -146,12 +149,24 @@ test {
 }
 
 processResources.dependsOn('copyYml')
-
 tasks.register('copyYml', Copy) {
     from './Secret-DogCat/Dev'
     include "*-improve.yml"  // 복사할 파일들
     into 'src/main/resources'  // 복사 위치
     rename('application-improve.yml', 'application.yml')
+}
+
+// docker
+processResources.dependsOn('copyDockerYml')
+tasks.register('copyDockerYml') {
+    // 증분 빌드나 상태 추적이 전혀 없으니, .gradle 캐시 파일 충돌 걱정 없이 무조건 복사
+    doLast {
+        project.copy {
+            from 'Secret-DogCat/Docker'
+            include '*.yml'
+            into project.rootDir   // 루트에 바로 복사
+        }
+    }
 }
 
 //  TODO 배포시 활성화
