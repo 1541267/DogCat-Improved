@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.community.dogcat.domain.ImgBoard;
 import com.community.dogcat.dto.uploadImage.FileInfoDTO;
 import com.community.dogcat.repository.upload.UploadRepository;
 
@@ -15,9 +14,9 @@ public class TestUploadRepository {
 	UploadRepository uploadRepository;
 
 	@Test
-	public void testFindFileUuidAndExtensionByDeletePossibleTrue() {
+	public void testFindFileUuidAndExtensionAndUploadTimeAndDeletePossibleByDeletePossibleTrue() {
 
-		for (FileInfoDTO i : uploadRepository.findFileUuidAndExtensionByDeletePossibleTrue()) {
+		for (FileInfoDTO i : uploadRepository.findFileUuidAndExtensionAndUploadTimeAndDeletePossibleByDeletePossibleTrue()) {
 			System.out.println("==========================================================");
 			System.out.println(i.getFullName());
 		}

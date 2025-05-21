@@ -2,6 +2,7 @@ package com.community.dogcat.domain;
 
 import java.time.Instant;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,9 +32,8 @@ public class ImgBoard {
 	@Column(name = "file_uuid", nullable = false)
 	private String fileUuid;
 
-	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "post_no", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = true)
+	@JoinColumn(name = "post_no", nullable = true)
 	private Post postNo;
 
 	@Size(max = 50)

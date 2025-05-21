@@ -5,13 +5,13 @@ import java.time.Duration;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-
 
 // 개선, 조회, 삭제 부하를 줄이기 위한 redis 도입
 @Configuration
@@ -24,6 +24,7 @@ public class RedisConfig {
 	}
 
 	@Bean
+	@Primary
 	public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory rf) {
 
 		RedisTemplate<String, String> tpl = new RedisTemplate<>();

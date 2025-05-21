@@ -42,23 +42,23 @@ public class UploadController {
 	private final UploadImageService uploadImageService;
 
 	// 로컬 전용 위한 summernoteUpload 25/02/06 추가
-	private final UploadRepository uploadRepository;
+	// private final UploadRepository uploadRepository;
 	// 로컬 전용, 섬네일+이미지의 url
-	@Value("${baseUrl}")
-	private String baseUrl;
+	// @Value("${baseUrl}")
+	// private String baseUrl;
 
 	// 최종 업로드 링크
-	@Value("${newUrl}")
-	private String finalUrl;
+	// @Value("${newUrl}")
+	// private String finalUrl;
 	// 최종 업로드 경로
-	@Value("${finalUploadPath}")
-	private String finalUploadPath;
+	// @Value("${finalUploadPath}")
+	// private String finalUploadPath;
 
-	// 업로드 완료 후 임시파일 제거
-	private final DeleteTempFiles deleteTempFiles;
+	// 개선, 지우지 않고 옮김 |업로드 완료 후 임시파일 제거
+	// private final DeleteTempFiles deleteTempFiles;
 
-	@Value("${tempUploadPath}")
-	private String tempUploadPath;
+	// @Value("${tempUploadPath}")
+	// private String tempUploadPath;
 
 	@Operation(summary = "SummerNote Final Image Upload", description = "썸머노트 이미지 업로드")
 	@PostMapping(value = "/finalImageUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -68,18 +68,14 @@ public class UploadController {
 		// @RequestParam("files") List<MultipartFile> files,
 		@RequestParam("postNo") Post postNo,
 		@RequestParam("uuids") List<String> uuids,
-		@RequestParam("extensions") List<String> extensions
+		@RequestParam("extensions") List<String> extensions,
+		@RequestParam("originalFileNames") List<String> originalFileNames
 	) throws IOException {
 
-		System.out.println("==========================================================");
-		System.out.println("final upload debug");
-
-		System.out.println("extensions = " + extensions);
-
 		List<String> errors = new ArrayList<>();
-		List<String> fileNames = new ArrayList<>();
+		// List<String> fileNames = new ArrayList<>();
 
-		uploadImageService.moveAndSaveImages(uuids, extensions, postNo);
+		uploadImageService.moveAndSaveImages(uuids, extensions, originalFileNames, postNo);
 
 		// for (int i = 0; i < files.size(); i++) {
 		// 	MultipartFile mf = files.get(i);

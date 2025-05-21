@@ -13,7 +13,7 @@ import com.community.dogcat.dto.board.post.PostDTO;
 
 public interface BoardService {
 
-	Long register(PostDTO postDTO);
+	Long register(PostDTO postDTO, List<String> uuids);
 
 	void delete(Long postNo, String userId);
 

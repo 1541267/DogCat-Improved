@@ -9,8 +9,7 @@ import com.community.dogcat.util.FileCheckTask;
 @SpringBootTest
 public class FileCheckTaskTest {
 
-	@Autowired
-	private FileCheckTask fileCheckTask;
+	@Autowired private FileCheckTask fileCheckTask;
 
 	@Test
 	public void monthlyFileCheck() throws Exception {

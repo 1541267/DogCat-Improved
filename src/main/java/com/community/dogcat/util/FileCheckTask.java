@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,22 +16,25 @@ import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.community.dogcat.dto.uploadImage.FileInfoDTO;
 import com.community.dogcat.repository.upload.UploadRepository;
-import com.community.dogcat.util.uploader.DeleteTempFiles;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import scala.compiletime.ops.string;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
+
+/**
+ * 정기적인 캐시 & 디스크 파일 정리 & 매일 자정 5분 전에 전체적인 정리
+ * */
 public class FileCheckTask {
 
 	@Value("${tempUploadPath}")
@@ -42,29 +45,36 @@ public class FileCheckTask {
 
 	@Value("${finalUploadPath}")
 	private String finalUploadPath;
-	@Value("${finalUploadPath}thumbnail")
-	private String finalUploadThumbPath;
 
-	private final DeleteTempFiles deleteTempFiles;
+	@Autowired
+	private RedisTemplate<String, String> rt;
 
 	private final UploadRepository uploadRepository;
 
 	private final String bigLogLine = "===========================================";
 	private final String smolLogLine = "-------------------------------------------";
 
+	private final String today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+
 	// s3 비활성
 	// @Value("${cloud.aws.s3.bucket}")
 	// private String bucketName;
 	// private final AmazonS3 s3Client;
 
-	/** TODO 꼭 배포 전에 활성화 시키기
+	/**
 	 * 매월 1일 자정에 요일무시 파일 정리 실행
 	 * @Scheduled(cron = "0 0 0 1 * ?")
 	 * 매일 새벽 5시
 	 * @Scheduled(cron = "0 0 5 * * ?", zone = "Asia/Seoul")
-	 * 실행 시 서버 점검으로 표시
+	 * 실행 시 서버 점검으로 설정
+	 * 매일 자정
+	 * @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Seoul")
+	 * 매일 자정 5분 전
+	 * @Scheduled(cron = "0 55 23 * * *")
+	 * 매월 마지막 날 자정 5분 전
 	 */
-	@Scheduled(cron = "0 0 5 * * ?", zone = "Asia/Seoul")
+
+	@Scheduled(cron = "0 55 23 * * *", zone = "Asia/Seoul")
 	@Transactional
 	public void checkFiles() throws Exception {
 		log.info(bigLogLine);
@@ -75,8 +85,8 @@ public class FileCheckTask {
 
 		Path tempPath = Paths.get(tempUploadPath);
 		Path tempThumbPath = Paths.get(tempUploadThumbPath);
-
 		// 남아있는 모든 임시 데이터 모두 삭제 후 폴더 생성
+
 		if (Files.exists(tempPath) || Files.exists(tempThumbPath)) {
 			deleteDirectory(tempPath);
 			Files.createDirectories(tempThumbPath);
@@ -89,6 +99,11 @@ public class FileCheckTask {
 		// + 삭제 마킹된 이미지 db 제거
 		cleanUpOrphanFiles();
 
+		// 매월 마지막 날 이면 전체 전체 디렉토리 검사, 비어있는 폴더 삭제
+		if (LocalDate.now().getDayOfMonth() == LocalDate.now().lengthOfMonth()) {
+			directoryCleaner();
+		}
+
 		log.info("Monthly File Check : 완료");
 		// S3 버킷과 DB의 이미지 테이블과 비교해 S3에 없는 파일 제거
 		// List<String> uploadedFiles = fileListInBucket();
@@ -100,109 +115,114 @@ public class FileCheckTask {
 	private void cleanUpOrphanFiles() throws IOException {
 
 		Path dir = Paths.get(finalUploadPath);
-		Path thumbDir = Paths.get(finalUploadThumbPath);
 
-		Set<FileInfoDTO> orphanFiles = uploadRepository.findFileUuidAndExtensionByDeletePossibleTrue();
+		// 수정으로 인한 삭제 가능 파일들
+		Set<FileInfoDTO> orphanFiles = uploadRepository.findFileUuidAndExtensionAndUploadTimeAndDeletePossibleByDeletePossibleTrue();
+		Set<Object> toDelete = rt.opsForHash().keys("imgboard:toDelete");
 
-		// db에 deletePossible이 true인 파일 삭제 후 마지막에 db에서 제거
-		if (!orphanFiles.isEmpty()) {
-			for (FileInfoDTO dto : orphanFiles) {
-				Path file = dir.resolve(dto.getFullName());
-				Path thumbFile = thumbDir.resolve(dto.getFullName());
 
-				Files.deleteIfExists(file);
-				Files.deleteIfExists(thumbFile);
 
-				log.info("file: {}, thumbFile: {}", file, thumbFile);
-			}
-		}
+		// 임시, 나중에 지울 것
+		Set<FileInfoDTO> temp = uploadRepository.findFileUuidAndExtensionAndUploadTimeAndDeletePossibleByDeletePossibleFalse();
 
-		Set<String> allFileNames = uploadRepository.findAllFullName();
-		Set<String> allThumbFileNames = allFileNames.stream()
+		// db에 deletePossible이 true인 파일 삭제 후 마지막에 db에서 제거, 날짜 상관 없음
+		// if (!orphanFiles.isEmpty()) {
+		// 	for (FileInfoDTO dto : orphanFiles) {
+		//
+		// 		String prefix = dto.getUuid().substring(0, 2);
+		// 		String uploadTime = dto.getUploadTime();
+		// 		Path file = dir.resolve(uploadTime).resolve(prefix).resolve(dto.getFullName());
+		//
+		// 		Path thumbFile = dir.resolve(uploadTime)
+		// 			.resolve(prefix)
+		// 			.resolve("thumbnail")
+		// 			.resolve("t_" + dto.getFullName());
+		//
+		// 		Files.deleteIfExists(file);
+		// 		Files.deleteIfExists(thumbFile);
+		//
+		// 		log.info("file: {}, thumbFile: {}", file, thumbFile);
+		// 	}
+		// }
+		// uploadRepository.deleteAllByDeletePossibleTrue();
+
+		// 정기적인 캐시 정리에도 남아있는 캐시와 파일 정리를 위해
+		Set<Object> keys = rt.opsForHash().keys("imgboard:meta");
+
+		// if (!keys.isEmpty()) {
+		// 	for (Object key : keys) {
+		// 		String value = (String)rt.opsForHash().get("imgboard:meta", key);
+		// 		String[] a = value.split("\\|");
+		// 		System.out.println("==========================================================");
+		// 		System.out.println("Value 0 : " + a[0] + "\nValue 1 : " + a[1]);
+		// 	}
+		// }
+
+		Set<String> dbFileNames = uploadRepository.findAllFullName();
+		Set<String> allThumbFileNames = dbFileNames.stream()
 			.map(names -> "t_" + names)
 			.collect(Collectors.toSet());
 
-		try (Stream<Path> files = Files.list(dir); Stream<Path> thumbs = Files.list(thumbDir)) {
-			files.forEach(path -> {
-				String fileName = path.getFileName().toString();
-				System.out.println("fileName = " + fileName);
-				if (!allFileNames.contains(fileName)) {
-					try {
-						Files.deleteIfExists(path);
-						log.info("Deleted orphan file: {}", fileName);
-					} catch (IOException e) {
-						log.error("Failed to delete orphan file {}", fileName, e);
-					}
-				}
-			});
+		Path baseDir = Path.of(finalUploadPath + today);
+		System.out.println("baseDir = " + baseDir);
 
-			thumbs.forEach(path -> {
-				String fileName = path.getFileName().toString();
-				System.out.println("ThumbFileName = " + fileName);
-				if (!allThumbFileNames.contains(fileName)) {
+		// 1. 일반 파일 검사 및 해당 썸네일 같이 삭제
+		try (Stream<Path> paths = Files.walk(baseDir)) {
+			paths.filter(Files::isRegularFile).forEach(file -> {
+				Path fileName = file.getFileName();
+				Path parent = file.getParent();
+
+				// thumbnail 폴더는 이 단계에서 무시 (2단계에서 별도로 처리)
+				if (parent.getFileName().toString().equalsIgnoreCase("thumbnail"))
+					return;
+
+				String baseName = fileName.toString();
+
+				if (!dbFileNames.contains(baseName)) {
 					try {
-						Files.deleteIfExists(thumbDir.resolve(fileName));
-						log.info("Deleted orphan file: {}", fileName);
+						// 원본 삭제
+						Files.delete(file);
+						System.out.println("삭제됨 (원본): " + file);
+
+						// 썸네일 경로 구성 및 삭제 시도
+						Path thumbPath = parent.resolve("thumbnail").resolve("t_" + baseName);
+						if (Files.exists(thumbPath)) {
+							Files.delete(thumbPath);
+							System.out.println("삭제됨 (썸네일): " + thumbPath);
+						}
 					} catch (IOException e) {
-						log.error("Failed to delete orphan file {}", fileName, e);
+						System.err.println("삭제 실패: " + file + " → " + e.getMessage());
 					}
 				}
 			});
 		}
 
-		uploadRepository.deleteAllByDeletePossibleTrue();
-
-		// List<String> uuids = Files.list(dir)
-		// 	.filter(Files::isRegularFile)
-		// 	.map(p -> p.getFileName().toString())
-		// 	.toList();
+		// 일단 썸네일만 남아 있다는 상황 없는 전재하에 원본만 정리
+		// // 2. thumbnail 폴더만 따로 검사해서 잔여 썸네일 삭제
+		// try (Stream<Path> paths = Files.walk(BASE_DIR)) {
+		// 	paths.filter(Files::isRegularFile).forEach(file -> {
+		// 		Path parent = file.getParent();
+		// 		if (!parent.getFileName().toString().equalsIgnoreCase("thumbnail"))
+		// 			return;
 		//
-		// List<String> thumbs = Files.list(thumbDir)
-		// 	.filter(Files::isRegularFile)
-		// 	.map(p -> p.getFileName().toString())
-		// 	.toList();
+		// 		String fileName = file.getFileName().toString();
 		//
-		// if (uuids.isEmpty() && thumbs.isEmpty()) {
-		// 	log.info("Monthly Uploaded File Check : 삭제 할 파일이 없습니다");
-		// 	return;
-		// }
-		//
-		// Set<String> existingSet = uploadRepository.findExistingImages(uuids);
-		// Set<String> existingThumbSet = uploadRepository.findExistingImages(thumbs);
-		//
-		// // 3) 메모리에서 비교 → 삭제 대상 UUID 목록
-		// List<String> toDelete = uuids.stream()
-		// 	.filter(id -> !existingSet.contains(id.split("\\.")[0]))
-		// 	.toList();
-		//
-		// List<String> toDeleteTemp = thumbs.stream()
-		// 	.filter(id -> !existingThumbSet.contains(id.split("\\.")[0]))
-		// 	.toList();
-		//
-		// if (toDelete.isEmpty() && toDeleteTemp.isEmpty()) {
-		// 	log.info("Monthly Uploaded File Check : 삭제 할 파일이 없습니다");
-		// 	return;
-		// }
-		//
-		// // 4) 실제 파일·썸네일 삭제
-		// if (!toDelete.isEmpty()) {
-		// 	for (String id : toDelete) {
-		// 		Path file = dir.resolve(id);
-		// 		Path thumb = dir.resolve("thumbnail").resolve("t_" + id);
-		//
-		// 		Files.deleteIfExists(file);
-		// 		Files.deleteIfExists(thumb);
-		// 		log.info("Deleted orphan files: {}, {}", file, thumb);
-		// 	}
-		// } else if (!toDeleteTemp.isEmpty()) {
-		// 	for (String id : toDeleteTemp) {
-		// 		Path thumb = thumbDir.resolve("thumbnail").resolve("t_" + id);
-		//
-		// 		Files.deleteIfExists(thumb);
-		// 		log.info("Deleted orphan files: {}", thumb);
-		// 	}
+		// 		if (!thumbNames.contains(fileName)) {
+		// 			try {
+		// 				Files.delete(file);
+		// 				System.out.println("삭제됨 (고아 썸네일): " + file);
+		// 			} catch (IOException e) {
+		// 				System.err.println("썸네일 삭제 실패: " + file + " → " + e.getMessage());
+		// 			}
+		// 		}
+		// 	});
 		// }
 
+	}
+
+	private void directoryCleaner() {
+
+		log.info("마지막 날 디렉토리 클리너 완료");
 	}
 
 	// DB에 저장되어있지 않는 업로드 파일들 제거

@@ -233,6 +233,7 @@
             formData.append('boardCode', boardCode);
             formData.append('postTag', postTag);
             formData.append('postContent', postContent);
+            formData.append('uuids', imageUUIDs)
 
             if (boardCode === 'qna') {
                 url = '/board/register_q';
@@ -255,7 +256,7 @@
                     // 게시글 먼저 등록 후 이미지 업로드시 엑박 방지를 위해 딜레이
                     if (uploadedImages.length !== 0) {
                         // uploadS3Image(uploadedImages, postNo, imageUUIDs);
-                        uploadFinalImage(uploadedImages, postNo, imageUUIDs);
+                        uploadFinalImage(uploadedImages, postNo, imageUUIDs, originalFileName);
                         setTimeout(() => {
                             location.href = '/board/read/' + postNo;
                         }, 3000);
@@ -314,7 +315,7 @@
                     // 게시글 먼저 등록 후 이미지 업로드시 엑박 방지를 위해
                     if (uploadedImages.length !== 0) {
                         // uploadS3Image(uploadedImages, postNo, imageUUIDs);
-                        uploadFinalImage(uploadedImages, postNo, imageUUIDs);
+                        uploadFinalImage(uploadedImages, postNo, imageUUIDs, originalFileName);
                         setTimeout(() => {
                             location.href = '/board/read/' + postNo;
                         }, 3000);
@@ -329,12 +330,13 @@
         /* ---------------------------------------------------------------------------- */
 
         // 25/02/06 로컬 전용 추가
-        function uploadFinalImage(files, postNo, uuids) {
+        function uploadFinalImage(files, postNo, uuids, originalFileName) {
             let formData = new FormData();
             files.forEach((file, idx) => {
                 formData.append('files', file);
                 formData.append('uuids', uuids[idx]);
                 formData.append('extensions', extensions[idx]);
+                formData.append('originalFileNames', originalFileName[idx]);
             });
 
             formData.append('postNo', postNo);

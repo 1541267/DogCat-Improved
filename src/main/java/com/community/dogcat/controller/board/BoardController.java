@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -63,7 +64,7 @@ public class BoardController extends BaseController {
 
 	@ResponseBody
 	@PostMapping({"/register", "/register_q"})
-	public ResponseEntity<Map<String, Long>> register(@ModelAttribute PostDTO postDTO, Model model) {
+	public ResponseEntity<Map<String, Long>> register(@ModelAttribute PostDTO postDTO, Model model, @RequestParam("uuids") List<String> uuids) {
 
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
@@ -75,7 +76,7 @@ public class BoardController extends BaseController {
 
 		postDTO.setUserId(userId);
 
-		Long id = boardService.register(postDTO);
+		Long id = boardService.register(postDTO, uuids);
 
 		Map<String, Long> response = new HashMap<>();
 		response.put("postNo", id);

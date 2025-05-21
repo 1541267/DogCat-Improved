@@ -258,9 +258,7 @@ gradle-app.setting
 # IntelliJ generated files
 src/main/generated/
 
-# Cache of project
-.gradletasknamecache
-
 src/main/resources/*.yml
-./mariadb-data
-./redis-data
+
+/mariadb-data/
+/redis-data/

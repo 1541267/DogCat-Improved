@@ -62,29 +62,4 @@ public class DeleteTempFiles {
 			log.error("썸머노트 임시파일 리스트 삭제 에러! - 이미 삭제 되었거나 존재하지 않습니다.");
 		}
 	}
-
-	// 개선, 파일 정기 체크시 삭제 가능한 이미지 체크 & 제거
-	public void cleanUpOrphanFiles() throws IOException {
-
-
-	}
-
-	// public void deleteFileAfterUpload(List<String> files) {
-	//
-	// 	for (String fileName : files) {
-	// 		File file = new File(tempUploadPath, fileName);
-	// 		file.delete();
-	// 	}
-	// }
-
-	// public void deleteUploadedFiles(List<ImgBoard> files) {
-	// 	for (ImgBoard imgBoard : files) {
-	// 		File thumb = new File(finalUploadPath + "thumbnail/",
-	// 			"t_" + imgBoard.getFileUuid() + imgBoard.getExtension());
-	// 		File file = new File(finalUploadPath, imgBoard.getFileUuid() + imgBoard.getExtension());
-	// 		log.info("업로드된 파일 삭제 (uuid={}, {})", file.getName(), thumb.getName());
-	// 		thumb.delete();
-	// 		file.delete();
-	// 	}
-	// }
 }

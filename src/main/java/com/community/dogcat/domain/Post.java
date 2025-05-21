@@ -40,7 +40,7 @@ public class Post {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "post_no", nullable = false)
+	@Column(name = "post_no", nullable = true)
 	private Long postNo;
 
 	@NotNull
@@ -100,8 +100,7 @@ public class Post {
 	private boolean completeQna;
 
 	// 게시판 등록시 이미지도 참조
-	@OneToMany(mappedBy = "postNo", cascade = CascadeType.ALL,
-		orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "postNo", fetch = FetchType.LAZY)
 	private final List<ImgBoard> images = new ArrayList<>();
 
 	// 게시글 삭제시 정보 삭제

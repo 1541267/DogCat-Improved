@@ -7,8 +7,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -17,7 +18,9 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class UploadImageServiceImpl implements UploadImageService {
 
-	private final AmazonS3 amazonS3;
+	// private final AmazonS3 amazonS3;
 	private final UploadRepository uploadRepository;
 	@Value("${baseUrl}")
 	private String baseUrl;
@@ -54,13 +57,18 @@ public class UploadImageServiceImpl implements UploadImageService {
 	// 최종 업로드 링크
 	@Value("${newUrl}")
 	private String finalUrl;
-	// 최종 업로드 경로
 
 	// private final S3Uploader s3Uploader;
 
 	// s3업로드 or 게시글 등록 취소 or 백스페이스 summernote 임시 업로드 이미지 파일 삭제
 	// 개선, 놔두고 매일 새벽에 한꺼번에 정리 -> I/O 부담 제거
 	private final DeleteTempFiles deleteTempFiles;
+
+	// 개선, 레디스 템플릿
+	@Autowired
+	private RedisTemplate<String, String> redisTemplate;
+	// 날짜로 파일 경로 분산
+	private final String datePath = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
 	// jsonArray
 	// 썸머노트 업로드후 본문에 insert 하기위해 정보 반환
@@ -110,7 +118,6 @@ public class UploadImageServiceImpl implements UploadImageService {
 				// 아래는 로컬용
 				String imageUrl = baseUrl + "/temp/" + saveFileName;
 				JsonObject fileJsonObject = new JsonObject();
-				System.out.println("imageUrl = " + imageUrl);
 
 				// 생성된 파일의 uuid 와 이미지링크 summernote 에 전달
 				fileJsonObject.addProperty("imageUrl", imageUrl);
@@ -140,42 +147,62 @@ public class UploadImageServiceImpl implements UploadImageService {
 
 	@Override
 	@Transactional
-	public void moveAndSaveImages(List<String> uuids, List<String> extensions, Post postNo) throws IOException {
+	// 개선, 게시글 등록 시 임시 파일을 업로드 성공 폴더로 옮김
+	public void moveAndSaveImages(List<String> uuids, List<String> extensions, List<String> originalFileNames,
+		Post postNo) throws IOException {
 		// final 디렉터리 및 썸네일 디렉터리 보장
 
-		Path finalDir = Paths.get(finalUploadPath);
-		Path thumbDir = finalDir.resolve("thumbnail");
+		Path finalDir = Paths.get(finalUploadPath + datePath);
+
+		List<ImgBoard> imgs = new ArrayList<>();
 
 		for (int i = 0; i < uuids.size(); i++) {
 			String uuid = uuids.get(i);
 			String ext = extensions.get(i);
+			String saveFileName = uuid + ext;
+			String originalFileName = originalFileNames.get(i);
+
+			// 해싱 분산을 위한 uuid의 prefix 추출
+			String prefix = uuid.substring(0, 2);
+
+			Path thumbDir = finalDir.resolve(prefix).resolve("thumbnail");
+
+			Files.createDirectories(thumbDir);
 
 			// 임시 파일 경로
-			Path tempFile = Paths.get(tempUploadPath, uuid + ext);
+			Path tempFile = Paths.get(tempUploadPath, saveFileName);
 			// 최종 파일 경로
-			Path finalFile = finalDir.resolve(uuid + ext);
+			Path finalFile = finalDir.resolve(prefix).resolve(saveFileName);
 
 			// 파일 이동 (복사 후 원본 삭제)
-			Files.move(tempFile, finalFile, StandardCopyOption.REPLACE_EXISTING);
+			Files.move(tempFile, finalFile);
 
-			// 썸네일 생성
-			Path thumbFile = thumbDir.resolve("t_" + uuid + ext);
+			// 이동 후 썸네일 생성
+			Path thumbFile = thumbDir.resolve("t_" + saveFileName);
 			Thumbnailator.createThumbnail(finalFile.toFile(), thumbFile.toFile(), 200, 200);
+
+			String finishedPath = finalUrl + datePath + "/" + prefix + "/";
 
 			// DB 엔티티 저장
 			ImgBoard img = ImgBoard.builder()
-				.uploadPath(finalUrl + uuid + ext)
-				.thumbnailPath(finalUrl + "thumbnail/t_" + uuid + ext)
+				.uploadPath(finishedPath + saveFileName)
+				.thumbnailPath(finishedPath + "thumbnail/t_" + saveFileName)
+				.deletePossible(false)
 				.img(true)
 				.uploadTime(Instant.now())
 				.extension(ext)
-				.fileName(uuid + ext)
+				.fileName(originalFileName)
 				.fileUuid(uuid)
 				.postNo(postNo)
 				.build();
 
-			uploadRepository.save(img);
+			imgs.add(img);
+			String MetaValue = finalFile + "|" + thumbFile;
+			// key = "img~meta", hashKey = fileName, value = MetaValue
+			redisTemplate.opsForHash().put("imgboard:meta", saveFileName, MetaValue);
 		}
+		// TODO 개선, 대량 INSERT의 batch 고려해보기
+		uploadRepository.saveAll(imgs);
 	}
 
 	// 업로드된 이미지의 가로세로 정보 추출

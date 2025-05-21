@@ -1,9 +1,9 @@
 package com.community.dogcat;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -19,12 +19,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 public class DogCatApplication implements CommandLineRunner {
 
-	@Value("${tempUploadPath}thumbnail")
-	private String tempThumbPath;
+	@Value("${tempUploadPath}")
+	private String tempPath;
 
-	@Value("${finalUploadPath}thumbnail")
-	private String uploadThumbPath;
+	@Value("${finalUploadPath}")
+	private String uploadPath;
 
+	// 도커 부터 시작
 	public static void main(String[] args) throws Exception {
 
 		// 1) 기존 컨테이너가 있으면 시작(start), 없으면 up 으로 생성+시작
@@ -49,14 +50,14 @@ public class DogCatApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Files.createDirectories(Paths.get(tempThumbPath));
-		Files.createDirectories(Paths.get(uploadThumbPath));
+		// 날짜 별로 업로드 디렉토리 생성
+		String today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+		Files.createDirectories(Paths.get(tempPath));
+		Files.createDirectories(Paths.get(uploadPath + today));
 	}
 
 	private static void runCommand(String... command) throws Exception {
 		ProcessBuilder pb = new ProcessBuilder(command);
-		// (필요시) 특정 디렉토리에서 실행하고 싶다면 아래처럼 설정
-		// pb.directory(new File(System.getProperty("user.dir")));
 		pb.inheritIO();  // 표준 입출력을 이 프로세스에 연결
 		Process p = pb.start();
 		int exitCode = p.waitFor();
@@ -66,4 +67,6 @@ public class DogCatApplication implements CommandLineRunner {
 			);
 		}
 	}
+
+
 }
