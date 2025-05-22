@@ -49,9 +49,9 @@ public interface UploadRepository extends JpaRepository<ImgBoard, String> {
 	Set<FileInfoDTO> findAllFileUuidAndExtensionAndUploadTimeAndDeletePossible();
 
 	/** 개선, 게시글 수정 시 없어진 이미지들 mark */
-	@Query("UPDATE ImgBoard i SET i.deletePossible = true WHERE i.fileUuid IN (:uuids)")
+	@Query("UPDATE ImgBoard i SET i.deletePossible = true, i.postNo = NULL WHERE i.fileUuid IN (:uuids)")
 	@Modifying
-	void updateAllDeletePossibleTrueByFileUuid(@Param("uuids") List<String> uuids);
+	void updateAllDeletePossibleTrueAndUnlinkByFileUuid(@Param("uuids") List<String> uuids);
 
 	/** 개선, 게시글 삭제 시 없어진 이미지들 mark */
 	@Query("UPDATE ImgBoard i SET i.deletePossible = true, i.postNo = NULL WHERE i.postNo.postNo = :postNo")
@@ -61,4 +61,8 @@ public interface UploadRepository extends JpaRepository<ImgBoard, String> {
 	// 개선 db에 없는 파일 제거하기 위해 fullName 반환
 	@Query("SELECT i.fileUuid || i.extension FROM ImgBoard i")
 	Set<String> findAllFullName();
+
+	@Modifying
+	@Query("DELETE ImgBoard i WHERE i.deletePossible = true")
+	void deleteAllByDeletePossibleTrue();
 }

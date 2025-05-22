@@ -35,7 +35,11 @@ public class UploadedImageCaching {
 	@PostConstruct
 	public void preloadCache() {
 
-		log.info("Redis Cacheing Init...");
+		long startTime = System.currentTimeMillis();
+
+		log.info("==========================================================");
+		log.info("Redis Caching...");
+
 		Set<FileInfoDTO> files = uploadRepository.findAllFileUuidAndExtensionAndUploadTimeAndDeletePossible();
 
 		files.forEach(file -> {
@@ -44,9 +48,13 @@ public class UploadedImageCaching {
 					.put("imgboard:meta", file.getFullName(), file.getUploadPath() + "|" + file.getUploadThumbPath());
 			} else {
 				rt.opsForHash()
-					.put("imgboard:toDelete", file.getFullName(), file.getUploadPath() + "|" + file.getUploadThumbPath());
+					.put("imgboard:toDelete", file.getFullName(),
+						file.getUploadPath() + "|" + file.getUploadThumbPath());
 			}
 		});
-		log.info("Redis Cacheing Complete");
+
+		log.info("Redis Caching Complete, cost {} s", (System.currentTimeMillis() - startTime) / 1000.0);
+		log.info("==========================================================");
+
 	}
 }

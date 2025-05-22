@@ -10,7 +10,7 @@ import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.Simulation;
 import io.gatling.javaapi.http.HttpProtocolBuilder;
 
-public class CrudSimulations1 extends Simulation {
+public class CrudSimulations1처음설정백업 extends Simulation {
 
 	// HTTP 프로토콜 설정
 	HttpProtocolBuilder httpProtocol = http

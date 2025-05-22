@@ -15,7 +15,7 @@
         let uploadedImages = []; // 이미지 업로드 배열
         let imageUUIDs = [];
         let extensions = [];
-        let originalFileName = [];
+        let originalFileNames = [];
         let previousContents = "";
         const s3UploadedUrl = /*[[${s3UploadedUrl}]]*/ 'default-url';
         // 섬머노트 초기화
@@ -94,7 +94,7 @@
 
                                             imageUUIDs.push(fileUuid);
                                             extensions.push(fileExtension);
-                                            originalFileName.push(fileName)
+                                            originalFileNames.push(fileName)
 
                                             // 이미지 크기
                                             let width = file.width;
@@ -107,8 +107,8 @@
                                             let newHeight = height * ratio;
 
                                             // 이미지 삽입과 추가 속성 설정
-                                            let $img = $('<img>').attr('src', imageUrl).attr('data-filename', fileName)
-                                                .attr('data-uuid', fileUuid).attr('data-extension', fileExtension)
+                                            let $img = $('<img>')
+                                                .attr('data-uuid', fileUuid).attr('src', imageUrl)
                                                 .attr('width', `${newWidth}%`).attr('height', `${newHeight}%`);
                                             $('#summernote').summernote('insertNode', $img[0]);
                                         });
@@ -202,7 +202,7 @@
                         const index = imageUUIDs.indexOf(uuid);
                         if (index > -1) {
                             uploadedImages.splice(index, 1);
-                            originalFileName.splice(index, 1);
+                            originalFileNames.splice(index, 1);
                             imageUUIDs.splice(index, 1);
                             extensions.splice(index, 1);
                         }
@@ -213,20 +213,33 @@
 
         /* ---------------------------------------------------------------------------- */
 
-        // 게시글 저장 및 업로드 함수
+        /** 게시글 등록, 수정 시 이미지 업로드를 위한 jquery의 ajax를 Promise 래핑 */
+        function ajaxPromise(options) {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    ...options,
+                    success: resolve,
+                    error: reject
+                });
+            });
+        }
+
+        /* ---------------------------------------------------------------------------- */
+
+        // 개선, 게시글 저장 및 업로드 함수, 기존 로직을 promise 반환으로, setTimeOut 제거
         function savePostAndGetPostNo() {
 
-            let userId = $('[name="userId"]').val();
-            let postTitle = $('[name="postTitle"]').val();
-            let boardCode = $('[name="boardCode"]').val();
-            let postTag = $('[name="postTag"]').val();
-            let postContent = $('#summernote').summernote('code');
-            let secret = $('[name="secret"]').val();
-            let replyAuth = $('[name="replyAuth"]').val();
+            const userId = $('[name="userId"]').val();
+            const postTitle = $('[name="postTitle"]').val();
+            const boardCode = $('[name="boardCode"]').val();
+            const postTag = $('[name="postTag"]').val();
+            const postContent = $('#summernote').summernote('code');
+            const secret = $('[name="secret"]').val();
+            const replyAuth = $('[name="replyAuth"]').val();
 
-            let formData = new FormData();
+            const formData = new FormData();
 
-            let url;
+            let url = '/board/register';
 
             formData.append('userId', userId);
             formData.append('postTitle', postTitle);
@@ -239,51 +252,106 @@
                 url = '/board/register_q';
                 formData.append('secret', secret);
                 formData.append('replyAuth', replyAuth);
-
-            } else {
-                url = '/board/register';
             }
+            // uploadFinalImage(uploadedImages, postNo, imageUUIDs, originalFileNames);
 
-            $.ajax({
+            return ajaxPromise({
                 url: url,
                 method: 'POST',
                 data: formData,
-                contentType: false,
                 processData: false,
-                success: function (response) {
-                    let postNo = response.postNo;
-
-                    // 게시글 먼저 등록 후 이미지 업로드시 엑박 방지를 위해 딜레이
-                    if (uploadedImages.length !== 0) {
-                        // uploadS3Image(uploadedImages, postNo, imageUUIDs);
-                        uploadFinalImage(uploadedImages, postNo, imageUUIDs, originalFileName);
-                        setTimeout(() => {
-                            location.href = '/board/read/' + postNo;
-                        }, 3000);
-                    } else {
-                        location.href = '/board/read/' + postNo;
-                    }
-                }, error: function (response) {
-                    console.log(response)
-                }
-            });
+                contentType: false
+            }).then(response => response.postNo);
         }
+
+        // function savePostAndGetPostNo() {
+        //
+        //     let userId = $('[name="userId"]').val();
+        //     let postTitle = $('[name="postTitle"]').val();
+        //     let boardCode = $('[name="boardCode"]').val();
+        //     let postTag = $('[name="postTag"]').val();
+        //     let postContent = $('#summernote').summernote('code');
+        //     let secret = $('[name="secret"]').val();
+        //     let replyAuth = $('[name="replyAuth"]').val();
+        //
+        //     let formData = new FormData();
+        //
+        //     let url = '/board/register';
+        //
+        //     formData.append('userId', userId);
+        //     formData.append('postTitle', postTitle);
+        //     formData.append('boardCode', boardCode);
+        //     formData.append('postTag', postTag);
+        //     formData.append('postContent', postContent);
+        //     formData.append('uuids', imageUUIDs)
+        //
+        //     if (boardCode === 'qna') {
+        //         url = '/board/register_q';
+        //         formData.append('secret', secret);
+        //         formData.append('replyAuth', replyAuth);
+        //     }
+        //
+        //     $.ajax({
+        //         url: url,
+        //         method: 'POST',
+        //         data: formData,
+        //         contentType: false,
+        //         processData: false,
+        //         success: function (response) {
+        //             let postNo = response.postNo;
+        //
+        //             // 게시글 먼저 등록 후 이미지 업로드시 엑박 방지를 위해 딜레이
+        //             if (uploadedImages.length !== 0) {
+        //                 // uploadS3Image(uploadedImages, postNo, imageUUIDs);
+        //                 uploadFinalImage(uploadedImages, postNo, imageUUIDs, originalFileNames);
+        //                 setTimeout(() => {
+        //                     location.href = '/board/read/' + postNo;
+        //                 }, 3000);
+        //             } else {
+        //                 location.href = '/board/read/' + postNo;
+        //             }
+        //         }, error: function (response) {
+        //             console.log(response)
+        //         }
+        //     });
+        //     $.ajax({
+        //         url: url,
+        //         method: 'POST',
+        //         data: formData,
+        //         contentType: false,
+        //         processData: false,
+        //         success: function (response) {
+        //             let postNo = response.postNo;
+        //
+        //             // 게시글 먼저 등록 후 이미지 업로드시 엑박 방지를 위해 딜레이
+        //             if (uploadedImages.length !== 0) {
+        //                 // uploadS3Image(uploadedImages, postNo, imageUUIDs);
+        //                 uploadFinalImage(uploadedImages, postNo, imageUUIDs, originalFileNames);
+        //                 setTimeout(() => {
+        //                     location.href = '/board/read/' + postNo;
+        //                 }, 3000);
+        //             } else {
+        //                 location.href = '/board/read/' + postNo;
+        //             }
+        //         }, error: function (response) {
+        //             console.log(response)
+        //         }
+        //     });
+        // }
 
         /* ---------------------------------------------------------------------------- */
 
-        // 게시글 수정
-
+        // 개선, 게시글 수정, 기존 로직을 promise 반환으로, setTimeOut 제거
         function modifyBoard() {
 
-            let userId = $('[name="userId"]').val();
-            let postNo = $('[name="postNo"]').val();
-            let postTitle = $('[name="postTitle"]').val();
-            let boardCode = $('[name="boardCode"]').val();
-            let postTag = $('[name="postTag"]').val();
-            let postContent = $('#summernote').summernote('code');
-            let secret = $('[name="secret"]').val();
-            let replyAuth = $('[name="replyAuth"]').val();
-
+            const userId = $('[name="userId"]').val();
+            const postNo = $('[name="postNo"]').val();
+            const postTitle = $('[name="postTitle"]').val();
+            const boardCode = $('[name="boardCode"]').val();
+            const postTag = $('[name="postTag"]').val();
+            const postContent = $('#summernote').summernote('code');
+            const secret = $('[name="secret"]').val();
+            const replyAuth = $('[name="replyAuth"]').val();
 
             let formData = new FormData();
 
@@ -305,54 +373,149 @@
                 url = '/board/modify';
             }
 
-            $.ajax({
+            return ajaxPromise({
                 url: url,
                 method: 'POST',
                 data: formData,
+                dataType: 'json',
                 contentType: false,
                 processData: false,
-                success: function () {
-                    // 게시글 먼저 등록 후 이미지 업로드시 엑박 방지를 위해
-                    if (uploadedImages.length !== 0) {
-                        // uploadS3Image(uploadedImages, postNo, imageUUIDs);
-                        uploadFinalImage(uploadedImages, postNo, imageUUIDs, originalFileName);
-                        setTimeout(() => {
-                            location.href = '/board/read/' + postNo;
-                        }, 3000);
-                    } else {
-                        location.href = '/board/read/' + postNo;
-                    }
-                }
-            });
-
+            }).then(response => response.modifyPostNo);
         }
+
+        // function modifyBoard() {
+        //
+        //     let userId = $('[name="userId"]').val();
+        //     let postNo = $('[name="postNo"]').val();
+        //     let postTitle = $('[name="postTitle"]').val();
+        //     let boardCode = $('[name="boardCode"]').val();
+        //     let postTag = $('[name="postTag"]').val();
+        //     let postContent = $('#summernote').summernote('code');
+        //     let secret = $('[name="secret"]').val();
+        //     let replyAuth = $('[name="replyAuth"]').val();
+        //
+        //
+        //     let formData = new FormData();
+        //
+        //     formData.append('userId', userId);
+        //     formData.append('postTitle', postTitle);
+        //     formData.append('boardCode', boardCode);
+        //     formData.append('postTag', postTag);
+        //     formData.append('postContent', postContent);
+        //     formData.append('postNo', postNo);
+        //
+        //     let url;
+        //
+        //     // qna 게시판일 경우
+        //     if (boardCode === 'qna') {
+        //         url = '/board/modify_q';
+        //         formData.append('secret', secret);
+        //         formData.append('replyAuth', replyAuth);
+        //     } else {
+        //         url = '/board/modify';
+        //     }
+        //
+        //     $.ajax({
+        //         url: url,
+        //         method: 'POST',
+        //         data: formData,
+        //         contentType: false,
+        //         processData: false,
+        //         success: function () {
+        //             // 게시글 먼저 등록 후 이미지 업로드시 엑박 방지를 위해
+        //             if (uploadedImages.length !== 0) {
+        //                 // uploadS3Image(uploadedImages, postNo, imageUUIDs);
+        //                 uploadFinalImage(uploadedImages, postNo, imageUUIDs, originalFileNames);
+        //                 setTimeout(() => {
+        //                     location.href = '/board/read/' + postNo;
+        //                 }, 3000);
+        //             } else {
+        //                 location.href = '/board/read/' + postNo;
+        //             }
+        //         }
+        //     });
+        //     $.ajax({
+        //         url: url,
+        //         method: 'POST',
+        //         data: formData,
+        //         contentType: false,
+        //         processData: false,
+        //         success: function () {
+        //             // 게시글 먼저 등록 후 이미지 업로드시 엑박 방지를 위해
+        //             if (uploadedImages.length !== 0) {
+        //                 // uploadS3Image(uploadedImages, postNo, imageUUIDs);
+        //                 uploadFinalImage(uploadedImages, postNo, imageUUIDs, originalFileNames);
+        //                 setTimeout(() => {
+        //                     location.href = '/board/read/' + postNo;
+        //                 }, 3000);
+        //             } else {
+        //                 location.href = '/board/read/' + postNo;
+        //             }
+        //         }
+        //     });
+        //
+        // }
 
         /* ---------------------------------------------------------------------------- */
 
-        // 25/02/06 로컬 전용 추가
-        function uploadFinalImage(files, postNo, uuids, originalFileName) {
+        /**
+         * 게시글 등록 | 수정 시 업로드 이미지 있을 시 호출
+         * @param {Array}    uploadedImages
+         * @param postNo
+         * @param uuids
+         * @param {Array}    originalFileNames
+         */
+
+        // 개선, 25/02/06 로컬 전용 추가, 05/22 -> ajaxPromise
+        function uploadFinalImage(uploadedImages, postNo, uuids, originalFileNames) {
+
+            if (!uploadedImages.length) {
+                return Promise.resolve();
+            }
+
             let formData = new FormData();
-            files.forEach((file, idx) => {
-                formData.append('files', file);
-                formData.append('uuids', uuids[idx]);
+            formData.append('postNo', postNo);
+            uuids.forEach((u, idx) => {
+                formData.append('uuids', u);
                 formData.append('extensions', extensions[idx]);
-                formData.append('originalFileNames', originalFileName[idx]);
+                formData.append('originalFileNames', originalFileNames[idx]);
             });
 
-            formData.append('postNo', postNo);
-
-            $.ajax({
+            return ajaxPromise({
                 url: '/api/upload/finalImageUpload',
-                data: formData,
                 method: 'POST',
+                data: formData,
                 contentType: false,
-                processData: false,
-                enctype: 'multipart/form-data',
-                error: function (error) {
-                    console.error('Error Uploading Image: ', error);
-                }
+                processData: false
             });
         }
+
+        // // 25/02/06 로컬 전용 추가
+        // function uploadFinalImage(uploadedImages, postNo, uuids, originalFileNames) {
+        //
+        //     let formData = new FormData();
+        //
+        //     uploadedImages.forEach((file, idx) => {
+        //         formData.append('uuids', uuids[idx]);
+        //         formData.append('extensions', extensions[idx]);
+        //         formData.append('originalFileNames', originalFileNames[idx]);
+        //     });
+        //
+        //     formData.append('postNo', postNo);
+        //
+        //     $.ajax({
+        //         url: '/api/upload/finalImageUpload',
+        //         data: formData,
+        //         method: 'POST',
+        //         contentType: false,
+        //         processData: false,
+        //         enctype: 'multipart/form-data',
+        //         error: function (error) {
+        //             console.error('Error Uploading Image: ', error);
+        //         }
+        //     });
+        // }
+
 
         function removeTempFileWithCancelButton(uuids, extensions) {
             let formData = new FormData();
@@ -372,37 +535,81 @@
             });
         }
 
+
         // 저장 버튼 클릭 시 동작
         let buttonState = 0;
-        $('.submitBtn').on('click', function (e) {
-            e.preventDefault();
-            buttonState += 1;
 
-            if (buttonState === 1) {
-                if (checkForm()) {
-                    savePostAndGetPostNo();
-                } else {
+        /**
+         * @param {Event}      e
+         * @param {Function}   actionFn  // savePostAndGetPostNo 또는 modifyBoard
+         */
+        async function handleButtonClick(e, actionFn) {
+            e.preventDefault();
+
+            if (buttonState > 0) {
+                alert('처리가 진행 중입니다.');
+                return;
+            }
+
+            if (!checkForm()) return;
+
+            if (checkForm()) {
+                buttonState++;
+
+                try {
+                    // 1) 게시글 등록
+                    const postNo = await actionFn();
+
+                    // 2) 이미지 확정 업로드
+                    await uploadFinalImage(
+                        uploadedImages,
+                        postNo,
+                        imageUUIDs,
+                        originalFileNames,
+                    );
+
+                    // 3) 리다이렉트
+                    location.href = `/board/read/${postNo}`;
+                } catch (err) {
+                    console.error(err);
+                    alert('등록 중 오류가 발생했습니다.');
                     buttonState = 0;
                 }
-            } else if (buttonState >= 2) {
-                alert('처리가 진행 중입니다.');
             }
-        });
+        }
 
-        $('.modifyBtn').on('click', function (e) {
-            e.preventDefault();
-            buttonState += 1;
+        // 뒤의 함수에 ()를 붙이면 결과값 postNo이 promise 실행이 아닌 callback 인자로 넘어감
+        $('.submitBtn').on('click', e => handleButtonClick(e, savePostAndGetPostNo));
+        $('.modifyBtn').on('click', e => handleButtonClick(e, modifyBoard));
 
-            if (buttonState === 1) {
-                if (checkForm()) {
-                    modifyBoard();
-                } else {
-                    buttonState = 0;
-                }
-            } else if (buttonState >= 2) {
-                alert('처리가 진행 중입니다.');
-            }
-        });
+
+        // let buttonState = 0;
+        // $('.submitBtn').on('click', function (e) {
+        //         e.preventDefault();
+        //
+        //         if (buttonState === 0) {
+        //             if (checkForm()) {
+        //                 buttonState++;
+        //                 savePostAndGetPostNo();
+        //             }
+        //         } else if (buttonState > 0) {
+        //             alert('처리가 진행 중입니다.');
+        //         }
+        //     }
+        // );
+        //
+        // $('.modifyBtn').on('click', function (e) {
+        //     e.preventDefault();
+        //
+        //     if (buttonState === 0) {
+        //         if (checkForm()) {
+        //             buttonState++;
+        //             modifyBoard();
+        //         }
+        //     } else if (buttonState > 0) {
+        //         alert('처리가 진행 중입니다.');
+        //     }
+        // });
 
         $('.cancelBtn').click(function () {
 

@@ -4,13 +4,12 @@ import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.*;
 
 import java.time.Duration;
-import java.util.Arrays;
 
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.Simulation;
 import io.gatling.javaapi.http.HttpProtocolBuilder;
 
-public class CrudSimulations extends Simulation {
+public class CrudSimulations20522백업 extends Simulation {
 
 	// HTTP 프로토콜 설정
 	HttpProtocolBuilder httpProtocol = http
@@ -171,7 +170,7 @@ public class CrudSimulations extends Simulation {
 		.pause(Duration.ofMillis(20))
 		// 게시글 상세 조회
 		.exec(http("GetPostDetail")
-			.get("/board/read/24050")
+			.get("/board/read/3")
 			.header("Cookie", session -> "access=" + session.getString("jwt"))
 			.check(status().is(200))
 		);

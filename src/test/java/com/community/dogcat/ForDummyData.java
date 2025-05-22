@@ -97,18 +97,18 @@ class ForDummyData {
 
 	@Test
 	public void dummyUser() {
-		// for (int i = 0; i < 10_000; i++) {
+		for (int i = 0; i < 10_000; i++) {
 			User user = User.builder()
-				.userId(10_000 + "@stress.com")
-				.userName("스트레스 테스트 계정 " + 10_000)
-				.nickname("스트레스 테스트 계정 " + 10_000)
+				.userId(i + "@stress.com")
+				.userName("스트레스 테스트 계정 " + i)
+				.nickname("스트레스 테스트 계정 " + i)
 				.tel("010-0000-0000")
 				.userPw(passwordEncoder.encode("11111111"))
 				.build();
 			userRepository.save(user);
 			UsersAuth auth = UsersAuth.builder().userId(user.getUserId()).authorities("ROLE_USER").build();
 			usersAuthRepository.save(auth);
-		// }
+		}
 	}
 
 	@Test

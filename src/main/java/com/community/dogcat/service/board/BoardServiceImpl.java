@@ -114,16 +114,26 @@ public class BoardServiceImpl implements BoardService {
 		// 게시글 등록시 이미지가 summernote 링크로 먼저 등록되기 때문에 x 박스가 뜸
 		// 고쳐주기 위해 업로드때 수행하던 작업을 게시판 등록할때 적용 - ys
 		// s3 사용 x 로컬로 전환
-		if (postDTO.getPostContent().contains(oldUrl)) {
-			postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl + datePath));
-		}
+		// if (postDTO.getPostContent().contains(oldUrl)) {
+		// 	postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl + datePath));
+		// }
 
 		// 개선, 폴더 해싱을 위해 추가
-		if (postDTO.getPostContent().contains(newUrl)) {
-			for (String uuid : uuids) {
-				String prefix = uuid.substring(0, 2);
-				postDTO.setPostContent(postDTO.getPostContent().replace(uuid, "/" + prefix + "/" + uuid));
-			}
+		for (String uuid : uuids) {
+			String prefix = uuid.substring(0, 2);
+			String beforeUrl = oldUrl + uuid;
+			String fixedUrl = newUrl
+				+ datePath + "/"
+				+ prefix + "/"
+				+ uuid;
+
+			postDTO.setPostContent(
+				postDTO.getPostContent()
+					.replaceAll(
+						Pattern.quote(beforeUrl),
+						Matcher.quoteReplacement(fixedUrl)
+					)
+			);
 		}
 
 		// 게시물 작성
@@ -189,6 +199,7 @@ public class BoardServiceImpl implements BoardService {
 			uploadRepository.markFilesDeletedAndUnlinkPost(postNo);
 
 			for (FileInfoDTO df : deletedFiles) {
+				rt.opsForHash().delete("imgboard:meta", df.getFullName());
 				rt.opsForHash()
 					.put("imgboard:toDelete", df.getFullName(), df.getUploadPath() + "|" + df.getUploadThumbPath());
 			}
@@ -330,7 +341,7 @@ public class BoardServiceImpl implements BoardService {
 			// 개선, 수정하면서 제거된 파일은 바로 삭제 했으나 I/O 부담 줄이기 위해
 			// mark만 해두고 나중에 스케쥴로 한꺼번에 삭제
 			// deleteTempFiles.deleteUploadedFiles(deletedImages);
-			uploadRepository.updateAllDeletePossibleTrueByFileUuid(deletedImages);
+			uploadRepository.updateAllDeletePossibleTrueAndUnlinkByFileUuid(deletedImages);
 
 			// 삭제된 이미지들은 레디스의 삭제 큐에 삽입, imgboard:delete
 			if (!deletedImagesMeta.isEmpty()) {
@@ -339,13 +350,8 @@ public class BoardServiceImpl implements BoardService {
 					String path = file.getUploadPath().replace(newUrl, uploadedPath);
 					String thumbPath = file.getThumbnailPath().replace(newUrl, uploadedPath);
 
-					System.out.println("path: " + path + "\nthumbPath = " + thumbPath);
-
-					if (file.isDeletePossible()) {
-						rt.opsForHash().delete("imgboard:meta", uuidKey);
-					}
+					rt.opsForHash().delete("imgboard:meta", uuidKey);
 					rt.opsForHash().put("imgboard:toDelete", uuidKey, path + "|" + thumbPath);
-
 				}
 			}
 

@@ -1,5 +1,6 @@
 username,password
 0@stress.com,11111111
+10000@stress.com,11111111
 1000@stress.com,11111111
 1001@stress.com,11111111
 1002@stress.com,11111111
@@ -600,8 +601,6 @@ username,password
 1539@stress.com,11111111
 153@stress.com,11111111
 1540@stress.com,11111111
-1541267@gmail.com
-1541267@naver.com
 1541@stress.com,11111111
 1542@stress.com,11111111
 1543@stress.com,11111111
@@ -2223,7 +2222,6 @@ username,password
 2999@stress.com,11111111
 299@stress.com,11111111
 29@stress.com,11111111
-2@2.com
 2@stress.com,11111111
 3000@stress.com,11111111
 3001@stress.com,11111111
@@ -3335,7 +3333,6 @@ username,password
 3999@stress.com,11111111
 399@stress.com,11111111
 39@stress.com,11111111
-3@3.com
 3@stress.com,11111111
 4000@stress.com,11111111
 4001@stress.com,11111111
@@ -4447,8 +4444,8 @@ username,password
 4999@stress.com,11111111
 499@stress.com,11111111
 49@stress.com,11111111
-4@4.com
 4@stress.com,11111111
+5000@stress.com,11111111
 5001@stress.com,11111111
 5002@stress.com,11111111
 5003@stress.com,11111111
@@ -6669,7 +6666,6 @@ username,password
 6999@stress.com,11111111
 699@stress.com,11111111
 69@stress.com,11111111
-6@6.com
 6@stress.com,11111111
 7000@stress.com,11111111
 7001@stress.com,11111111
