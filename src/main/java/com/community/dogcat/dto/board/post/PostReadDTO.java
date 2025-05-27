@@ -1,4 +1,4 @@
-package com.community.dogcat.dto.board;
+package com.community.dogcat.dto.board.post;
 
 import java.time.Instant;
 import java.util.List;

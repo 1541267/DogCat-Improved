@@ -1,36 +1,25 @@
 package com.community.dogcat.service.upload;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import net.coobird.thumbnailator.Thumbnailator;
-
-import com.amazonaws.services.s3.AmazonS3;
-import com.community.dogcat.domain.ImgBoard;
 import com.community.dogcat.domain.Post;
+import com.community.dogcat.dto.uploadImage.FileInfoDTO;
 import com.community.dogcat.repository.upload.UploadRepository;
+import com.community.dogcat.service.util.FileProcessingService;
+import com.community.dogcat.util.cache.UploadedImageCaching;
 import com.community.dogcat.util.uploader.DeleteTempFiles;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -44,19 +33,15 @@ import lombok.extern.slf4j.Slf4j;
 public class UploadImageServiceImpl implements UploadImageService {
 
 	// private final AmazonS3 amazonS3;
-	private final UploadRepository uploadRepository;
-	@Value("${baseUrl}")
-	private String baseUrl;
 
-	@Value("${tempUploadPath}")
-	private String tempUploadPath;
+	@Value("${baseUrl}") private String baseUrl;
 
-	@Value("${finalUploadPath}")
-	private String finalUploadPath;
+	@Value("${tempUploadPath}") private String tempUploadPath;
+
+	@Value("${finalUploadPath}") private String finalUploadPath;
 
 	// 최종 업로드 링크
-	@Value("${newUrl}")
-	private String finalUrl;
+	@Value("${newUrl}") private String finalUrl;
 
 	// private final S3Uploader s3Uploader;
 
@@ -65,163 +50,40 @@ public class UploadImageServiceImpl implements UploadImageService {
 	private final DeleteTempFiles deleteTempFiles;
 
 	// 개선, 레디스 템플릿
-	@Autowired
-	private RedisTemplate<String, String> redisTemplate;
-	// 날짜로 파일 경로 분산
-	private final String datePath = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+	private final RedisTemplate<String, String> rt;
 
-	// jsonArray
-	// 썸머노트 업로드후 본문에 insert 하기위해 정보 반환
-	@Override
-	public String uploadSummerNoteImage(List<MultipartFile> multipartFiles, HttpServletRequest request) {
+	// 개선, 레디스 캐싱 파이프라이닝
+	private final UploadedImageCaching uploadedImageCaching;
 
-		JsonObject jsonObject = new JsonObject();
-		JsonArray jsonArray = new JsonArray();
+	private final UploadRepository uploadRepository;
 
-		// 이미지 저장 경로 설정
-		String contextRoot = tempUploadPath;
+	private final FileProcessingService fileProcessingService;
 
-		// 디렉토리가 없을경우 생성
-		// File directory = new File(tempUploadPath);
-		// 로컬 전용
-		// File directory = new File(contextRoot);
-		// if (!directory.exists()) {
-		// 	directory.mkdirs();
-		// }
-
-		for (MultipartFile multipartFile : multipartFiles) {
-			String originalFileName = multipartFile.getOriginalFilename();
-			assert originalFileName != null;
-
-			// 확장자 추출
-			String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-
-			// 원본 파일 이름
-
-			// UUID 파일명
-			String uuid = UUID.randomUUID().toString();
-			String saveFileName = uuid + extension;
-
-			// 파일경로, 이름 정보를 저장하는 객체
-			File targetFile = new File(contextRoot + saveFileName);
-
-			try {
-				InputStream fileStream = multipartFile.getInputStream();
-
-				// 파일의 가로 세로 길이 정보 저장
-				List<Integer> imagesLength = calcImageLength(multipartFile);
-
-				FileUtils.copyInputStreamToFile(fileStream, targetFile);
-
-				// 이미지의 URL 생성
-				// String imageUrl = baseUrl + "/temp/" + saveFileName;
-				// 아래는 로컬용
-				String imageUrl = baseUrl + "/temp/" + saveFileName;
-				JsonObject fileJsonObject = new JsonObject();
-
-				// 생성된 파일의 uuid 와 이미지링크 summernote 에 전달
-				fileJsonObject.addProperty("imageUrl", imageUrl);
-				fileJsonObject.addProperty("uuid", uuid);
-				fileJsonObject.addProperty("extension", extension);
-				fileJsonObject.addProperty("name", originalFileName);
-				fileJsonObject.addProperty("width", imagesLength.get(0));
-				fileJsonObject.addProperty("height", imagesLength.get(1));
-
-				jsonArray.add(fileJsonObject);
-
-			} catch (IOException e) {
-				// 파일 저장 중 오류가 발생한 경우 해당 파일 삭제 및 에러 응답 코드 추가
-				log.error("Summernote Image Upload failed", e);
-				FileUtils.deleteQuietly(targetFile);
-				JsonObject errorJsonObject = new JsonObject();
-				jsonObject.addProperty("responseCode", "error");
-				jsonArray.add(errorJsonObject);
-				e.printStackTrace();
-			}
-
-		}
-		jsonObject.add("files", jsonArray);
-
-		return jsonObject.toString();
-	}
+	private final UploadMetaService uploadMetaService;
 
 	@Override
-	@Transactional
 	// 개선, 게시글 등록 시 임시 파일을 업로드 성공 폴더로 옮김
 	public void moveAndSaveImages(List<String> uuids, List<String> extensions, List<String> originalFileNames,
-		Post postNo) throws IOException {
-		// final 디렉터리 및 썸네일 디렉터리 보장
+		Post postNo) {
 
-		Path finalDir = Paths.get(finalUploadPath + datePath);
+		String datePath = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+		String baseDir = finalUploadPath + datePath + "/";
 
-		List<ImgBoard> imgs = new ArrayList<>();
-
-		for (int i = 0; i < uuids.size(); i++) {
-			String uuid = uuids.get(i);
-			String ext = extensions.get(i);
-			String saveFileName = uuid + ext;
-			String originalFileName = originalFileNames.get(i);
-
-			// 해싱 분산을 위한 uuid의 prefix 추출
-			String prefix = uuid.substring(0, 2);
-
-			Path thumbDir = finalDir.resolve(prefix).resolve("thumbnail");
-
-			Files.createDirectories(thumbDir);
-
-			// 임시 파일 경로
-			Path tempFile = Paths.get(tempUploadPath, saveFileName);
-			// 최종 파일 경로
-			Path finalFile = finalDir.resolve(prefix).resolve(saveFileName);
-
-			// 파일 이동 (복사 후 원본 삭제)
-			Files.move(tempFile, finalFile);
-
-			// 이동 후 썸네일 생성
-			Path thumbFile = thumbDir.resolve("t_" + saveFileName);
-			Thumbnailator.createThumbnail(finalFile.toFile(), thumbFile.toFile(), 200, 200);
-
-			String finishedPath = finalUrl + datePath + "/" + prefix + "/";
-
-			// DB 엔티티 저장
-			ImgBoard img = ImgBoard.builder()
-				.uploadPath(finishedPath + saveFileName)
-				.thumbnailPath(finishedPath + "thumbnail/t_" + saveFileName)
+		List<FileInfoDTO> infos = IntStream.range(0, uuids.size()).mapToObj(i ->
+			FileInfoDTO.builder()
+				.uuid(uuids.get(i))
+				.extension(extensions.get(i))
 				.deletePossible(false)
-				.img(true)
+				.originalName(originalFileNames.get(i))
 				.uploadTime(Instant.now())
-				.extension(ext)
-				.fileName(originalFileName)
-				.fileUuid(uuid)
-				.postNo(postNo)
-				.build();
+				.build()).toList();
 
-			imgs.add(img);
-			String MetaValue = finalFile + "|" + thumbFile;
-			// key = "img~meta", hashKey = fileName, value = MetaValue
-			redisTemplate.opsForHash().put("imgboard:meta", saveFileName, MetaValue);
-		}
-		// TODO 개선, 대량 INSERT의 batch 고려해보기
-		uploadRepository.saveAll(imgs);
-	}
+		uploadMetaService.saveImageToDB(infos, postNo);
 
-	// 업로드된 이미지의 가로세로 정보 추출
-	private List<Integer> calcImageLength(MultipartFile multipartFile) throws IOException {
-
-		List<Integer> imagesLength = new ArrayList<>();
-
-		try (InputStream inputStream = multipartFile.getInputStream()) {
-
-			BufferedImage bufferedImage = ImageIO.read(inputStream);
-
-			imagesLength.add(bufferedImage.getWidth());
-			imagesLength.add(bufferedImage.getHeight());
-
-		} catch (IOException e) {
-			log.error("이미지 가로세로 추출 에러!");
-			throw e;
-		}
-		return imagesLength;
+		// 비동기 파일 이동 + 캐싱, 썸네일 생성 위임, 파일 이동 후 썸네일 생성 되고 완료 요청을 받음
+		fileProcessingService.handleFinalSave(infos, baseDir);
+		// 비동기 썸네일 생성 (cpuExecutor)
+		fileProcessingService.handleThumbnails(infos, baseDir);
 	}
 
 	// summernote 취소버튼 누를 때 임시파일 제거
@@ -243,6 +105,247 @@ public class UploadImageServiceImpl implements UploadImageService {
 			deleteTempFiles.deleteFile(fileName);
 		}
 	}
+
+	// jsonArray
+	// 썸머노트 업로드후 본문에 insert 하기위해 정보 반환
+	@Override
+	public String uploadSummerNoteImage(List<MultipartFile> multipartFiles, HttpServletRequest request) {
+
+		JsonObject jsonObject = new JsonObject();
+		JsonArray jsonArray = new JsonArray();
+
+		// 이미지 저장 경로 설정
+		List<FileInfoDTO> dtos = new ArrayList<>(multipartFiles.size());
+
+		for (MultipartFile multipartFile : multipartFiles) {
+			String originalFileName = multipartFile.getOriginalFilename();
+			// 확장자 추출
+			String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+			// UUID 파일명
+			String uuid = UUID.randomUUID().toString();
+			String saveFileName = uuid + extension;
+
+			FileInfoDTO dto = FileInfoDTO.builder()
+				.uuid(uuid)
+				.extension(extension)
+				.uploadTime(Instant.now())
+				.deletePossible(false)
+				.build();
+
+			dtos.add(dto);
+
+			// json 응답용
+			JsonObject fileJson = new JsonObject();
+
+			fileJson.addProperty("imageUrl", baseUrl + "/temp/" + saveFileName);
+			fileJson.addProperty("uuid", uuid);
+			fileJson.addProperty("extension", extension);
+			fileJson.addProperty("name", originalFileName);
+			// int[] size = calcImageLength(multipartFile);
+			// fileJson.addProperty("width", size[0]);
+			// fileJson.addProperty("height", size[1]);
+			jsonArray.add(fileJson);
+		}
+		jsonObject.add("files", jsonArray);
+
+		// 임시 파일 비동기 저장, ioExecutor 풀
+		fileProcessingService.handleTempSave(dtos, multipartFiles);
+
+		return jsonObject.toString();
+	}
+
+	// 개선, 비동기 1차 시도, 제대로 이뤄지지 않았음
+	// public void moveAndSaveImages(List<String> uuids, List<String> extensions, List<String> originalFileNames,
+	// 	Post postNo) throws IOException {
+	//
+	// 	String baseDir = finalUploadPath + datePath + "/";
+	//
+	// 	// 락-free 큐
+	// 	Queue<ImgBoard> imgQueue = new ConcurrentLinkedQueue<>();
+	// 	Queue<FileInfoDTO> infoQueue = new ConcurrentLinkedQueue<>();
+	//
+	// 	List<CompletableFuture<Void>> tasks = IntStream.range(0, uuids.size())
+	// 		.mapToObj(i -> CompletableFuture.runAsync(() -> {
+	// 			try {
+	// 				semaphore.acquire();
+	//
+	// 				processImage(uuids.get(i), extensions.get(i), originalFileNames.get(i),
+	// 					postNo, baseDir, datePath, imgQueue, infoQueue);
+	//
+	// 			} catch (InterruptedException | IOException e) {
+	// 				throw new RuntimeException(e);
+	// 			} finally {
+	// 				semaphore.release();
+	// 			}
+	// 		}, ioExecutor))
+	// 		.toList();
+	//
+	// 	CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).join();
+	// 	uploadRepository.saveAll(new ArrayList<>(imgQueue));
+	// 	uploadedImageCaching.cacheMetadataAddOrDelete(
+	// 		new ArrayList<>(infoQueue), Collections.emptyList());
+	// }
+
+	// private void processImage(String uuid, String extension, String originalFilename, Post postNo,
+	// 	String baseDir, String datePath, Queue<ImgBoard> imgQueue, Queue<FileInfoDTO> infoQueue) throws IOException {
+	//
+	// 	String prefix = uuid.substring(0, 2);
+	// 	String savedName = uuid + extension;
+	// 	String tempFile = tempUploadPath + savedName;
+	// 	Path tempPath = Path.of(tempFile);
+	// 	String destDir = baseDir + prefix;
+	// 	String destFile = destDir + "/" + savedName;
+	// 	String thumbDir = baseDir + "/" + prefix + "/thumbnail/";
+	// 	// 논 블로킹 복사
+	//
+	// 	Files.createDirectories(Path.of(thumbDir));
+	//
+	// 	try (AsynchronousFileChannel in = AsynchronousFileChannel.open(
+	// 		tempPath, StandardOpenOption.READ);
+	// 		 AsynchronousFileChannel out = AsynchronousFileChannel.open(
+	// 			 Paths.get(destFile), StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+	//
+	// 		ByteBuffer buffer = ByteBuffer.allocateDirect(4 * 1024 * 1024);
+	// 		CopyHandler handler = new CopyHandler(in, out, buffer);
+	// 		in.read(buffer, 0, null, handler);
+	// 		handler.getFuture().join();           // 비동기 완료 대기
+	// 		Files.deleteIfExists(tempPath);
+	//
+	// 	} catch (Exception e) {
+	// 		throw new UncheckedIOException("비동기 복사 실패", toIOE(e));
+	// 	}
+	//
+	// 	// 2) 썸네일 생성 — CPU 풀로 분리
+	// 	CompletableFuture<Void> thumbFuture = CompletableFuture.runAsync(() -> {
+	// 		try {
+	// 			Thumbnails.of(destFile)
+	// 				.size(200, 200)
+	// 				.toFile(thumbDir + "t_" + savedName);
+	// 		} catch (IOException e) {
+	// 			throw new RuntimeException(e);
+	// 		}
+	// 	}, thumbExecutor);
+	//
+	// 	thumbFuture.join();
+	//
+	// 	// 3) 엔티티 수집
+	// 	String uploadUrl = finalUrl + datePath + "/" + prefix + "/" + savedName;
+	// 	String thumbnailUrl = finalUrl + datePath + "/" + prefix + "/thumbnail/t_" + savedName;
+	// 	Instant uploadedTime = Instant.now();
+	// 	ImgBoard img = ImgBoard.builder()
+	// 		.uploadPath(uploadUrl)
+	// 		.thumbnailPath(thumbnailUrl)
+	// 		.deletePossible(false)
+	// 		.img(true)
+	// 		.uploadTime(uploadedTime)
+	// 		.extension(extension)
+	// 		.fileName(originalFilename)
+	// 		.fileUuid(uuid)
+	// 		.postNo(postNo)
+	// 		.build();
+	//
+	// 	FileInfoDTO info = FileInfoDTO.builder()
+	// 		.uuid(uuid)
+	// 		.extension(extension)
+	// 		.uploadTime(uploadedTime)
+	// 		.deletePossible(false)
+	// 		.build();
+	//
+	// 	imgQueue.add(img);
+	// 	infoQueue.add(info);
+	// }
+	// private IOException toIOE(Throwable t) {
+	// 	return t instanceof IOException
+	// 		? (IOException)t
+	// 		: new IOException(t);
+	// }
+
+	// 업로드된 이미지의 가로세로 정보 추출
+
+	// 개선, 매번 업로드 시 이미지의 크기 계산으로 cpu 바운드, 클라이언트(브라우저) 에 위임
+	// private int[] calcImageLength(MultipartFile multipartFile) throws IOException {
+	//
+	// 	int[] imagesLength = new int[2];
+	//
+	// 	try (InputStream inputStream = multipartFile.getInputStream()) {
+	//
+	// 		BufferedImage bufferedImage = ImageIO.read(inputStream);
+	//
+	// 		imagesLength[0] = bufferedImage.getWidth();
+	// 		imagesLength[1] = bufferedImage.getHeight();
+	//
+	// 	} catch (IOException e) {
+	// 		log.error("이미지 가로세로 추출 에러!");
+	// 		throw e;
+	// 	}
+	// 	return imagesLength;
+	// }
+
+	// 개선 전
+	// @Override
+	// public String uploadSummerNoteImage(List<MultipartFile> multipartFiles, HttpServletRequest request) {
+	//
+	// 	JsonObject jsonObject = new JsonObject();
+	// 	JsonArray jsonArray = new JsonArray();
+	//
+	// 	// 이미지 저장 경로 설정
+	// 	String contextRoot = tempUploadPath;
+	//
+	// 	for (MultipartFile multipartFile : multipartFiles) {
+	// 		String originalFileName = multipartFile.getOriginalFilename();
+	// 		assert originalFileName != null;
+	//
+	// 		// 확장자 추출
+	// 		String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+	//
+	// 		// 원본 파일 이름
+	//
+	// 		// UUID 파일명
+	// 		String uuid = UUID.randomUUID().toString();
+	// 		String saveFileName = uuid + extension;
+	//
+	// 		// 파일경로, 이름 정보를 저장하는 객체
+	// 		File targetFile = new File(contextRoot + saveFileName);
+	//
+	// 		try {
+	// 			InputStream fileStream = multipartFile.getInputStream();
+	//
+	// 			// 파일의 가로 세로 길이 정보 저장
+	// 			List<Integer> imagesLength = calcImageLength(multipartFile);
+	//
+	// 			FileUtils.copyInputStreamToFile(fileStream, targetFile);
+	//
+	// 			// 이미지의 URL 생성
+	// 			// String imageUrl = baseUrl + "/temp/" + saveFileName;
+	// 			// 아래는 로컬용
+	// 			String imageUrl = baseUrl + "/temp/" + saveFileName;
+	// 			JsonObject fileJsonObject = new JsonObject();
+	//
+	// 			// 생성된 파일의 uuid 와 이미지링크 summernote 에 전달
+	// 			fileJsonObject.addProperty("imageUrl", imageUrl);
+	// 			fileJsonObject.addProperty("uuid", uuid);
+	// 			fileJsonObject.addProperty("extension", extension);
+	// 			fileJsonObject.addProperty("name", originalFileName);
+	// 			fileJsonObject.addProperty("width", imagesLength.get(0));
+	// 			fileJsonObject.addProperty("height", imagesLength.get(1));
+	//
+	// 			jsonArray.add(fileJsonObject);
+	//
+	// 		} catch (IOException e) {
+	// 			// 파일 저장 중 오류가 발생한 경우 해당 파일 삭제 및 에러 응답 코드 추가
+	// 			log.error("Summernote Image Upload failed", e);
+	// 			FileUtils.deleteQuietly(targetFile);
+	// 			JsonObject errorJsonObject = new JsonObject();
+	// 			jsonObject.addProperty("responseCode", "error");
+	// 			jsonArray.add(errorJsonObject);
+	// 			e.printStackTrace();
+	// 		}
+	//
+	// 	}
+	// 	jsonObject.add("files", jsonArray);
+	//
+	// 	return jsonObject.toString();
+	// }
 
 	// summernote 로 임시파일 업로드 후 게시글 등록하면 자동 s3 업로드
 	// @Override
@@ -297,4 +400,83 @@ public class UploadImageServiceImpl implements UploadImageService {
 	// 		uploadRepository.deleteByUploadPath(imageUrl);
 	// 	}
 	// }
+
+	// 개선, 게시글 등록 시 임시 파일을 업로드 성공 폴더로 옮김
+	// 처음에 쓰던 것
+	// public void moveAndSaveImages(List<String> uuids, List<String> extensions, List<String> originalFileNames,
+	// 	Post postNo) throws IOException {
+	// 	// final 디렉터리 및 썸네일 디렉터리 보장
+	//
+	// 	String finalDir = finalUploadPath + datePath;
+	//
+	// 	List<ImgBoard> imgs = new ArrayList<>();
+	//
+	// 	// 개선, redis 파이프라이닝을 위해
+	// 	List<FileInfoDTO> uploadedFileInfo = new ArrayList<>();
+	//
+	// 	List<ImgBoard> imgs = new ArrayList<>();
+	// 	List<FileInfoDTO> uploadedInfos = new ArrayList<>();
+	// 	List<CompletableFuture<Void>> tasks = new ArrayList<>();
+	//
+	// 	for (int i = 0; i < uuids.size(); i++) {
+	// 		String uuid = uuids.get(i);
+	// 		String ext = extensions.get(i);
+	// 		String saveFileName = uuid + ext;
+	// 		String originalFileName = originalFileNames.get(i);
+	//
+	// 		// 해싱 분산을 위한 uuid의 prefix 추출
+	// 		String prefix = uuid.substring(0, 2);
+	//
+	// 		String thumbDir = finalDir + "/" + prefix + "/thumbnail/";
+	//
+	// 		Files.createDirectories(Path.of(thumbDir));
+	//
+	// 		// 임시 파일 경로
+	// 		Path tempFilePath = Paths.get(tempUploadPath, saveFileName);
+	// 		// 최종 파일 경로
+	// 		String finishedFile = finalDir + "/" + prefix + "/" + saveFileName;
+	//
+	// 		// 파일 이동 (복사 후 원본 삭제)
+	// 		Path target = Path.of(finishedFile);
+	//
+	// 		Files.move(tempFilePath, target);
+	//
+	// 		// 이동 후 썸네일 생성
+	// 		String finishedThumbFile = thumbDir + "t_" + saveFileName;
+	// 		Thumbnailator.createThumbnail(target.toFile(), new File(finishedThumbFile), 200, 200);
+	//
+	// 		String finishedPath = finalUrl + datePath + "/" + prefix + "/" + saveFileName;
+	// 		String finishedThumbPath = finalUrl + datePath + "/" + prefix + "/thumbnail/t_" + saveFileName;
+	//
+	// 		// DB 엔티티 저장
+	// 		ImgBoard img = ImgBoard.builder()
+	// 			.uploadPath(finishedPath)
+	// 			.thumbnailPath(finishedThumbPath)
+	// 			.deletePossible(false)
+	// 			.img(true)
+	// 			.uploadTime(Instant.now())
+	// 			.extension(ext)
+	// 			.fileName(originalFileName)
+	// 			.fileUuid(uuid)
+	// 			.postNo(postNo)
+	// 			.build();
+	//
+	// 		imgs.add(img);
+	//
+	// 		FileInfoDTO dto = FileInfoDTO.builder()
+	// 			.uuid(img.getFileUuid())
+	// 			.extension(img.getExtension())
+	// 			.uploadTime(img.getUploadTime())
+	// 			.deletePossible(img.isDeletePossible())
+	// 			.build();
+	//
+	// 		uploadedFileInfo.add(dto);
+	// 	}
+	//
+	// 	uploadRepository.saveAll(imgs);
+	//
+	// 	// 한꺼번에 모아서 캐싱
+	// 	uploadedImageCaching.cacheMetadataAddOrDelete(uploadedFileInfo, new ArrayList<>());
+	// }
+
 }

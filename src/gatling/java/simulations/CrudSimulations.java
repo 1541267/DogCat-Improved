@@ -5,6 +5,8 @@ import static io.gatling.javaapi.http.HttpDsl.*;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.Simulation;
@@ -30,7 +32,7 @@ public class CrudSimulations extends Simulation {
 			.check(status().is(200))
 			.check(headerRegex("Set-Cookie", "access=(.*?); ").saveAs("jwt"))
 		)
-		.pause(Duration.ofMillis(100))
+		.pause(Duration.ofSeconds(1), Duration.ofSeconds(3))
 
 		// 페이지 로드 (GET /board/register)
 		.exec(http("Load Register Page")
@@ -38,7 +40,6 @@ public class CrudSimulations extends Simulation {
 			.header("Cookie", session -> "access=" + session.getString("jwt"))
 			.check(status().is(200))
 		)
-		.pause(Duration.ofSeconds(1))
 
 		// 2) Summernote 이미지 업로드 (비동기)
 		.exec(http("Upload Summernote Image")
@@ -55,7 +56,7 @@ public class CrudSimulations extends Simulation {
 			.check(jsonPath("$.files[0].extension").saveAs("extensions"))
 			.check(jsonPath("$.files[0].name").saveAs("originalFileNames"))
 		)
-		.pause(Duration.ofSeconds(1))
+		.pause(Duration.ofSeconds(2), Duration.ofSeconds(5))
 
 		// 3) 게시글 등록 (본문에 <img> 태그 포함)
 		.exec(session -> {
@@ -80,6 +81,8 @@ public class CrudSimulations extends Simulation {
 			.check(status().in(200, 302))
 			.check(jsonPath("$.postNo").saveAs("postNo"))
 		)
+		.pause(Duration.ofSeconds(5), Duration.ofSeconds(10))
+
 		// 4) 최종 이미지 처리 (uploadFinalImage)
 		.exec(http("Final Image Upload")
 			.post("/api/upload/finalImageUpload")
@@ -91,7 +94,7 @@ public class CrudSimulations extends Simulation {
 			.asMultipartForm()
 			.check(status().is(200))
 		)
-		.pause(Duration.ofSeconds(3))
+		.pause(Duration.ofSeconds(1), Duration.ofSeconds(3))
 
 		// 수정
 		.exec(http("Upload Edit Image")
@@ -108,7 +111,8 @@ public class CrudSimulations extends Simulation {
 			.check(jsonPath("$.files[0].extension").saveAs("extensions"))
 			.check(jsonPath("$.files[0].name").saveAs("originalFileNames"))
 		)
-		.pause(Duration.ofMillis(50))
+		.pause(Duration.ofSeconds(2), Duration.ofSeconds(5))
+
 		.exec(session -> {
 			String url = session.getString("imageUrl");
 			String uuid = session.getString("imageUuid");
@@ -129,7 +133,8 @@ public class CrudSimulations extends Simulation {
 			.formParam("postContent", session -> session.getString("editContent"))
 			.check(status().in(200, 302))
 		)
-		.pause(Duration.ofSeconds(3))
+		.pause(Duration.ofSeconds(5), Duration.ofSeconds(10))
+
 		.exec(http("Final Edit Image Upload")
 			.post("/api/upload/finalImageUpload")
 			.header("Cookie", session -> "access=" + session.getString("jwt"))
@@ -140,7 +145,7 @@ public class CrudSimulations extends Simulation {
 			.asMultipartForm()
 			.check(status().is(200))
 		)
-		.pause(Duration.ofSeconds(3))
+		.pause(Duration.ofSeconds(1), Duration.ofSeconds(3))
 
 		// // 게시글 삭제
 		.exec(http("DeletePost")
@@ -152,6 +157,7 @@ public class CrudSimulations extends Simulation {
 	// 2) 읽기(Read) 시나리오: 로그인 → 목록 조회 → 상세 조회
 	ScenarioBuilder readScn = scenario("Read Scenario")
 		.feed(csv("accounts.csv").circular())
+		.feed(csv("posts.csv").circular())
 		// 로그인
 		.exec(http("User Login")
 			.post("/user/loginProc")
@@ -161,17 +167,26 @@ public class CrudSimulations extends Simulation {
 			.check(status().is(200))
 			.check(headerRegex("Set-Cookie", "access=(.*?); ").saveAs("jwt"))
 		)
-		.pause(Duration.ofMillis(20))
+		.pause(Duration.ofSeconds(1), Duration.ofSeconds(3))
+
 		// 게시판 목록 조회
 		.exec(http("ListPosts")
 			.get("/board/general")
 			.header("Cookie", session -> "access=" + session.getString("jwt"))
 			.check(status().is(200))
 		)
-		.pause(Duration.ofMillis(20))
+		.pause(Duration.ofSeconds(3), Duration.ofSeconds(6))
+
+		// .exec(session -> {
+		// 	String randomId = postIds.get(ThreadLocalRandom.current().nextInt(postIds.size()));
+		// 	return session.set("postId", randomId);
+		// })
+
 		// 게시글 상세 조회
 		.exec(http("GetPostDetail")
-			.get("/board/read/24050")
+			.get("/board/read/#{postNo}")
+			// .get("/board/read/51169")
+			// .get(session -> "/board/read/" + session.getString("postId"))
 			.header("Cookie", session -> "access=" + session.getString("jwt"))
 			.check(status().is(200))
 		);

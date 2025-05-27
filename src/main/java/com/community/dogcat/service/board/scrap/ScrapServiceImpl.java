@@ -39,7 +39,7 @@ public class ScrapServiceImpl implements ScrapService {
 		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Scrap Service Register Error : 401 Unauthorized"));
 
 		// 로그인한 회원의 스크랩 여부 확인
-		Optional<Scrap> scrapState = scrapRepository.findByPostNoAndUserId(post, user);
+		Optional<Scrap> scrapState = scrapRepository.findByPostNoAndUserId(post.getPostNo(), userId);
 
 		// 스크랩 정보가 없는 경우 스크랩 정보 추가
 		if (scrapState.isEmpty()) {

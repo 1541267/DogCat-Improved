@@ -2,13 +2,11 @@ package com.community.dogcat.service.board;
 
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-
 import com.community.dogcat.domain.Post;
 import com.community.dogcat.dto.board.BoardListDTO;
 import com.community.dogcat.dto.board.BoardPageRequestDTO;
 import com.community.dogcat.dto.board.BoardPageResponseDTO;
-import com.community.dogcat.dto.board.PostReadDTO;
+import com.community.dogcat.dto.board.post.PostReadDTO;
 import com.community.dogcat.dto.board.post.PostDTO;
 
 public interface BoardService {

@@ -2,11 +2,11 @@ package com.community.dogcat.domain;
 
 import java.time.Instant;
 
-import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -25,7 +25,16 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "img_board", schema = "dogcat")
+
+// 개선, 인덱스 튜닝
+@Table(
+	name = "img_board",
+	indexes = {
+		@Index(name = "idx_imgboard_uuid", columnList = "file_uuid"),
+		@Index(name = "idx_imgboard_delete", columnList = "delete_possible"),
+		@Index(name = "idx_imgboard_uploadtime", columnList = "upload_time")
+	}
+)
 public class ImgBoard {
 	@Id
 	@Size(max = 255)
@@ -36,9 +45,8 @@ public class ImgBoard {
 	@JoinColumn(name = "post_no", nullable = true)
 	private Post postNo;
 
-	@Size(max = 50)
 	@NotNull
-	@Column(name = "file_name", nullable = false, length = 50)
+	@Column(name = "file_name", nullable = false, columnDefinition = "TEXT")
 	private String fileName;
 
 	@NotNull

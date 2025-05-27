@@ -22,31 +22,42 @@ public interface UploadRepository extends JpaRepository<ImgBoard, String> {
 	// 개선, 더미데이터 제거용 / 25-05-16
 	@Transactional
 	@Modifying
-	@Query("DELETE FROM ImgBoard i WHERE i.postNo.postNo >= :threshold")
-	void deleteAllByPostNoMore1000(@Param("threshold") Long threshold);
+	@Query("UPDATE FROM ImgBoard i SET i.postNo = null, i.deletePossible = true WHERE i.postNo.postNo >= :threshold")
+	void unlinkAllByUpperPostNo(@Param("threshold") Long threshold);
 
 	// 개선, 파일 삭제 가능 마크가 된 데이터를 전부 불러옴
 	@Query("SELECT new com.community.dogcat.dto.uploadImage.FileInfoDTO"
-		+ "(i.fileUuid, i.extension, i.uploadTime, i.deletePossible) "
+		+ "(i.fileUuid, i.extension, i.uploadTime, i.deletePossible, i.fileName) "
 		+ "FROM ImgBoard i"
 		+ " WHERE i.deletePossible = true")
-	Set<FileInfoDTO> findFileUuidAndExtensionAndUploadTimeAndDeletePossibleByDeletePossibleTrue();
+	Set<FileInfoDTO> SetfindFileInfoDTOByDeletePossibleTrue();
 
 	@Query("SELECT new com.community.dogcat.dto.uploadImage.FileInfoDTO"
-		+ "(i.fileUuid, i.extension, i.uploadTime, i.deletePossible) "
+		+ "(i.fileUuid, i.extension, i.uploadTime, i.deletePossible, i.fileName) "
+		+ "FROM ImgBoard i"
+		+ " WHERE i.deletePossible = true")
+	List<FileInfoDTO> listFindFileInfoDTOByDeletePossibleTrue();
+
+	@Query("SELECT new com.community.dogcat.dto.uploadImage.FileInfoDTO"
+		+ "(i.fileUuid, i.extension, i.uploadTime, i.deletePossible, i.fileName) "
 		+ "FROM ImgBoard i"
 		+ " WHERE i.deletePossible = false")
-	Set<FileInfoDTO> findFileUuidAndExtensionAndUploadTimeAndDeletePossibleByDeletePossibleFalse();
+	List<FileInfoDTO> listFileInfoDTOByDeletePossibleFalse();
 
 	@Query("SELECT new com.community.dogcat.dto.uploadImage.FileInfoDTO"
-		+ "(i.fileUuid, i.extension, i.uploadTime, i.deletePossible) "
+		+ "(i.fileUuid, i.extension, i.uploadTime, i.deletePossible, i.fileName) "
 		+ "FROM ImgBoard i WHERE i.postNo.postNo = :postNo")
-	Set<FileInfoDTO> findFileInfoByPostNo(Long postNo);
+	List<FileInfoDTO> findFileInfoByPostNo(Long postNo);
 
 	@Query("SELECT new com.community.dogcat.dto.uploadImage.FileInfoDTO"
-		+ "(i.fileUuid, i.extension, i.uploadTime, i.deletePossible) "
+		+ "(i.fileUuid, i.extension, i.uploadTime, i.deletePossible, i.fileName) "
 		+ "FROM ImgBoard i")
-	Set<FileInfoDTO> findAllFileUuidAndExtensionAndUploadTimeAndDeletePossible();
+	Set<FileInfoDTO> setFindAllFileInfoDTO();
+
+	@Query("SELECT new com.community.dogcat.dto.uploadImage.FileInfoDTO"
+		+ "(i.fileUuid, i.extension, i.uploadTime, i.deletePossible, i.fileName) "
+		+ "FROM ImgBoard i")
+	List<FileInfoDTO> listFindAllFileInfoDTO();
 
 	/** 개선, 게시글 수정 시 없어진 이미지들 mark */
 	@Query("UPDATE ImgBoard i SET i.deletePossible = true, i.postNo = NULL WHERE i.fileUuid IN (:uuids)")
@@ -65,4 +76,9 @@ public interface UploadRepository extends JpaRepository<ImgBoard, String> {
 	@Modifying
 	@Query("DELETE ImgBoard i WHERE i.deletePossible = true")
 	void deleteAllByDeletePossibleTrue();
+
+	@Query("SELECT new com.community.dogcat.dto.uploadImage.FileInfoDTO"
+		+ "(i.fileUuid, i.extension, i.uploadTime, i.deletePossible, i.fileName)"
+		+ "FROM ImgBoard i WHERE i.fileUuid IN :uuids")
+	List<FileInfoDTO> findFileInfoByUuid(@Param("uuids") List<String> deletedImages);
 }

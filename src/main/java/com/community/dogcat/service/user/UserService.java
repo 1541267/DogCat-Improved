@@ -11,6 +11,8 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -69,12 +71,12 @@ public class UserService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = "userId", key = "#userId")
 	public void deleteUserById(HttpServletResponse response, String userId) {
 
 		User deleteUser = userRepository.findByUserId(userId);
 
 		if (deleteUser != null) {
-
 
 			List<PostLike> postLikes = postLikeRepository.findAllByUserId(deleteUser);
 
@@ -278,16 +280,12 @@ public class UserService {
 
 	}
 
+	// @Cacheable(value = "userId", key ="#userId")
 	public String getRole(String userId) {
-
 		UsersAuth usersAuth = usersAuthRepository.findByUserId(userId);
-
 		if (usersAuth != null) {
-
 			return usersAuth.getAuthorities();
-
 		}
-
 		return null;
 	}
 

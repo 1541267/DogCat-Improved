@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.community.dogcat.domain.Post;
+import com.community.dogcat.dto.uploadImage.FileInfoDTO;
 
 @Service
 public interface UploadImageService {

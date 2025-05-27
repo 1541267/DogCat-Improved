@@ -97,7 +97,7 @@ class ForDummyData {
 
 	@Test
 	public void dummyUser() {
-		for (int i = 0; i < 10_000; i++) {
+		for (int i = 0; i < 10_001; i++) {
 			User user = User.builder()
 				.userId(i + "@stress.com")
 				.userName("스트레스 테스트 계정 " + i)
@@ -114,8 +114,8 @@ class ForDummyData {
 	@Test
 	public void deleteDummyPost() {
 
-		uploadRepository.deleteAllByPostNoMore1000(1000L);
-		boardRepository.deleteAllByPostNoMore1000(1000L);
+		uploadRepository.unlinkAllByUpperPostNo(179838L);
+		boardRepository.deleteAllByUpperPostNo(179838L);
 
 
 	}

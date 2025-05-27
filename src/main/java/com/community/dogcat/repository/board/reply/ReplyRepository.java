@@ -43,4 +43,8 @@ public interface ReplyRepository extends JpaRepository<Reply, Long>, ReplySearch
     void deleteAllByUserId(User user);
 
     List<Reply> findAllByUserId(User user);
+
+    /** 레디스 캐싱을 위해 댓글 갯수 반환 */
+    @Query("SELECT count(r) FROM Reply r WHERE r.postNo.postNo = :postNo")
+    long countByPostNo(Long postNo);
 }

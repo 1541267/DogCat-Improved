@@ -5,15 +5,12 @@ import static org.springframework.http.HttpStatus.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,16 +22,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.community.dogcat.controller.BaseController;
 import com.community.dogcat.domain.Post;
 import com.community.dogcat.dto.board.BoardListDTO;
 import com.community.dogcat.dto.board.BoardPageRequestDTO;
 import com.community.dogcat.dto.board.BoardPageResponseDTO;
-import com.community.dogcat.dto.board.PostReadDTO;
+import com.community.dogcat.dto.board.post.PostReadDTO;
 import com.community.dogcat.dto.board.post.PostDTO;
-import com.community.dogcat.dto.board.postLike.PostLikeDTO;
 import com.community.dogcat.jwt.JWTUtil;
 import com.community.dogcat.service.board.BoardService;
 import com.community.dogcat.service.user.UserService;
@@ -64,7 +59,8 @@ public class BoardController extends BaseController {
 
 	@ResponseBody
 	@PostMapping({"/register", "/register_q"})
-	public ResponseEntity<Map<String, Long>> register(@ModelAttribute PostDTO postDTO, Model model, @RequestParam("uuids") List<String> uuids) {
+	public ResponseEntity<Map<String, Long>> register(@ModelAttribute PostDTO postDTO, Model model,
+		@RequestParam("uuids") List<String> uuids) {
 
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
@@ -96,9 +92,6 @@ public class BoardController extends BaseController {
 			return "redirect:/error"; // 게시글이 존재하지 않는 경우 404 오류
 		}
 
-		// 조회수 증가
-		boardService.updateViewCount(postNo);
-
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");
 		String role = userService.getRole(userId);
@@ -109,6 +102,10 @@ public class BoardController extends BaseController {
 			return "redirect:/user/login"; // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
 		}
 
+		// 조회수 증가
+		// 개선, 서비스 단에서 레디스 사용
+		// boardService.updateViewCount(postNo);
+
 		// 상세페이지 출력
 		PostReadDTO postDTO = boardService.readDetail(postNo, userId);
 
@@ -118,7 +115,7 @@ public class BoardController extends BaseController {
 
 		// 비밀글 게시글 작성자 확인
 		if (secret) {
-			if(!userId.equals(postDTO.getUserId()) && role.equals("ROLE_USER")) {
+			if (!userId.equals(postDTO.getUserId()) && role.equals("ROLE_USER")) {
 				log.error("BoardController Read Error : 403 Forbidden");
 				return "redirect:/error"; // 권한이 없는 경우 403 오류
 			}
@@ -247,7 +244,7 @@ public class BoardController extends BaseController {
 	}
 
 	@PostMapping("/completeQna")
-	public ResponseEntity<Map<String, Long>> completeQna (@RequestBody PostDTO postDTO, Model model) {
+	public ResponseEntity<Map<String, Long>> completeQna(@RequestBody PostDTO postDTO, Model model) {
 
 		// 모델에서 사용자 정보를 가져옴
 		String userId = (String)model.getAttribute("username");

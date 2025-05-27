@@ -16,8 +16,12 @@ import com.community.dogcat.repository.search.ScrapSearch;
 public interface ScrapRepository extends JpaRepository<Scrap, Long>, ScrapSearch {
 
 	// postNo와 userId로 해당하는 scrap이 있는지 확인
-	@Query("SELECT s FROM Scrap s WHERE s.postNo = :postNo AND s.userId = :userId")
-	Optional<Scrap> findByPostNoAndUserId(@Param("postNo") Post postNo, @Param("userId") User userId);
+	// @Query("SELECT s FROM Scrap s WHERE s.postNo = :postNo AND s.userId = :userId")
+	// Optional<Scrap> findByPostNoAndUserId(@Param("postNo") Post postNo, @Param("userId") User userId);
+	
+	// 개선, 위의 개선
+	@Query("SELECT s FROM Scrap s WHERE s.postNo.postNo = :postNo AND s.userId.userId = :userId")
+	Optional<Scrap> findByPostNoAndUserId(@Param("postNo") long postNo, @Param("userId") String userId);
 
 	// scrapNo와 userId에 해당하는 scrap이 있는지 확인
 	@Query("SELECT s FROM Scrap s WHERE s.scrapNo = :scrapNo AND s.userId = :userId")

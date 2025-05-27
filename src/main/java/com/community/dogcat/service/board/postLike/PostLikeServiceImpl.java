@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.community.dogcat.domain.Post;
 import com.community.dogcat.domain.PostLike;
-import com.community.dogcat.domain.Scrap;
 import com.community.dogcat.domain.User;
 import com.community.dogcat.dto.board.postLike.PostLikeDTO;
 import com.community.dogcat.repository.board.BoardRepository;
@@ -41,7 +40,7 @@ public class PostLikeServiceImpl implements PostLikeService {
 		User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("PostLike Service Register Error : 401 Unauthorized"));
 
 		// 해당 게시물에 대한 사용자의 좋아요, 싫어요 상태 조회
-		Optional<PostLike> like = postLikeRepository.findByPostAndUser(post, user);
+		Optional<PostLike> like = postLikeRepository.findByPostNoAndUser(post, user);
 
 		//  해당 게시물에 대해 로그인한 유저의 좋아요, 싫어요 상태가 없는 경우 생성
 		if (like.isEmpty()) {
@@ -113,7 +112,7 @@ public class PostLikeServiceImpl implements PostLikeService {
 		PostLike postLike = postLikeRepository.findById(likeNo).orElseThrow(() -> new NoSuchElementException("PostLike Service Delete Error : 404 Not Found"));
 
 		// 해당 게시물에 대한 사용자의 좋아요, 싫어요 상태 조회
-		Optional<PostLike> like = postLikeRepository.findByPostAndUser(postLike.getPostNo(), user);
+		Optional<PostLike> like = postLikeRepository.findByPostNoAndUser(postLike.getPostNo(), user);
 
 		// 해당 게시물에 대해 로그인한 유저의 좋아요, 싫어요 상태가 있는 경우 삭제
 		if (like.isPresent()) {

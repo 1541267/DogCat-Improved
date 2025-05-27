@@ -28,7 +28,7 @@ import com.community.dogcat.domain.User;
 import com.community.dogcat.dto.board.BoardListDTO;
 import com.community.dogcat.dto.board.BoardPageRequestDTO;
 import com.community.dogcat.dto.board.BoardPageResponseDTO;
-import com.community.dogcat.dto.board.PostReadDTO;
+import com.community.dogcat.dto.board.post.PostReadDTO;
 import com.community.dogcat.dto.board.post.PostDTO;
 import com.community.dogcat.dto.uploadImage.FileInfoDTO;
 import com.community.dogcat.dto.uploadImage.UploadPostImageResultDTO;
@@ -41,6 +41,11 @@ import com.community.dogcat.repository.report.ReportLogRepository;
 import com.community.dogcat.repository.upload.UploadRepository;
 import com.community.dogcat.repository.user.UserRepository;
 import com.community.dogcat.repository.user.UsersAuthRepository;
+import com.community.dogcat.service.util.FileProcessingService;
+import com.community.dogcat.service.upload.UploadImageServiceImpl;
+import com.community.dogcat.util.cache.PostCache;
+import com.community.dogcat.util.cache.UploadedImageCaching;
+import com.community.dogcat.util.scheduled.BoardCacheRefresh;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,24 +80,34 @@ public class BoardServiceImpl implements BoardService {
 
 	// 업로드된 이미지 정보 얻기 - ys
 	private final UploadResultMappingImgBoard uploadResultMappingImgBoard;
+	private final UploadImageServiceImpl uploadImageServiceImpl;
+	private final UploadedImageCaching uploadedImageCaching;
+	private final FileProcessingService fileProcessingService;
 
 	// 게시글 먼저 등록 후
-	@Value("${oldUrl}")
-	private String oldUrl;
+	@Value("${oldUrl}") private String oldUrl;
 
 	// 임시 이미지 링크를 s3링크로 변경, 로컬로 전환해서 사용 
 	// 로컬용으로 s3에서 uploaded/ 로 변경
-	@Value("${newUrl}")
-	private String newUrl;
+	@Value("${newUrl}") private String newUrl;
 
-	@Value("${finalUploadPath}")
-	private String uploadedPath;
+	@Value("${finalUploadPath}") private String uploadedPath;
 
 	// 날짜로 파일 경로 분산
 	private final String datePath = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
 	// 수정으로 인한 삭제 이미지 레디스 캐시 갱신(메타, 삭제 둘 다)
-	private final RedisTemplate<String, String> rt;
+	// + 조회수 를 위해
+	private final RedisTemplate<String, PostReadDTO> redisTemplate;
+	private final RedisTemplate<String, Long> counterRedisTemplate;
+
+	// 게시글 조회 캐시 삭제 파이프라이닝
+	private final PostCache postCache;
+	// 게시글 수정 시 내용 동기화를 위해
+	private final BoardCacheRefresh boardCacheRefresh;
+
+	// 삭제된 이미지 찾을 정규식 패턴
+	Pattern p = Pattern.compile("data-uuid\\s*=\\s*\"([^\"]+)\"");
 
 	//게시물을 작성한 회원 정보 조회
 	@Override
@@ -122,18 +137,10 @@ public class BoardServiceImpl implements BoardService {
 		for (String uuid : uuids) {
 			String prefix = uuid.substring(0, 2);
 			String beforeUrl = oldUrl + uuid;
-			String fixedUrl = newUrl
-				+ datePath + "/"
-				+ prefix + "/"
-				+ uuid;
+			String fixedUrl = newUrl + datePath + "/" + prefix + "/" + uuid;
 
 			postDTO.setPostContent(
-				postDTO.getPostContent()
-					.replaceAll(
-						Pattern.quote(beforeUrl),
-						Matcher.quoteReplacement(fixedUrl)
-					)
-			);
+				postDTO.getPostContent().replaceAll(Pattern.quote(beforeUrl), Matcher.quoteReplacement(fixedUrl)));
 		}
 
 		// 게시물 작성
@@ -195,15 +202,19 @@ public class BoardServiceImpl implements BoardService {
 					reportLogRepository.deleteReportLog(reportLogId);
 				}
 			}
-			Set<FileInfoDTO> deletedFiles = uploadRepository.findFileInfoByPostNo(postNo);
-			uploadRepository.markFilesDeletedAndUnlinkPost(postNo);
 
-			for (FileInfoDTO df : deletedFiles) {
-				rt.opsForHash().delete("imgboard:meta", df.getFullName());
-				rt.opsForHash()
-					.put("imgboard:toDelete", df.getFullName(), df.getUploadPath() + "|" + df.getUploadThumbPath());
-			}
+			// 삭제 파일들 파이프라이닝으로 캐싱
+			List<FileInfoDTO> deletedFiles = uploadRepository.findFileInfoByPostNo(postNo);
+
+			// 이미지 캐시 삭제 파이프라이닝
+			uploadedImageCaching.cacheMetadataAddOrDelete(new ArrayList<>(), deletedFiles);
+			// 이미지 소프트 삭제
+			uploadRepository.markFilesDeletedAndUnlinkPost(postNo);
+			// 게시글 db 삭제
 			boardRepository.deleteById(postNo);
+			// 게시글 캐시 삭제
+			postCache.evictPostCache(postNo);
+
 		} else {
 			log.error("Board Service Delete Error : 403 Forbidden");
 		}
@@ -221,47 +232,97 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	// 상세페이지 접속시 조회수 증가
+	// 개선, 레디스 도입
 	@Override
 	public void updateViewCount(Long postNo) {
-
-		boardRepository.updateViewCount(postNo);
+		// boardRepository.updateViewCount(postNo);
 	}
 
 	// 게시글 상세보기
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public PostReadDTO readDetail(Long postNo, String userId) {
 
-		// 게시물 번호 조회 (게시물 정보 확인용)
-		Post post = boardRepository.findById(postNo)
-			.orElseThrow(() -> new NoSuchElementException("Board Service ReadDetail Error : 404 Not Found"));
+		String keyContent = "post:content";
 
+		// 1) 정적 데이터: 전용 템플릿으로 get() → 없으면 DB 조회 후 set()
+		PostReadDTO dto = (PostReadDTO)Optional.ofNullable(redisTemplate.opsForHash().get(keyContent, postNo))
+			.orElseGet(() -> {
+				Post post = boardRepository.findById(postNo)
+					.orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다: " + postNo));
+				PostReadDTO tmp = new PostReadDTO(post);
+				redisTemplate.opsForHash().put(keyContent, postNo, tmp);
+				return tmp;
+			});
+
+		// 2) 조회수 INCR, 첫 조회 시 키가 있으면 바로 INCR, 없으면 가져온 dto 에서 조회
+		Long views = postCache.getViewCountAndIncrement(postNo,
+			() -> boardRepository.findById(postNo).orElseThrow().getViewCount()    // 조회할 때마다 +1
+		);
+		dto.setViewCount(views);
+
+		// Long view;
+		// if (Boolean.TRUE.equals(counterRedisTemplate.hasKey(keyViews))) {
+		// 	view = counterRedisTemplate.opsForHash().increment(keyViews, postNo, 1);
+		// } else {
+		// 	view = dto.getViewCount() + 1;
+		// 	counterRedisTemplate.opsForHash().put(keyViews, postNo, view);
+		// }
+		// dto.setViewCount(view);
+
+		// 3) 댓글 수
+		Long replies = postCache.getCachedCount(
+			"post:replies",
+			postNo,
+			() -> replyRepository.countRepliesByPost(postNo)
+		);
+		dto.setReplyCount(replies);
+
+		// 4) 좋아요 / 싫어요 수
+		Long likes = postCache.getCachedCount(
+			"post:likes",
+			postNo,
+			() -> postLikeRepository.countByPostNoAndIsLikeTrue(postNo)
+		);
+		dto.setLikeCount(likes);
+
+		Long dislikes = postCache.getCachedCount(
+			"post:dislikes",
+			postNo,
+			() -> postLikeRepository.countByPostNoAndIsLikeFalse(postNo)
+		);
+		dto.setDislikeCount(dislikes);
+
+		// 게시물 번호 조회 (게시물 정보 확인용)
+		// Post post = boardRepository.findById(postNo)
+		// 	.orElseThrow(() -> new NoSuchElementException("Board Service ReadDetail Error : 404 Not Found"));
+
+		// 개선, 이미 로그인한 userId 가 넘어오기 때문에 user
 		// 로그인한 회원정보를 받아 userId 조회
-		User user = userRepository.findById(userId)
-			.orElseThrow(() -> new NoSuchElementException("Board Service ReadDetail Error : 401 Unauthorized"));
+		// User user = userRepository.findById(userId)
+		// 	.orElseThrow(() -> new NoSuchElementException("Board Service ReadDetail Error : 401 Unauthorized"));
 
 		// 로그인한 회원의 스크랩 여부 확인
-		Optional<Scrap> scrap = scrapRepository.findByPostNoAndUserId(post, user);
-
-		// 로그인한 회원의 좋아요/싫어요 여부 확인
-		Optional<PostLike> postLike = postLikeRepository.findByPostAndUser(post, user);
+		// Optional<Scrap> scrap = scrapRepository.findByPostNoAndUserId(post, user);
+		Optional<Scrap> scrap = scrapRepository.findByPostNoAndUserId(postNo, userId);
+		dto.setScrapNo(scrap.map(Scrap::getScrapNo).orElse(null));
 
 		// 게시글 하나에 달린 댓글 수
-		Long replyCount = replyRepository.countRepliesByPost(post.getPostNo());
+		// Long replyCount = replyRepository.countRepliesByPost(dto.getPostNo());
+		// dto.setReplyCount(replyCount);
 
-		// 게시물 정보 설정
-		PostReadDTO postReadDTO = new PostReadDTO(post);
-		postReadDTO.setReplyCount(replyCount);
-		postReadDTO.setScrapNo(scrap.map(Scrap::getScrapNo).orElseGet(() -> null));
-		postReadDTO.setLikeNo(postLike.map(PostLike::getLikeNo).orElseGet(() -> null));
-		postReadDTO.setLikeState(postLike.map(PostLike::isLikeState).orElseGet(() -> false));
-		postReadDTO.setDislikeState(postLike.map(PostLike::isDislikeState).orElseGet(() -> false));
+		// 로그인한 회원의 좋아요/싫어요 여부 확인
+		Optional<PostLike> postLike = postLikeRepository.findByPostNoAndUserId(postNo, userId);
+		dto.setLikeNo(postLike.map(PostLike::getLikeNo).orElseGet(() -> null));
+		dto.setLikeState(postLike.map(PostLike::isLikeState).orElseGet(() -> false));
+		dto.setDislikeState(postLike.map(PostLike::isDislikeState).orElseGet(() -> false));
 
-		return postReadDTO;
+		return dto;
 	}
 
 	// 게시글 존재 유무위해 - ys
 	@Override
+	// @Cacheable(value = "post:findPostExistence", key = "#postNo")
 	public Post findPostByPostNo(Long postNo) {
 
 		Optional<Post> optionalPost = boardRepository.findById(postNo);
@@ -314,68 +375,35 @@ public class BoardServiceImpl implements BoardService {
 
 			// 수정된 postContents에서 남은 uuid 추출
 			Set<String> uuids = new HashSet<>();
-			Pattern p = Pattern.compile("data-uuid\\s*=\\s*\"([^\"]+)\"");
 			Matcher m = p.matcher(postDTO.getPostContent());
 
 			while (m.find()) {
 				// 위의 정규식으론 수정 전에 업로드 된 이미지는 해싱된 폴더 까지 적혀옴, 분리
 				String raw = m.group(1);
-				String uuidOnly = raw.contains("/")
-					? raw.substring(raw.lastIndexOf('/') + 1)
-					: raw;
-				uuids.add(uuidOnly);
+				String fileName = raw.contains("/") ? raw.substring(raw.lastIndexOf('/') + 1) : raw;
+				uuids.add(fileName);
 			}
 
 			List<String> deletedImages = new ArrayList<>();
-			List<ImgBoard> deletedImagesMeta = new ArrayList<>();
+
 			if (!imgBoards.isEmpty()) {
 				for (ImgBoard img : imgBoards) {
 					String uuid = img.getFileUuid();
 					if (!uuids.contains(uuid)) {
 						deletedImages.add(uuid);
-						deletedImagesMeta.add(img);
 					}
 				}
 			}
-
-			// 개선, 수정하면서 제거된 파일은 바로 삭제 했으나 I/O 부담 줄이기 위해
-			// mark만 해두고 나중에 스케쥴로 한꺼번에 삭제
-			// deleteTempFiles.deleteUploadedFiles(deletedImages);
 			uploadRepository.updateAllDeletePossibleTrueAndUnlinkByFileUuid(deletedImages);
-
-			// 삭제된 이미지들은 레디스의 삭제 큐에 삽입, imgboard:delete
-			if (!deletedImagesMeta.isEmpty()) {
-				for (ImgBoard file : deletedImagesMeta) {
-					String uuidKey = file.getFileUuid() + file.getExtension();
-					String path = file.getUploadPath().replace(newUrl, uploadedPath);
-					String thumbPath = file.getThumbnailPath().replace(newUrl, uploadedPath);
-
-					rt.opsForHash().delete("imgboard:meta", uuidKey);
-					rt.opsForHash().put("imgboard:toDelete", uuidKey, path + "|" + thumbPath);
-				}
-			}
-
-			// s3 사용 x, 로컬로 전환
-			// if (postDTO.getPostContent().contains(oldUrl)) {
-			// 	postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
-			// }
 
 			// UUID 하나당 한 번만, 임시 경로 → 해시 폴더 경로 포함 최종 경로로 치환
 			for (String uuid : uuids) {
 				String prefix = uuid.substring(0, 2);       // 해시용 앞 두 글자
 				String beforeUrl = oldUrl + uuid;        // "…/temp/7199…"
-				String fixedUrl = newUrl
-					+ datePath + "/"
-					+ prefix + "/"
-					+ uuid;
+				String fixedUrl = newUrl + datePath + "/" + prefix + "/" + uuid;
 
 				postDTO.setPostContent(
-					postDTO.getPostContent()
-						.replaceAll(
-							Pattern.quote(beforeUrl),
-							Matcher.quoteReplacement(fixedUrl)
-						)
-				);
+					postDTO.getPostContent().replaceAll(Pattern.quote(beforeUrl), Matcher.quoteReplacement(fixedUrl)));
 			}
 
 			// 수정시간 추가
@@ -385,7 +413,21 @@ public class BoardServiceImpl implements BoardService {
 			post.modify(postDTO.getBoardCode(), postDTO.getPostTitle(), postDTO.getPostContent(), postDTO.getModDate(),
 				postDTO.getPostTag(), postDTO.isSecret(), postDTO.isReplyAuth());
 
+			// 개선, 게시글 수정 먼저 db 완료시켜 트랜잭션 끝내고 캐시 업데이트는 비동기로 위임
 			boardRepository.save(post);
+			// 수정 된 게시글 post:content에 반영하기 위해 파이프라이닝 0.5초 마다
+			boardCacheRefresh.markPostUpdated(postDTO.getPostNo());
+
+			// 개선, 수정하면서 제거된 파일은 바로 삭제 했으나 I/O 부담 줄이기 위해
+			// mark만 해두고 나중에 스케쥴로 한꺼번에 삭제
+			// deleteTempFiles.deleteUploadedFiles(deletedImages);
+			List<FileInfoDTO> deletedImagesInfo = uploadRepository.findFileInfoByUuid(deletedImages);
+			fileProcessingService.handleDeletedFiles(deletedImagesInfo);
+
+			// s3 사용 x, 로컬로 전환
+			// if (postDTO.getPostContent().contains(oldUrl)) {
+			// 	postDTO.setPostContent(postDTO.getPostContent().replace(oldUrl, newUrl));
+			// }
 
 		} else {
 			log.error("Board Service Modify Error : 403 Forbidden");

@@ -9,17 +9,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Post, Long>, BoardSearch {
-
-	// 상세페이지 접속시 조회수 증가
-	@Modifying
-	@Query("UPDATE Post p SET p.viewCount = p.viewCount+1 WHERE p.postNo = :postNo")
-	void updateViewCount(@Param("postNo") Long postNo);
 
 	// userId 와 postNo 가 일치하는 게시물 찾기
 	@Query("SELECT p FROM Post p WHERE p.postNo = :postNo AND p.userId = :userId")
@@ -33,13 +27,6 @@ public interface BoardRepository extends JpaRepository<Post, Long>, BoardSearch 
 	@Query("SELECT count(p) FROM Post p WHERE p.userId.userId = :userId")
 	Long countPostsByUser(@Param("userId") String userId);
 
-	// S3 업로드시 게시글 본문의 이미지 링크 변환
-	// @Modifying
-	// @Transactional
-	// @Query("UPDATE Post p SET p.postContent = REPLACE(p.postContent, :oldUrl, :newUrl) WHERE p.postNo = :postNo")
-	// void updatePostByS3img(@Param("oldUrl") String oldUrl, @Param("newUrl") String newUrl,
-	// 	@Param("postNo") Long postNo);
-
 	Post findByPostNo(Long postNo);
 
 	@Transactional
@@ -51,7 +38,21 @@ public interface BoardRepository extends JpaRepository<Post, Long>, BoardSearch 
 	@Transactional
 	@Modifying
 	@Query("DELETE FROM Post p WHERE p.postNo >= :threshold")
-	void deleteAllByPostNoMore1000(@Param("threshold") Long threshold);
+	void deleteAllByUpperPostNo(@Param("threshold") Long threshold);
 
+	@Query("SELECT p.postNo FROM Post p")
+	List<Long> findAllPostNo();
 
+	// 상세페이지 접속시 조회수 증가
+	// 개선, 레디스 캐싱
+	// @Modifying
+	// @Query("UPDATE Post p SET p.viewCount = p.viewCount+1 WHERE p.postNo = :postNo")
+	// void updateViewCount(@Param("postNo") Long postNo);
+
+	// S3 업로드시 게시글 본문의 이미지 링크 변환
+	// @Modifying
+	// @Transactional
+	// @Query("UPDATE Post p SET p.postContent = REPLACE(p.postContent, :oldUrl, :newUrl) WHERE p.postNo = :postNo")
+	// void updatePostByS3img(@Param("oldUrl") String oldUrl, @Param("newUrl") String newUrl,
+	// 	@Param("postNo") Long postNo);
 }

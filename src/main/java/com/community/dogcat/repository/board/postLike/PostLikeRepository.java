@@ -16,10 +16,20 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
 
 	//postNo와 userId로 해당하는 postLike가 있는지 확인
 	@Query("SELECT pl FROM PostLike pl WHERE pl.postNo = :postNo AND pl.userId = :userId")
-	Optional<PostLike> findByPostAndUser(@Param("postNo") Post postNo, @Param("userId") User userId);
+	Optional<PostLike> findByPostNoAndUser(@Param("postNo") Post postNo, @Param("userId") User userId);
+
+	// 개선, 위의 개선
+	@Query("SELECT pl FROM PostLike pl WHERE pl.postNo.postNo = :postNo AND pl.userId.userId = :userId")
+	Optional<PostLike> findByPostNoAndUserId(@Param("postNo") long postNo, @Param("userId") String userId);
 
 	@Transactional
 	void deleteAllByUserId(User user);
 
 	List<PostLike> findAllByUserId(User user);
+
+	@Query("SELECT count(*) FROM PostLike p WHERE p.likeState = true")
+	Long countByPostNoAndIsLikeTrue(Long postNo);
+
+	@Query("SELECT count(*) FROM PostLike p WHERE p.likeState = false")
+	Long countByPostNoAndIsLikeFalse(Long postNo);
 }

@@ -14,9 +14,9 @@ public class TestUploadRepository {
 	UploadRepository uploadRepository;
 
 	@Test
-	public void testFindFileUuidAndExtensionAndUploadTimeAndDeletePossibleByDeletePossibleTrue() {
+	public void testSetfindFileInfoDTOByDeletePossibleTrue() {
 
-		for (FileInfoDTO i : uploadRepository.findFileUuidAndExtensionAndUploadTimeAndDeletePossibleByDeletePossibleTrue()) {
+		for (FileInfoDTO i : uploadRepository.SetfindFileInfoDTOByDeletePossibleTrue()) {
 			System.out.println("==========================================================");
 			System.out.println(i.getFullName());
 		}

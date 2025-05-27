@@ -127,7 +127,8 @@ dependencies {
     // redis 적용
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.session:spring-session-data-redis' // 세션 관리용
-
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.15.2'
 }
 
 gatling {

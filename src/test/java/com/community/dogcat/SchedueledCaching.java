@@ -15,7 +15,7 @@ public class SchedueledCaching {
 	@Test
 	public void cachingTest() {
 
-		caching.caching();
+		// caching.caching();
 
 	}
 

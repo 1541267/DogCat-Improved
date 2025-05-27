@@ -20,7 +20,7 @@ public class UploadedImageCachingTest {
 	@Test
 	void preloadCache() {
 
-		Set<FileInfoDTO> files = uploadRepository.findAllFileUuidAndExtensionAndUploadTimeAndDeletePossible();
+		Set<FileInfoDTO> files = uploadRepository.setFindAllFileInfoDTO();
 		for (FileInfoDTO file : files) {
 			System.out.println(REDIS_KEY + "\n" + file.getUploadPath() + "\n" + file.getUploadThumbPath());
 		}
