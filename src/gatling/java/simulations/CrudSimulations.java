@@ -56,7 +56,7 @@ public class CrudSimulations extends Simulation {
 			.check(jsonPath("$.files[0].extension").saveAs("extensions"))
 			.check(jsonPath("$.files[0].name").saveAs("originalFileNames"))
 		)
-		.pause(Duration.ofSeconds(2), Duration.ofSeconds(5))
+		.pause(Duration.ofSeconds(3), Duration.ofSeconds(6))
 
 		// 3) 게시글 등록 (본문에 <img> 태그 포함)
 		.exec(session -> {
@@ -111,7 +111,7 @@ public class CrudSimulations extends Simulation {
 			.check(jsonPath("$.files[0].extension").saveAs("extensions"))
 			.check(jsonPath("$.files[0].name").saveAs("originalFileNames"))
 		)
-		.pause(Duration.ofSeconds(2), Duration.ofSeconds(5))
+		.pause(Duration.ofSeconds(3), Duration.ofSeconds(6))
 
 		.exec(session -> {
 			String url = session.getString("imageUrl");

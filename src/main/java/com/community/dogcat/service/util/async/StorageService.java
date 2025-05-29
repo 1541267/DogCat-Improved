@@ -29,6 +29,7 @@ public class StorageService {
 	/** 파일 업로드 시 파일 복사 & 이미지 캐시 업데이트
 	 * ioExecutor 비동기 사용 */
 	@Async("ioExecutor")
+	// kafka로 전환, 동기 실행으로 전환
 	public CompletableFuture<Void> processUploadedFiles(List<FileInfoDTO> uploadedFiles, String baseUploadPath) {
 
 		uploadedFiles.forEach(info -> {

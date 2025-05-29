@@ -266,3 +266,5 @@ src/main/resources/*.yml
 docker-compose.yml
 e
 .env
+/kafka-data/
+/zk-data/

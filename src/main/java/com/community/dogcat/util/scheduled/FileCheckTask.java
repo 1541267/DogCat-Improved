@@ -12,8 +12,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,6 +24,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -171,7 +174,7 @@ import lombok.extern.slf4j.Slf4j;
 
 	/** 5분 간격 toDelete의 파일 + 데이터 제거 + 빈 폴더도 제거 */
 	@Transactional
-	@Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul")
+	// @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
 	public void toDelete() throws IOException {
 
 		log.info(bigLogLine);
@@ -185,28 +188,62 @@ import lombok.extern.slf4j.Slf4j;
 			log.info(bigLogLine);
 			return;
 		}
+
 		rt.rename("imgboard:toDelete", "imgboard:toDelete:processing");
 
 		Set<Object> toDelete = rt.opsForHash().keys("imgboard:toDelete:processing");
+		Set<String> processing = rt.opsForSet().members("imgboard:thumbnail:processing");
+
+		Map<String, String> restoreMap = new HashMap<>();
 		Set<Path> parentsToCheck = new HashSet<>();
+		int count = 0;
 
 		for (Object o : toDelete) {
-			String files = (String)rt.opsForHash().get("imgboard:toDelete:processing", o);
+			String key = (String)o;
+			String file = (String)rt.opsForHash().get("imgboard:toDelete:processing", o);
+			assert file != null;
 
-			assert files != null;
-			String[] paths = files.split("\\|");
-			String directory = paths[0].substring(0, paths[0].lastIndexOf("/"));
-			parentsToCheck.add(Path.of(directory));
-			deleteFile(Paths.get(paths[0]));
-			deleteFile(Paths.get(paths[1]));
+			if (processing != null && processing.contains(key)) {
+				restoreMap.put(key, file);
+				continue;
+			}
+
+			try {
+				count += 2;
+
+				String[] paths = file.split("\\|");
+				String directory = paths[0].substring(0, paths[0].lastIndexOf("/"));
+				parentsToCheck.add(Path.of(directory));
+
+				deleteFile(Paths.get(paths[0]));
+				deleteFile(Paths.get(paths[1]));
+			} catch (Exception e) {
+				log.info("사용중인 파일이 있습니다, 해당 파일은 제외합니다");
+			}
 		}
-
-		rt.delete("imgboard:toDelete:processing");
+		log.info("삭제 된 파일 개수: {}", count);
+		// rt.delete("imgboard:toDelete:processing");
 		uploadRepository.deleteAllByDeletePossibleTrue();
+
+		rt.executePipelined((RedisCallback<Object>)conn -> {
+			byte[] deleteKeyBytes = rt.getStringSerializer().serialize("imgboard:toDelete");
+			byte[] procKeyBytes = rt.getStringSerializer().serialize("imgboard:toDelete:processing");
+
+			if (!restoreMap.isEmpty()) {
+
+				for (Map.Entry<String, String> e : restoreMap.entrySet()) {
+					conn.hSet(deleteKeyBytes,
+						rt.getStringSerializer().serialize(e.getKey()),
+						rt.getStringSerializer().serialize(e.getValue()));
+				}
+			}
+			// 2) 처리 해시 전체 삭제
+			conn.del(procKeyBytes);
+			return null;
+		});
 
 		log.info(smolLogLine);
 		log.info("비어있는 경로 삭제 중..");
-
 		for (Path path : parentsToCheck) {
 			boolean hasFile;
 			try (Stream<Path> stream = Files.list(path)) {
@@ -223,6 +260,64 @@ import lombok.extern.slf4j.Slf4j;
 		log.info(bigLogLine);
 	}
 }
+// 	/** 5분 간격 toDelete의 파일 + 데이터 제거 + 빈 폴더도 제거 */
+// 	@Transactional
+// 	// @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul")
+// 	public void toDelete() throws IOException {
+//
+// 		log.info(bigLogLine);
+// 		long startTime = System.currentTimeMillis();
+// 		log.info("FileCheckTask ToDelete : Start");
+// 		log.info(smolLogLine);
+//
+// 		if (rt.opsForHash().size("imgboard:toDelete") == 0) {
+// 			log.info("삭제 대기중인 파일이 없습니다");
+// 			log.info("FileCheckTask ToDelete : Complete, {}s", (System.currentTimeMillis() - startTime) / 1000.0);
+// 			log.info(bigLogLine);
+// 			return;
+// 		}
+// 		rt.rename("imgboard:toDelete", "imgboard:toDelete:processing");
+//
+// 		Set<Object> toDelete = rt.opsForHash().keys("imgboard:toDelete:processing");
+// 		Set<Path> parentsToCheck = new HashSet<>();
+// 		int count = 0;
+//
+// 		for (Object o : toDelete) {
+// 			String files = (String)rt.opsForHash().get("imgboard:toDelete:processing", o);
+// 			count += 2;
+// 			assert files != null;
+// 			String[] paths = files.split("\\|");
+// 			String directory = paths[0].substring(0, paths[0].lastIndexOf("/"));
+// 			parentsToCheck.add(Path.of(directory));
+// 			try {
+// 				deleteFile(Paths.get(paths[0]));
+// 				deleteFile(Paths.get(paths[1]));
+// 			} catch (Exception e) {
+// 				log.info("사용중인 파일이 있습니다, 해당 파일은 제외합니다");
+// 			}
+// 		}
+// 		log.info("삭제 된 파일 개수: {}", count);
+// 		rt.delete("imgboard:toDelete:processing");
+// 		uploadRepository.deleteAllByDeletePossibleTrue();
+//
+// 		log.info(smolLogLine);
+// 		log.info("비어있는 경로 삭제 중..");
+// 		for (Path path : parentsToCheck) {
+// 			boolean hasFile;
+// 			try (Stream<Path> stream = Files.list(path)) {
+// 				hasFile = stream.anyMatch(Files::isRegularFile);
+// 			} catch (NoSuchFileException e) {
+// 				continue;
+// 			}
+// 			if (!hasFile) {
+// 				deleteDirectory(path);
+// 			}
+// 		}
+// 		log.info(smolLogLine);
+// 		log.info("FileCheckTask ToDelete : Complete, {}s", (System.currentTimeMillis() - startTime) / 1000.0);
+// 		log.info(bigLogLine);
+// 	}
+// }
 
 // // 매달 마지막 날 정각 5분전 비어있는 디렉토리 제거
 // @Scheduled(cron = "0 55 23 L * *", zone = "Asia/Seoul")

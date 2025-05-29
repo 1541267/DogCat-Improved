@@ -52,9 +52,9 @@ public class AsyncConfig implements AsyncConfigurer {
 		ThreadPoolTaskExecutor exec = new ThreadPoolTaskExecutor();
 		int cores = Runtime.getRuntime().availableProcessors(); // 12
 		// 블로킹 I/O가 많으면 코어 수×(1 + 대기/실행) 공식을 적용
-		exec.setCorePoolSize(40);    // 24
-		exec.setMaxPoolSize(60);     // 48
-		exec.setQueueCapacity(5000);         // 요청 폭주 시 적당히 대기
+		exec.setCorePoolSize(60);    // 24
+		exec.setMaxPoolSize(100);     // 48
+		exec.setQueueCapacity(2500);         // 요청 폭주 시 적당히 대기
 		exec.setThreadNamePrefix("io-");
 		exec.initialize();
 		return exec;
@@ -68,7 +68,7 @@ public class AsyncConfig implements AsyncConfigurer {
 		// 순수 연산은 코어 수 내에서만 실행
 		exec.setCorePoolSize(14);
 		exec.setMaxPoolSize(15);
-		exec.setQueueCapacity(500);
+		exec.setQueueCapacity(1000);
 		exec.setThreadNamePrefix("cpu-");
 		exec.initialize();
 		return exec;

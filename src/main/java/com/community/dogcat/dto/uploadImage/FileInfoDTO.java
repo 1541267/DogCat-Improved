@@ -13,9 +13,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 // 개선, 레디스 캐싱 | repository 사용 시 file의 uuid + 확장자를 위한 Dto
 public class FileInfoDTO {

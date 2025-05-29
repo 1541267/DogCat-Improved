@@ -6,19 +6,23 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.community.dogcat.domain.Post;
 import com.community.dogcat.dto.uploadImage.FileInfoDTO;
+import com.community.dogcat.dto.uploadImage.ThumbnailRequestPayload;
 import com.community.dogcat.repository.upload.UploadRepository;
 import com.community.dogcat.service.util.FileProcessingService;
+import com.community.dogcat.service.util.async.ThumbnailService;
 import com.community.dogcat.util.cache.UploadedImageCaching;
 import com.community.dogcat.util.uploader.DeleteTempFiles;
 import com.google.gson.JsonArray;
@@ -49,17 +53,11 @@ public class UploadImageServiceImpl implements UploadImageService {
 	// 개선, 놔두고 매일 새벽에 한꺼번에 정리 -> I/O 부담 제거
 	private final DeleteTempFiles deleteTempFiles;
 
-	// 개선, 레디스 템플릿
-	private final RedisTemplate<String, String> rt;
-
-	// 개선, 레디스 캐싱 파이프라이닝
-	private final UploadedImageCaching uploadedImageCaching;
-
-	private final UploadRepository uploadRepository;
-
 	private final FileProcessingService fileProcessingService;
 
+	// 이미지 업로드 시 db 저장, 트랜잭션 축소를 위해 moveAndSaveImage에서 분리
 	private final UploadMetaService uploadMetaService;
+
 
 	@Override
 	// 개선, 게시글 등록 시 임시 파일을 업로드 성공 폴더로 옮김
@@ -81,9 +79,15 @@ public class UploadImageServiceImpl implements UploadImageService {
 		uploadMetaService.saveImageToDB(infos, postNo);
 
 		// 비동기 파일 이동 + 캐싱, 썸네일 생성 위임, 파일 이동 후 썸네일 생성 되고 완료 요청을 받음
-		fileProcessingService.handleFinalSave(infos, baseDir);
+		fileProcessingService.handleFinalSave(infos, baseDir).join();
+
+
+
 		// 비동기 썸네일 생성 (cpuExecutor)
-		fileProcessingService.handleThumbnails(infos, baseDir);
+		// 개선, 썸네일은 kafka가 담당
+		// fileProcessingService.handleThumbnails(infos, baseDir);
+		// kafkaTemplate.send("thumbnail-Generator", new ThumbnailRequestPayload(infos, baseDir));
+
 	}
 
 	// summernote 취소버튼 누를 때 임시파일 제거
@@ -149,7 +153,7 @@ public class UploadImageServiceImpl implements UploadImageService {
 		jsonObject.add("files", jsonArray);
 
 		// 임시 파일 비동기 저장, ioExecutor 풀
-		fileProcessingService.handleTempSave(dtos, multipartFiles);
+		fileProcessingService.handleTempSave(dtos, multipartFiles).join();
 
 		return jsonObject.toString();
 	}
