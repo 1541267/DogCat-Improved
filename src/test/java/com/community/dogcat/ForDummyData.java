@@ -113,7 +113,7 @@ class ForDummyData {
 
 	@Test
 	public void deleteDummyPost() {
-		uploadRepository.unlinkAllByUpperPostNo(179838L);
-		boardRepository.deleteAllByUpperPostNo(179838L);
+		uploadRepository.unlinkAllByUpperPostNo(62144L);
+		boardRepository.deleteAllByUpperPostNo(62144L);
 	}
 }

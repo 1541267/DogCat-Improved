@@ -37,8 +37,8 @@ public class BoardCacheRefresh {
 	private final String smolLogLine = "-------------------------------------------";
 
 	@Transactional
-	@Scheduled(cron = "*/30 * * * * *")
-	/** 30초마다 조회수 업데이트 */
+	@Scheduled(cron = "*/10 * * * * *")
+	/** 10초마다 조회수 업데이트 */
 	public void updateViewCount() {
 
 		// log.info(bigLogLine);
@@ -69,13 +69,9 @@ public class BoardCacheRefresh {
 
 	// 업데이트 된 게시글 큐에 삽입
 	public void markPostUpdated(Long postNo) {
-
 		postUpdateQueue.add(postNo);
-
 	}
-	
-	
-	
+
 	@Scheduled(fixedDelay = 250)
 	public void updateContent() {
 

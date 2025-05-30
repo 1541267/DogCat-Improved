@@ -51,7 +51,8 @@ public class PostCache {
 			counterRedisTemplate.opsForHash();
 		String field = postNo.toString();
 		if (hashOps.hasKey(hash, field)) {
-			return hashOps.get(hash, field);
+			hashOps.put(hash, field, dbCount.get());
+			return dbCount.get();
 		} else {
 			Long cnt = dbCount.get();
 			hashOps.put(hash, field, cnt);

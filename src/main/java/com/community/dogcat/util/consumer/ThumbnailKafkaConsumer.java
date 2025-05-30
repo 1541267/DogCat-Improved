@@ -18,7 +18,7 @@ public class ThumbnailKafkaConsumer {
 	private final ThumbnailService thumbnailService;
 	private final RedisTemplate<String, String> rt;
 
-	@KafkaListener(topics = "thumbnail-Generator", groupId = "thumbnail-workers")
+	@KafkaListener(topics = "thumbnail-Generator", groupId = "thumbnail-workers", concurrency = "14")
 	public void consume(ThumbnailRequestPayload payload) {
 		thumbnailService.createThumbnails(payload.getInfos(), payload.getBaseDir()).join();
 

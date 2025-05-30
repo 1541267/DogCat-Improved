@@ -3,33 +3,33 @@ package com.community.dogcat.util.scheduled;
 import static org.apache.commons.io.file.PathUtils.*;
 
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
-import com.community.dogcat.dto.uploadImage.FileInfoDTO;
 import com.community.dogcat.repository.upload.UploadRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -56,6 +56,7 @@ import lombok.extern.slf4j.Slf4j;
 
 	private final String bigLogLine = "===========================================";
 	private final String smolLogLine = "-------------------------------------------";
+	@Qualifier("ioExecutor") @Autowired private ThreadPoolTaskExecutor ioExecutor;
 
 	// s3 비활성
 	// @Value("${cloud.aws.s3.bucket}")
@@ -175,7 +176,7 @@ import lombok.extern.slf4j.Slf4j;
 	/** 5분 간격 toDelete의 파일 + 데이터 제거 + 빈 폴더도 제거 */
 	@Transactional
 	@Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul")
-	public void toDelete() throws IOException {
+	public void toDelete() throws IOException, InterruptedException {
 
 		log.info(bigLogLine);
 		long startTime = System.currentTimeMillis();
@@ -196,7 +197,8 @@ import lombok.extern.slf4j.Slf4j;
 
 		Map<String, String> restoreMap = new HashMap<>();
 		Set<Path> parentsToCheck = new HashSet<>();
-		int count = 0;
+
+		List<String> filesToRemove = new ArrayList<>();
 
 		for (Object o : toDelete) {
 			String key = (String)o;
@@ -208,21 +210,84 @@ import lombok.extern.slf4j.Slf4j;
 				continue;
 			}
 
-			try {
-				count += 2;
+			String[] paths = file.split("\\|");
+			String directory = paths[0].substring(0, paths[0].lastIndexOf("/"));
+			parentsToCheck.add(Path.of(directory));
 
-				String[] paths = file.split("\\|");
-				String directory = paths[0].substring(0, paths[0].lastIndexOf("/"));
-				parentsToCheck.add(Path.of(directory));
-
-				deleteFile(Paths.get(paths[0]));
-				deleteFile(Paths.get(paths[1]));
-			} catch (Exception e) {
-				log.info("사용중인 파일이 있습니다, 해당 파일은 제외합니다");
-			}
+			filesToRemove.add(paths[0].replace('/', '\\'));
+			filesToRemove.add(paths[1].replace('/', '\\'));
 		}
-		log.info("삭제 된 파일 개수: {}", count);
-		// rt.delete("imgboard:toDelete:processing");
+
+		// java의 deleteFile() api로 호출하면 jni 오버헤드, jvm 스케줄줄링 비용 증가?
+		AtomicInteger count = new AtomicInteger();
+
+		if (!filesToRemove.isEmpty()) {
+			long startDeleteTime = System.currentTimeMillis();
+
+			int batchSize = 500;  // 한 배치당 처리할 파일 수
+			for (int i = 0; i < filesToRemove.size(); i += batchSize) {
+				int end = Math.min(i + batchSize, filesToRemove.size());
+				List<String> batch = filesToRemove.subList(i, end);
+
+				// 이 배치만큼만 ioExecutor 에 던집니다
+				List<CompletableFuture<Void>> futures = batch.stream()
+					.map(pathStr -> CompletableFuture.runAsync(() -> {
+						try {
+							count.getAndIncrement();
+							Files.deleteIfExists(Paths.get(pathStr));
+						} catch (IOException e) {
+							log.warn("파일 삭제 실패 ({}): {}", pathStr, e.getMessage());
+						}
+					}, ioExecutor))
+					.toList();
+
+				// 이 배치 삭제가 모두 끝날 때까지 대기
+				CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+			}
+
+			log.info("병렬 삭제 완료 삭제된 파일 개수와 시간: {}, {}s", count,
+				(System.currentTimeMillis() - startDeleteTime) / 1000.0);
+		}
+
+		// -> os의 native rm 프로세스 한번의 호출로 한꺼번에 제거
+		// if (!filesToRemove.isEmpty()) {
+		// 	log.info("파일 삭제");
+		// 	long startDeleteTime = System.currentTimeMillis();
+		// 	// 삭제 할 임시 파일 목록 -> 목록 없이 커맨드에 붙이면 너무 길어서 실행이 안됨
+		// 	Path todayPath = Paths.get(
+		// 		"c:/testupload/uploaded/" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy")));
+		// 	Path tempList = Files.createTempFile(todayPath, "toDeleteList", ".txt");
+		// 	Files.write(tempList, filesToRemove, StandardOpenOption.TRUNCATE_EXISTING);
+		//
+		// 	String psCmd = String.format(
+		// 		"Get-Content -LiteralPath '%s' | " +
+		// 			"ForEach-Object { Write-Output \"Deleting $_\"; Remove-Item -Force -ErrorAction SilentlyContinue $_ }",
+		// 		tempList.toAbsolutePath()
+		// 	);
+		//
+		// 	List<String> cmd = List.of(
+		// 		"powershell.exe",
+		// 		"-NoProfile",
+		// 		"-ExecutionPolicy", "Bypass",
+		// 		"-Command", psCmd
+		// 	);
+		//
+		// 	ProcessBuilder pb = new ProcessBuilder(cmd).redirectErrorStream(true);
+		// 	Process p = pb.start();
+		// 	try (BufferedReader reader = new BufferedReader(
+		// 		new InputStreamReader(p.getInputStream(), Charset.defaultCharset()))) {
+		// 		reader.lines().forEach(line -> log.debug("[PS] {}", line));
+		// 	}
+		// 	int exit = p.waitFor();
+		// 	if (exit != 0) {
+		// 		log.error("PowerShell 삭제 실패 (exit code={})", exit);
+		// 	} else {
+		// 		log.info("PowerShell 네이티브 삭제 성공: {}개 파일, 소요 {}s",
+		// 			filesToRemove.size(),
+		// 			(System.currentTimeMillis() - startDeleteTime) / 1000.0);
+		// 	}
+		// 	Files.deleteIfExists(tempList);
+		// }
 		uploadRepository.deleteAllByDeletePossibleTrue();
 
 		rt.executePipelined((RedisCallback<Object>)conn -> {
@@ -260,10 +325,11 @@ import lombok.extern.slf4j.Slf4j;
 		log.info(bigLogLine);
 	}
 }
+
 // 	/** 5분 간격 toDelete의 파일 + 데이터 제거 + 빈 폴더도 제거 */
 // 	@Transactional
 // 	// @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul")
-// 	public void toDelete() throws IOException {
+// 	public void toDelete() throws IOException, InterruptedException {
 //
 // 		log.info(bigLogLine);
 // 		long startTime = System.currentTimeMillis();
@@ -276,20 +342,33 @@ import lombok.extern.slf4j.Slf4j;
 // 			log.info(bigLogLine);
 // 			return;
 // 		}
+//
 // 		rt.rename("imgboard:toDelete", "imgboard:toDelete:processing");
 //
 // 		Set<Object> toDelete = rt.opsForHash().keys("imgboard:toDelete:processing");
+// 		Set<String> processing = rt.opsForSet().members("imgboard:thumbnail:processing");
+//
+// 		Map<String, String> restoreMap = new HashMap<>();
 // 		Set<Path> parentsToCheck = new HashSet<>();
 // 		int count = 0;
 //
 // 		for (Object o : toDelete) {
-// 			String files = (String)rt.opsForHash().get("imgboard:toDelete:processing", o);
-// 			count += 2;
-// 			assert files != null;
-// 			String[] paths = files.split("\\|");
-// 			String directory = paths[0].substring(0, paths[0].lastIndexOf("/"));
-// 			parentsToCheck.add(Path.of(directory));
+// 			String key = (String)o;
+// 			String file = (String)rt.opsForHash().get("imgboard:toDelete:processing", o);
+// 			assert file != null;
+//
+// 			if (processing != null && processing.contains(key)) {
+// 				restoreMap.put(key, file);
+// 				continue;
+// 			}
+//
 // 			try {
+// 				count += 2;
+//
+// 				String[] paths = file.split("\\|");
+// 				String directory = paths[0].substring(0, paths[0].lastIndexOf("/"));
+// 				parentsToCheck.add(Path.of(directory));
+//
 // 				deleteFile(Paths.get(paths[0]));
 // 				deleteFile(Paths.get(paths[1]));
 // 			} catch (Exception e) {
@@ -297,8 +376,25 @@ import lombok.extern.slf4j.Slf4j;
 // 			}
 // 		}
 // 		log.info("삭제 된 파일 개수: {}", count);
-// 		rt.delete("imgboard:toDelete:processing");
+// 		// rt.delete("imgboard:toDelete:processing");
 // 		uploadRepository.deleteAllByDeletePossibleTrue();
+//
+// 		rt.executePipelined((RedisCallback<Object>)conn -> {
+// 			byte[] deleteKeyBytes = rt.getStringSerializer().serialize("imgboard:toDelete");
+// 			byte[] procKeyBytes = rt.getStringSerializer().serialize("imgboard:toDelete:processing");
+//
+// 			if (!restoreMap.isEmpty()) {
+//
+// 				for (Map.Entry<String, String> e : restoreMap.entrySet()) {
+// 					conn.hSet(deleteKeyBytes,
+// 						rt.getStringSerializer().serialize(e.getKey()),
+// 						rt.getStringSerializer().serialize(e.getValue()));
+// 				}
+// 			}
+// 			// 2) 처리 해시 전체 삭제
+// 			conn.del(procKeyBytes);
+// 			return null;
+// 		});
 //
 // 		log.info(smolLogLine);
 // 		log.info("비어있는 경로 삭제 중..");

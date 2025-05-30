@@ -27,9 +27,9 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
 
 	List<PostLike> findAllByUserId(User user);
 
-	@Query("SELECT count(*) FROM PostLike p WHERE p.likeState = true")
+	@Query("SELECT count(*) FROM PostLike p WHERE p.postNo.postNo = :postNo AND p.likeState = true")
 	Long countByPostNoAndIsLikeTrue(Long postNo);
 
-	@Query("SELECT count(*) FROM PostLike p WHERE p.likeState = false")
+	@Query("SELECT count(*) FROM PostLike p WHERE p.postNo.postNo = :postNo AND p.likeState = false")
 	Long countByPostNoAndIsLikeFalse(Long postNo);
 }

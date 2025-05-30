@@ -27,11 +27,6 @@ public class Caching {
 	private final RedisTemplate<String, Long> redisTemplate;
 	private final ConcurrentMap<String, LongAdder> buffer = new ConcurrentHashMap<>();
 
-	/** 애플리케이션에서 호출 **/
-	public void increment(String key) {
-		buffer.computeIfAbsent(key, k -> new LongAdder()).increment();
-	}
-
 	/** 5초마다 모은 값을 Redis에 파이프라인으로 한 번에 전송 **/
 	@Scheduled(fixedRate = 5000)
 	public void flushToRedis() {

@@ -19,7 +19,7 @@ public class FileCheckTaskTest {
 	}
 
 	@Test
-	public void toDelete() throws IOException {
+	public void toDelete() throws IOException, InterruptedException {
 		fileCheckTask.toDelete();
 	}
 }

@@ -57,9 +57,7 @@ public class CacheWarmup implements ApplicationListener<ApplicationReadyEvent> {
 		log.info("Image Cache WarmUp...");
 
 		// 이미지 캐시웜업 파이프라이닝
-		uploadedImageCaching.cacheMetadataAddOrDelete(files, new ArrayList<>());
-		uploadedImageCaching.cacheMetadataAddOrDelete(new ArrayList<>(), deletedFiles);
-
+		uploadedImageCaching.cacheMetadataAddOrDelete(files, deletedFiles);
 	}
 
 	/** 게시글 캐싱
