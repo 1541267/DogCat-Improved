@@ -174,7 +174,7 @@ import lombok.extern.slf4j.Slf4j;
 
 	/** 5분 간격 toDelete의 파일 + 데이터 제거 + 빈 폴더도 제거 */
 	@Transactional
-	// @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
+	@Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul")
 	public void toDelete() throws IOException {
 
 		log.info(bigLogLine);
