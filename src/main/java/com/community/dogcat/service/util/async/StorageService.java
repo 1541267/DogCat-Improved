@@ -28,9 +28,9 @@ public class StorageService {
 
 	/** 파일 업로드 시 파일 복사 & 이미지 캐시 업데이트
 	 * ioExecutor 비동기 사용 */
-	@Async("ioExecutor")
+	// @Async("ioExecutor")
 	// kafka로 전환, 동기 실행으로 전환
-	public CompletableFuture<Void> processUploadedFiles(List<FileInfoDTO> uploadedFiles, String baseUploadPath) {
+	public void processUploadedFiles(List<FileInfoDTO> uploadedFiles, String baseUploadPath) {
 
 		uploadedFiles.forEach(info -> {
 			try {
@@ -41,7 +41,7 @@ public class StorageService {
 		});
 
 		uploadedImageCaching.cacheMetadataAddOrDelete(uploadedFiles, new ArrayList<>());
-		return CompletableFuture.completedFuture(null);
+		// return CompletableFuture.completedFuture(null);
 	}
 
 	/** 게시글 수정 시 캐시 삭제 비동기를 위해 */

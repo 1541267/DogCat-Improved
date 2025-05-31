@@ -81,8 +81,6 @@ public class UploadImageServiceImpl implements UploadImageService {
 		// 비동기 파일 이동 + 캐싱, 썸네일 생성 위임, 파일 이동 후 썸네일 생성 되고 완료 요청을 받음
 		fileProcessingService.handleFinalSave(infos, baseDir).join();
 
-
-
 		// 비동기 썸네일 생성 (cpuExecutor)
 		// 개선, 썸네일은 kafka가 담당
 		// fileProcessingService.handleThumbnails(infos, baseDir);

@@ -41,6 +41,7 @@ public class FileProcessingService {
 	}
 
 	// 2) 최종 복사 + 캐시
+	@Async("ioExecutor")
 	public CompletableFuture<Void> handleFinalSave(List<FileInfoDTO> dtos, String baseUploadPath) {
 		String PROCESSING_KEY = "imgboard:thumbnail:processing";
 
@@ -48,10 +49,23 @@ public class FileProcessingService {
 
 		// 썸네일 처리 중 표시, consummer (kafkaListener) 에서 끝나면 삭제
 		rt.opsForSet().add(PROCESSING_KEY, files);
+		// 2) 실제 파일 복사(→디스크 또는 S3 업로드) : 반드시 ioExecutor에서 실행
 
-		return storageService.processUploadedFiles(dtos, baseUploadPath)
-			.thenRun(() ->
-				kafkaTemplate.send("thumbnail-Generator", new ThumbnailRequestPayload(dtos, baseUploadPath)));
+		CompletableFuture<Void> copyStage = CompletableFuture.runAsync(() -> {
+			// storageService.processFinalFiles 내부에서
+			// → Files.copy 또는 S3 업로드 등의 블로킹 I/O가 일어남
+			storageService.processUploadedFiles(dtos, baseUploadPath);
+		}, ioExecutor);
+
+		// 3) “copyStage”가 완료된 뒤에만 Kafka로 썸네일 요청 데이터 전송
+		CompletableFuture<Void> kafkaStage = copyStage.thenRunAsync(() -> {
+			ThumbnailRequestPayload payload = new ThumbnailRequestPayload(dtos, baseUploadPath);
+			kafkaTemplate.send("thumbnail-Generator", payload);
+		}, ioExecutor);
+		return kafkaStage;
+		// return storageService.processUploadedFiles(dtos, baseUploadPath)
+		// 	.thenRun(() ->
+		// 		kafkaTemplate.send("thumbnail-Generator", new ThumbnailRequestPayload(dtos, baseUploadPath)));
 	}
 
 	// 3) 삭제된 파일 캐시 제거

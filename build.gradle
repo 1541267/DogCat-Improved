@@ -129,8 +129,12 @@ dependencies {
     implementation 'org.springframework.session:spring-session-data-redis' // 세션 관리용
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.15.2'
-    // 썸네일레이터 보다 더 가벼움?
-    implementation 'org.imgscalr:imgscalr-lib:4.2'
+
+    // prometheus + grafana
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    implementation 'org.springframework.boot:spring-boot-starter'
 }
 
 gatling {
@@ -177,7 +181,6 @@ tasks.register('copyYml', Copy) {
 // docker
 processResources.dependsOn('copyDockerYml')
 tasks.register('copyDockerYml') {
-    // 증분 빌드나 상태 추적이 전혀 없으니, .gradle 캐시 파일 충돌 걱정 없이 무조건 복사
     doLast {
         project.copy {
             from 'Secret-DogCat/Docker'

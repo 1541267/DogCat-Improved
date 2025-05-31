@@ -229,7 +229,6 @@ import lombok.extern.slf4j.Slf4j;
 				int end = Math.min(i + batchSize, filesToRemove.size());
 				List<String> batch = filesToRemove.subList(i, end);
 
-				// 이 배치만큼만 ioExecutor 에 던집니다
 				List<CompletableFuture<Void>> futures = batch.stream()
 					.map(pathStr -> CompletableFuture.runAsync(() -> {
 						try {

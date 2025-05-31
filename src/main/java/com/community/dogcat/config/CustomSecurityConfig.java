@@ -75,6 +75,7 @@ public class CustomSecurityConfig {
 			.antMatchers("/admin/**").hasRole("ADMIN")
 			.antMatchers("/user/**", "/", "/check/**", "/login/**", "/oauth2/**", "/error/**").permitAll()
 			.antMatchers("/css/**", "/fonts/**", "/js/**", "/img/**", "/static/**", "/home/home").permitAll()
+			.antMatchers("/actuator/prometheus").permitAll()
 			.anyRequest().authenticated();
 
 		http.formLogin()

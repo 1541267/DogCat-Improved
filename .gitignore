@@ -268,3 +268,4 @@ e
 .env
 /kafka-data/
 /zk-data/
+/docker/
