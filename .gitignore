@@ -269,3 +269,4 @@ e
 /kafka-data/
 /zk-data/
 /docker/
+/etc/
