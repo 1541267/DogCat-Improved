@@ -251,7 +251,7 @@ public class BoardServiceImpl implements BoardService {
 				Post post = boardRepository.findById(postNo)
 					.orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다: " + postNo));
 				PostReadDTO tmp = new PostReadDTO(post);
-				redisTemplate.opsForHash().put(keyContent, postNo, tmp);
+				redisTemplate.opsForHash().putIfAbsent(keyContent, postNo, tmp);
 				return tmp;
 			});
 
