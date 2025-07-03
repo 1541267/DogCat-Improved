@@ -1,22 +1,22 @@
-![header](https://capsule-render.vercel.app/api?type=waving&color=67cafe&height=250&fontColor=ffffff&fontSize=50&fontAlignY=30&animation=fadeIn&desc=반려동물%20커뮤니티%20프로젝트&descAlignY=55&descFontSize=60&descAlign=50&&text=Goott%20Arcademy&textAlign=50)
+<div align = "center">
+<img
+  src="https://capsule-render.vercel.app/api?type=waving&color=67cafe&height=250&fontColor=ffffff&fontSize=50&fontAlignY=30&animation=fadeIn&desc=반려동물%20커뮤니티%20프로젝트&descAlignY=55&descFontSize=60&descAlign=50&&text=Goott%20Arcademy&textAlign=50"
+  alt="header"
+  style="display:block; margin-left:auto; margin-right:auto;"
+/>
+</div>
+
 <div align=center>
-	<h3>🐈말랑 발자국🐕</h3>
-	
-<hr>
-<h4> 기존 프로젝트의 개선판 </h4>
+	<h3>🐈말랑 발자국 (개선판)🐕</h3>
+</div>
 
-
-<h3>작업 내용</h3>
-
-- 기존의 CRUD 성능 개선
 <hr>
 
 
-</>
- <h1> 아래로는 프로젝트 완성 했을 때의 ReadMe</h1>
+ <div align=center>
 	<h3>📚 Tech Stack 📚</h3>
-</>
-</><br>
+
+<br>
 	<h3>✨Front End✨</h3>
 		<img style = "height: 30px;" src="https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=HTML5&logoColor=white" />
 		<img style = "height: 30px;" src="https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=CSS3&logoColor=white" />
@@ -53,11 +53,12 @@
 	<h3>🎨 SNS & Portfolio 🎨</h3>
 </div>
 <h2>팀원 소개</h2>
+<div align = "center">
 
 |<img src="https://avatars.githubusercontent.com/u/68197163?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/167984075?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/108951117?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/156433565?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/173113765?v=4" width="150" height="150"/>|
 |:-:|:-:|:-:|:-:|:-:|
 |[@1541267](https://github.com/1541267)|[@seulbaong](https://github.com/seulbaong)|[@parkminwoo0802](https://github.com/parkminwoo0802)|[@ongdanul](https://github.com/ongdanul)|[@hyunseok-goo](https://github.com/hyunseok-goo)|
-
+</div>
 <br>
 	
 <h2>1. 개발 및 배포 환경</h2>
@@ -82,9 +83,9 @@ Github Flow
 
 <h2>3. 역할 분담</h2>
 
-- 팀장, 파일 업로드 처리: 김윤섭 (<a href="https://github.com/1541267">@a1541267</a>)
-- 게시판 담당: 김주희(<a href="https://github.com/ongdanul">@ongdanul</a>) | 김현석(<a href="https://github.com/hyunseok-goo">@hyunseok-goo</a>)<br>
-- 시큐리티, 신고 담당: 김슬기(<a href="https://github.com/seulbaong">@seulbaong</a>) | 박민우(<a href="https://github.com/parkminwoo0802">@parkminwoo0802</a>)<br><br>
+- 팀장 & 파일 업로드 & AWS 인프라: 김윤섭 (<a href="https://github.com/1541267">@a1541267</a>)
+- 게시판: 김주희(<a href="https://github.com/ongdanul">@ongdanul</a>) | 김현석(<a href="https://github.com/hyunseok-goo">@hyunseok-goo</a>)<br>
+- 시큐리티 & 신고 담당: 김슬기(<a href="https://github.com/seulbaong">@seulbaong</a>) | 박민우(<a href="https://github.com/parkminwoo0802">@parkminwoo0802</a>)<br><br>
 <h2>4. 페이지별 기능</h2>
 
 
@@ -537,3 +538,32 @@ JWT방식의 정확한 구현을 위해 학습시간을 가짐<br>
 완성 단계에 이르러서는 완성된 코드를 계속해서 수정하면서 어떻게 해서든 깔끔하게 작성하려 노력하였는데 이때 코드 퀄리티 부분에서 제 역량이 아직 많이 부족함을 느끼게 되었습니다.
 
 <br><br>
+
+<hr>
+
+<h4> 개선 작업 내용</h4>
+<div align = left>
+	
+- Redis 캐시 도입, 조회 로직 최적화 및 Summernote 이미지 업로드 비동기 전환
+    - 4분간 부하 테스트(쓰기 10 RPS, 읽기 20 RPS) 결과
+    - 응답 속도 Max: 40,996ms → 23,406ms(↓43%), p99: 25,537ms → 17,912ms(↓30%) 개선
+- 게시글 캐싱과 파이프라이닝, 파일 I/O 전면 비동기화 및 로직 최적화, 스레드풀 튜닝
+    - 게시글 동시 조회 요청에도 조건부 원자 캐시 + HINCRBY로 레이스 컨디션 및 중복 DB 조회를 방지해 정확하고 안정적 서비스 제공
+    - 단일 전체 트랜잭션 처리로 인한 응답 지연 문제를 트랜잭션 축소 및 비동기 처리로 해소해 응답 속도 개선
+    - I/O 및 CPU Bound 작업에 맞춘 스레드풀 크기 및 큐 용량 조절
+    - 응답 속도 Max: 23,406ms → 936ms(↓96%), p99: 17,912ms → 2,700ms(↓85%) 개선
+- Prometheus + Grafana를 통한 실시간 모니터링을 활용해 Kafka의 병목 현상 분석 및 제거
+    - 단일 메시지 기반 소비 구조를 배치 + 병렬 처리 구조로 전환, 프로듀서와 컨슈머 파라미터를 튜닝하여 처리량을 개선
+    - 비동기 메시징과 Zero-copy 전송, Redis 캐싱 최적화를 통해 전체 파이프라인 성능 향상
+    - 응답 속도 Max: 936ms → 552ms(↓41%), p99: 2,700ms → 221ms(↓92%)
+- 정기 파일 정리 삭제 시 병렬 로직을 사용해 효율 극대화
+    - 이미지 10,000개 삭제 기준 15s → 0.5s (↓97%) 개선
+- 장시간 부하 테스트 안정화
+    - 기존 4분의 불안정한 테스트 → 1시간 장기 테스트에서도 안정적으로 처리
+</div>
+
+<hr>
+<h3> 개선 전 후 아키텍처</h3>
+<div align = "center">
+<img src = "https://github.com/user-attachments/assets/999df180-87a9-4082-8324-be5ea5e211e8"/>
+</div>
